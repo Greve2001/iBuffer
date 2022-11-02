@@ -31,7 +31,9 @@ char *generate_pass_phrase(void)
         pass_fragment = get_line_from_file(i, &length);
         size_sum += length;
     }
-    server_pass_phrase = (char *) malloc(sizeof(char));
+    
+    if(size_sum > 0)
+        server_pass_phrase = (char *) malloc(sizeof(char) * size_sum);
     return server_pass_phrase;
 }
 
