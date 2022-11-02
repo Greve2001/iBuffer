@@ -73,7 +73,7 @@ void interpretChar(char c, char* str){
     if (len >= 99) return;
 
     // Normal typing
-    if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')){
+    if ((32 <= c && c <= 126)){
         str[len] = c;
         str[len+1] = '\0';
     }
@@ -91,7 +91,7 @@ void interpretChar2(char c, char* str, int* pos){
     int x = *pos;
 
     // Normal typing
-    if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')){
+    if ((32 <= c && c <= 126)){
         str[x] = c;
         str[x+1] = '\0';
         x++;
