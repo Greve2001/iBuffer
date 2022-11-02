@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g
+CFLAGS=-g -lncurses
 
 objects=discover.o linklist.o main.o tcpclient.o tcpserver.o tui.o
 
