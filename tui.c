@@ -7,6 +7,7 @@
 void testWindow();
 void testBufferedWriting();
 void interpretChar(char c, char* str);
+void interpretChar2(char c, char* str, int* pos);
 
 void tuiMain(){
     initscr(); cbreak(); noecho(); // Inital setup of screen
@@ -43,8 +44,12 @@ void testWindow(){
 
 void testBufferedWriting(){
     char* str = malloc(sizeof(char)*100);
+    //int pos = 0;
+
     while (true)
     {
+
+
         // Setup counters
         int len = strlen(str);
 
@@ -53,6 +58,7 @@ void testBufferedWriting(){
 
         // Write to window
         clear(); // Clear window
+        //printw("\t%d\t", c);
         interpretChar(c, str);    
         printw("%s", str);
 
@@ -66,7 +72,7 @@ void interpretChar(char c, char* str){
     int len = strlen(str);
     if (len >= 99) return;
 
-    // Get a regex at somepoint
+    // Normal typing
     if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')){
         str[len] = c;
         str[len+1] = '\0';
@@ -75,5 +81,29 @@ void interpretChar(char c, char* str){
         str[len-1] = '\0';
         str[len] = 0;
     }
+}
 
+void interpretChar2(char c, char* str, int* pos){
+    // Get better way to handle this.
+    int len = strlen(str);
+    if (len >= 99) return;
+
+    int x = *pos;
+
+    // Normal typing
+    if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')){
+        str[x] = c;
+        str[x+1] = '\0';
+        x++;
+    }
+    else if (c == 7){ // Return
+        str[x] = 0;
+        x--;
+    } else if (c == 4) { // Arrow Left
+        x--;
+    } else if (c == 5) { // Arrow Right
+        x++;
+    }
+
+    *pos = x;
 }
