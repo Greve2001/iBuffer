@@ -8,7 +8,7 @@
 static char *server_pass_phrase;
 static char *gen_files[] = {"adjective_list.txt", "animal_list.txt", "verb_list.txt"};
 int count_lines_in_file(FILE *fptr);
-char *get_line_from_file(int resource_file_number);
+char *get_line_from_file(int resource_file_number, size_t *length);
 
 void seed_rand(void) 
 {
@@ -23,11 +23,14 @@ bool validate_pass_phrase(char *phrase)
 char *generate_pass_phrase(void) 
 {
     free_pass_phrase();
-    
+
+    char *pass_fragment;
+    size_t size_sum = 0, length = 0;
     for(int i = 0; i < RESOURCE_FILES; i++)
-        {
-            
-        }
+    {
+        pass_fragment = get_line_from_file(i, &length);
+        size_sum += length;
+    }
     server_pass_phrase = (char *) malloc(sizeof(char));
     return server_pass_phrase;
 }
@@ -41,14 +44,13 @@ void free_pass_phrase(void)
     }
 }
 
-char *get_line_from_file(int resource_file_number)
+char *get_line_from_file(int resource_file_number, size_t *length)
 {
     char source[MAX_PATH_LENGTH];
     strncat(source, gen_files[resource_file_number], MAX_PATH_LENGTH);
     FILE *fptr = fopen(source, "r");
-    
+
     char *line = NULL;
-    size_t length = 0;
     ssize_t nread;
 
     // Make sure that the line we try to get is within the length of the file
@@ -60,18 +62,18 @@ char *get_line_from_file(int resource_file_number)
         goto error;
 
     for(int i = 0; i < line_to_get; i++)
-        nread = getline(&line, &length, fptr);
+        nread = getline(&line, length, fptr);
 
-    error:
-        fclose(fptr);
-        return line;
+error:
+    fclose(fptr);
+    return line;
 }
 
 int count_lines_in_file(FILE *fptr)
 {
     if(!fptr)
         return -1;
-    
+
     char c;
     int lines = 0;
     while((c = fgetc(fptr)) != EOF)
