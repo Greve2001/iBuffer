@@ -64,6 +64,19 @@ void list_line_for_edit(Line* li){
 	Active_Line* new_line= malloc(sizeof(Active_Line));
 	li->active_line = new_line;
 	new_line->original_line = li;
+	
+	Letter* last_inserted_letter;
+	for(int i = 0; li->paragraph[i] != '\000'; i++){
+		Letter* l = malloc(sizeof(Letter));
+		l->character = li->paragraph[i];
+		if(last_inserted_letter)
+			last_inserted_letter->next = l;
+		else
+			new_line->first_char = l;
+		last_inserted_letter = l;
+		
+	}
+	
 }
 
 void delist_line_for_edit(Active_Line* line){
@@ -121,6 +134,6 @@ void insert_in_line(int position, char character){
 }
 
 /***********
-* Methods for the TCP connection
+* Methods that can be called from the socket
 *
 ***********/
