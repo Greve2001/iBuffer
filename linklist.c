@@ -143,7 +143,11 @@ void write(int position, char character){
 }
 
 void delete(int position){
-	;//TODO: delete version
+	Letter* prev_character = users_active_line->first_char;
+	for(int i = 0; i < position-1; i++) prev_character = prev_character->next;
+	Letter* after_character = prev_character->next->next;
+	free(prev_character->next);
+	prev_character->next = after_character;
 }
 
 char* get_line(int line_number){
