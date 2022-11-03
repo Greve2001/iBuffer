@@ -65,9 +65,9 @@ void edit_line(void){
 
 void delist_line(active_line* line){
 	char* delisted_line = malloc((users_active_line_length + 1) * sizeof(char));
-	letter current_letter = line->first_char;
-	for(int i = 0; i < users_active_line_length; i++={
-		delisted_line[i] = current_letter;
+	letter* current_letter = line->first_char;
+	for(int i = 0; i < users_active_line_length; i++){
+		delisted_line[i] = current_letter->character;
 		current_letter = current_letter->next;
 	}
 }
@@ -80,6 +80,6 @@ void delist_line(active_line* line){
 void enable_line_for_edit(int line_number, bool local_flag){
 	if (local_flag){
 		if (users_active_line)
-			
+			;//TODO: something
 	}
 }
