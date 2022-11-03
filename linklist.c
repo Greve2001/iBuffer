@@ -23,7 +23,7 @@ static Active_Line* users_active_line;
 * These methods is used for handleing the buffered lines only
 *
 ************************************************************/
-void make_new_line(void){
+void make_new_line(int previus_line){
 	Line* new = (Line*) malloc(sizeof(Line));
 
 	if(!new){
@@ -112,10 +112,14 @@ void delist_line_for_edit(Active_Line* line){
 * These methods need public accessability on the local machine
 * 
 ******************************************************************/
-void enable_line_for_edit(int line_number){
+void clicked_on_line(int line_number){
 	if (users_active_line){
 		delist_line_for_edit(users_active_line);
 		//TODO: make TCP sent a delist to the other clients
+	}
+	if(!line_number){ //if NULL is passed as parameter
+		users_active_line = NULL;
+		return;
 	}
 	Line* pointer_to_line = first_line;
 	for(int i = 0; i < line_number; i++){
@@ -125,12 +129,25 @@ void enable_line_for_edit(int line_number){
 		
 }
 
-void delete_in_line(int position){
+void write(int position, char character){
+	if(character = '\n'){
+		//TODO: create new line method
+		return;
+	}
+	Letter* new_letter = malloc(sizeof(Letter));
+	new_letter -> character = character;
+	Letter* prev_letter = users_active_line->first_char;
+	for(int i = 0; i<position; i++) prev_letter = prev_letter->next;
+	new_letter->next = prev_letter->next;
+	prev_letter->next = new_letter;
+}
+
+void delete(int position){
 	;//TODO: delete version
 }
 
-void insert_in_line(int position, char character){
-	;//TODO: insert a letter (might be the last)
+char* get_line(int line_number){
+	
 }
 
 /***********
