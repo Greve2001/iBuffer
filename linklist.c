@@ -38,7 +38,7 @@ void make_new_line(void){
 }
 
 /**************************************************************
-*
+* Theses methods are used to manipulate the active lines
 *
 ***************************************************************/
 void active_line_size(active_line* my_line){
@@ -63,25 +63,47 @@ void make_line_active(int line_number){
 void edit_line(void){
 }
 
-void delist_line(active_line* line){
+void delist_line_for_edit(active_line* line){
+	//allocate memory for the new array, and copy over each letter to it
 	char* delisted_line = malloc((users_active_line_length + 1) * sizeof(char));
 	letter* current_letter = line->first_char;
 	for(int i = 0; i < users_active_line_length; i++){
 		delisted_line[i] = current_letter->character;
+		letter* temp = current_letter;
 		current_letter = current_letter->next;
+		free(temp);
 	}
 	delisted_line[users_active_line_length] = '\000';	//allows to operate the char array as a string, this will be used by the front_end to simplify.
-	line->original_line->paragraph = delisted_line;
+	
+	//here we need to deallocate the old array before we save the new.
+	free(line->original_line->paragraph);				//free the old array space
+	line->original_line->paragraph = delisted_line;		//saves the new array to the inactive list
+	
+	//Then we need to remove the active line from the linked list of active lines
+	active_line* current_active_line = active_first_line;
+	for(;current_active_line->next != line; current_active_line = current_active_line->next){
+		;
+	}
+	current_active_line->next = line->next;
+	
+	//finaly we can free up our original line.
+	free(line);
+	
+	
 }
 
 
 /******************************************************************
-*These methods need public accessability.
+* These methods need public accessability.
 *
 ******************************************************************/
 void enable_line_for_edit(int line_number, bool local_flag){
 	if (local_flag){
-		if (users_active_line)
-			;//TODO: something
+		if (users_active_line){
+			delist_line_for_edit(users_active_line);
+			//TODO: make TCP sent a delist to the other clients
+		}
+		
+		
 	}
 }
