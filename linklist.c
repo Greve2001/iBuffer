@@ -70,6 +70,8 @@ void delist_line(active_line* line){
 		delisted_line[i] = current_letter->character;
 		current_letter = current_letter->next;
 	}
+	delisted_line[users_active_line_length] = '\000';	//allows to operate the char array as a string, this will be used by the front_end to simplify.
+	line->original_line->paragraph = delisted_line;
 }
 
 

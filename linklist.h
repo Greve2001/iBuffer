@@ -14,6 +14,7 @@ typedef struct Letters{
 
 
 typedef struct Active_Line{
-	struct Active_Line* next;
-	letter* first_char;
+	struct Active_Line* next;	//pointer to next data in the linked list
+	line* original_line;		//used to either delete or save it when finished editing
+	letter* first_char;			//the first char the paragraph
 } active_line;
