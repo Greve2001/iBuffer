@@ -28,8 +28,6 @@ void startTUI(){
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
 
-    // Setup windows
-
     // Refreshing
     refresh();
 }
@@ -54,9 +52,7 @@ void bufferedWriting(){
 
         // Write to window
         clear(); // Clear window
-        
         printStatus();
-
         interpretChar(c, str);    
         printw("%s", str);
 
