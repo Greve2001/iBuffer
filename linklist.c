@@ -11,8 +11,12 @@ static line* last_line;
 
 // active lines
 static int active_users = 0;
-static line* active_first_line;
-static line* active_last_line;
+static active_line* active_first_line;
+static active_line* active_last_line;
+
+//this users active line
+static int users_active_line_length = 0;
+static active_line* users_active_line;
 
 
 /**********************************************************
@@ -57,4 +61,25 @@ void make_line_active(int line_number){
 
 
 void edit_line(void){
+}
+
+void delist_line(active_line* line){
+	char* delisted_line = malloc((users_active_line_length + 1) * sizeof(char));
+	letter current_letter = line->first_char;
+	for(int i = 0; i < users_active_line_length; i++={
+		delisted_line[i] = current_letter;
+		current_letter = current_letter->next;
+	}
+}
+
+
+/******************************************************************
+*These methods need public accessability.
+*
+******************************************************************/
+void enable_line_for_edit(int line_number, bool local_flag){
+	if (local_flag){
+		if (users_active_line)
+			
+	}
 }
