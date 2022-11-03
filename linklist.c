@@ -67,19 +67,37 @@ void line_to_active_line(Line* line){
 	}
 
 }
-/*
-//TODO: delete
-void make_line_active(int line_number){
-	Line* line_to_load = first_line;
-	for(int i = 0; i < line_number; i++){
-		line_to_load = line_to_load->next;
-	}
+
+void active_line_to_line(Active_Line* active_line, bool free_active_line){
+	Line* line = active_line->original_line;
+	free(line->paragraph);
 	
-	if(!line_to_load){
-		//TODO: deal with NULL pointers
+	int size = active_line->linked_list_size;
+	
+	if(size == 0){
+		;//TODO: nothing on the line
+	}
+	char* paragraph = malloc((size + 1)* sizeof(char));
+	Letter* letter = active_line -> first_char;
+	for(int i = 0; i < size; i++){
+		paragraph[i] = letter->character;
+		if(free_active_line){
+			Letter* temp = letter;
+			letter = letter -> next;
+			free(temp);
+		}else
+			letter = letter -> next;
+	}
+	paragraph[size] = '\000';
+	line->paragraph = paragraph;
+	
+	
+	if(free_active_line){
+		free(line->active_line);
 	}
 	
 }
+/*
 
 //TODO: delete
 void list_line_for_edit(Line* li){
@@ -211,6 +229,7 @@ char** get_all_lines(){
 
 void free_all_space(){
 	;//TODO: free it all, need to make list of what needs to be free'ed and deal with the seperately
+	//this is only for use when the program is closed to free up the memory
 }
 
 /***********
