@@ -19,4 +19,5 @@ typedef struct Active_Line{
 	struct Active_Line* next;	//pointer to next data in the linked list
 	Line* original_line;		//used to either delete or save it when finished editing
 	Letter* first_char;			//the first char the paragraph
+	int linked_list_size;
 } Active_Line;
