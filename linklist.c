@@ -40,7 +40,7 @@ void make_new_line(int previus_line){
 }
 
 /**************************************************************
-* Theses methods are used to manipulate the active lines
+* Methods for changing in between being a linked list and an array
 *
 ***************************************************************/
 void line_to_active_line(Line* line){
@@ -94,6 +94,7 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 	
 	if(free_active_line){
 		free(line->active_line);
+		line->active_line = NULL;
 	}
 	
 }
@@ -205,6 +206,7 @@ void delete(int position){
 	Letter* after_character = prev_character->next->next;
 	free(prev_character->next);
 	prev_character->next = after_character;
+	users_active_line->linked_list_size--;
 }
 
 char* get_line(int line_number){
@@ -216,6 +218,8 @@ char* get_line(int line_number){
 }
 
 char** get_all_lines(){
+	if(list_of_lines)
+		free(list_of_lines);
 	list_of_lines = malloc(size * sizeof(char*));
 	Line* current_element = first_line;
 	for(int i = 0; i < size; i++){

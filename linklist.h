@@ -21,3 +21,9 @@ typedef struct Active_Line{
 	Letter* first_char;			//the first char the paragraph
 	int linked_list_size;
 } Active_Line;
+
+
+
+//TODO: void pointer for delete stuff
+
+//TODO: look up union
