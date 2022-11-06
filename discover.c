@@ -1,4 +1,6 @@
 #include "common.h"
+#include <stdio.h>
+#include <string.h>
 #define MAX_PASS_LENGTH 1024
 #define MAX_PATH_LENGTH 1024
 #define RESOURCE_PATH ./resources/
@@ -12,6 +14,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 
 
@@ -33,20 +36,36 @@ char *send_udp_broadcast(void)
     setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &sock_opt, sizeof sock_opt);
 
     // Settings for sending the broadcast
-    struct sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT_NUMBER);
-    server_addr.sin_addr.s_addr = inet_addr(BROADCAST_ADDR);
+    struct sockaddr_in broadcast_addr;
+    broadcast_addr.sin_family = AF_INET;
+    broadcast_addr.sin_port = htons(PORT_NUMBER);
+    broadcast_addr.sin_addr.s_addr = inet_addr(BROADCAST_ADDR);
 
     // Send message
     char message[] = "EHLO iBuffer";
-    sendto(sock, message, strlen(message) + 1, 0, (struct sockaddr *) &server_addr, sizeof(server_addr));
+    sendto(sock, message, strlen(message) + 1, 0, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
 
+    close(sock);
     return "";
 }
 
-void listen_udp_broadcat(void) 
+void listen_udp_broadcast(void) 
 {
+    int listener = socket(AF_INET, SOCK_DGRAM, 0);
+
+    struct sockaddr_in broadcast_addr;
+    broadcast_addr.sin_family = AF_INET;
+    broadcast_addr.sin_port = htons(PORT_NUMBER);
+    broadcast_addr.sin_addr.s_addr = INADDR_ANY;
+    
+    int ret = bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
+
+    char msg[13];
+    recvfrom(listener, msg, 12, 0, NULL, 0);
+    if(strncmp("EHLO iBuffer", msg, 12) == 0)
+        puts("EHLO Recieved");
+
+    close(listener);
 }
 
 bool validate_pass_phrase(char *phrase) 
