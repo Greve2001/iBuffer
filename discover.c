@@ -1,19 +1,52 @@
 #include "common.h"
-#include <stdio.h>
-#include <string.h>
 #define MAX_PASS_LENGTH 1024
 #define MAX_PATH_LENGTH 1024
 #define RESOURCE_PATH ./resources/
 #define RESOURCE_FILES 3
 
+// Networking
+#define PORT_NUMBER 2207 
+#define BROADCAST_ADDR "255.255.255.255"
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
+
+
 static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
-int count_lines_in_file(FILE *fptr);
-char *get_line_from_file(int resource_file_number, size_t *length);
 
 void seed_rand(void) 
 {
     srand(time(0));
+}
+
+char *send_udp_broadcast(void) 
+{
+    // Create a socket
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    // Set the socket options
+    int sock_opt = 1;
+    setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &sock_opt, sizeof sock_opt);
+
+    // Settings for sending the broadcast
+    struct sockaddr_in server_addr;
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT_NUMBER);
+    server_addr.sin_addr.s_addr = inet_addr(BROADCAST_ADDR);
+
+    // Send message
+    char message[] = "EHLO iBuffer";
+    sendto(sock, message, strlen(message) + 1, 0, (struct sockaddr *) &server_addr, sizeof(server_addr));
+
+    return "";
+}
+
+void listen_udp_broadcat(void) 
+{
 }
 
 bool validate_pass_phrase(char *phrase) 
