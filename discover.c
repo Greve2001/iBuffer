@@ -1,12 +1,13 @@
 #include "common.h"
 #include <stdio.h>
+#include <string.h>
 #define MAX_PASS_LENGTH 1024
 #define MAX_PATH_LENGTH 1024
 #define RESOURCE_PATH ./resources/
 #define RESOURCE_FILES 3
 
 static char *server_pass_phrase;
-static char *gen_files[] = {"adjective_list.txt", "animal_list.txt", "verb_list.txt"};
+static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
 int count_lines_in_file(FILE *fptr);
 char *get_line_from_file(int resource_file_number, size_t *length);
 
@@ -24,16 +25,25 @@ char *generate_pass_phrase(void)
 {
     free_pass_phrase();
 
-    char *pass_fragment;
+    char *pass_fragment[RESOURCE_FILES];
     size_t size_sum = 0, length = 0;
     for(int i = 0; i < RESOURCE_FILES; i++)
     {
-        pass_fragment = get_line_from_file(i, &length);
+        pass_fragment[i] = get_line_from_file(i, &length);
         size_sum += length;
     }
     
     if(size_sum > 0)
-        server_pass_phrase = (char *) malloc(sizeof(char) * size_sum);
+        server_pass_phrase = (char *) malloc(sizeof(char) * (size_sum + RESOURCE_FILES));
+    else
+        return "";
+
+    *server_pass_phrase = '\0';
+    for(int i = 0; i < RESOURCE_FILES; i++) {
+        strcat(server_pass_phrase, pass_fragment[i]);
+        free(pass_fragment[i]);
+    }
+
     return server_pass_phrase;
 }
 
@@ -48,12 +58,12 @@ void free_pass_phrase(void)
 
 char *get_line_from_file(int resource_file_number, size_t *length)
 {
-    char source[MAX_PATH_LENGTH];
-    strncat(source, gen_files[resource_file_number], MAX_PATH_LENGTH);
+    char source[MAX_PATH_LENGTH] = "resources/";
+    strncat(source, gen_files[resource_file_number], MAX_PATH_LENGTH - 1);
     FILE *fptr = fopen(source, "r");
 
     char *line = NULL;
-    ssize_t nread;
+    ssize_t nread = -1;
 
     // Make sure that the line we try to get is within the length of the file
     int lines = count_lines_in_file(fptr);
@@ -65,6 +75,14 @@ char *get_line_from_file(int resource_file_number, size_t *length)
 
     for(int i = 0; i < line_to_get; i++)
         nread = getline(&line, length, fptr);
+
+
+    // Check if a reading error has occurred
+    if(nread == -1)
+        goto error;
+
+    // Remove trailing newline character from the line
+    line[strcspn(line, "\n")] = ' ';
 
 error:
     fclose(fptr);
@@ -81,6 +99,8 @@ int count_lines_in_file(FILE *fptr)
     while((c = fgetc(fptr)) != EOF)
         if(c == '\n')
             lines++;
-
+    
+    // Reset the file pointer af count
+    rewind(fptr);
     return lines;
 }
