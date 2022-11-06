@@ -8,7 +8,6 @@
 
 // Networking
 #define PORT_NUMBER 2207 
-//#define BROADCAST_ADDR "192.168.0.49"
 #define BROADCAST_ADDR "0.0.0.0" 
 
 #include <arpa/inet.h>
@@ -64,10 +63,13 @@ void listen_udp_broadcast(void)
     
     int ret = bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
 
+    struct sockaddr_in sender_addr;
+    socklen_t sender_size = sizeof(sender_addr);
     char msg[13];
-    recvfrom(listener, msg, 12, 0, NULL, 0);
+    recvfrom(listener, msg, 12, 0, (struct sockaddr *) &sender_addr, &sender_size); 
+    
     if(strncmp("EHLO iBuffer", msg, 12) == 0)
-        puts("EHLO Recieved");
+        printf("EHLO Recieved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
 
     close(listener);
 }
