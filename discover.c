@@ -8,7 +8,8 @@
 
 // Networking
 #define PORT_NUMBER 2207 
-#define BROADCAST_ADDR "255.255.255.255"
+#define BROADCAST_ADDR "192.168.0.49"
+//#define BROADCAST_ADDR "255.255.255.255" 
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -57,6 +58,9 @@ void listen_udp_broadcast(void)
     broadcast_addr.sin_family = AF_INET;
     broadcast_addr.sin_port = htons(PORT_NUMBER);
     broadcast_addr.sin_addr.s_addr = INADDR_ANY;
+
+    int sock_opt = 1;
+    setsockopt(listener, SOL_SOCKET, SO_BROADCAST, &sock_opt, sizeof(sock_opt));
     
     int ret = bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
 
