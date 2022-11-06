@@ -1,6 +1,4 @@
 #include "common.h"
-#include <stdio.h>
-#include <string.h>
 #define MAX_PASS_LENGTH 1024
 #define MAX_PATH_LENGTH 1024
 #define RESOURCE_PATH ./resources/
@@ -10,14 +8,6 @@
 #define PORT_NUMBER 2207 
 //#define BROADCAST_ADDR "0.0.0.0"          // For loopback broadcast
 #define BROADCAST_ADDR "255.255.255.255"    // For network broadcast
-
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
-
 
 static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
@@ -52,23 +42,29 @@ char *send_udp_broadcast(void)
 
 void listen_udp_broadcast(void) 
 {
+    // Create listening socket
     int listener = socket(AF_INET, SOCK_DGRAM, 0);
 
+    // Set socket option for broadcast
+    int sock_opt = 1;
+    setsockopt(listener, SOL_SOCKET, SO_BROADCAST, &sock_opt, sizeof(sock_opt));
+
+    // Set listing struct
     struct sockaddr_in broadcast_addr;
     broadcast_addr.sin_family = AF_INET;
     broadcast_addr.sin_port = htons(PORT_NUMBER);
     broadcast_addr.sin_addr.s_addr = INADDR_ANY;
-
-    int sock_opt = 1;
-    setsockopt(listener, SOL_SOCKET, SO_BROADCAST, &sock_opt, sizeof(sock_opt));
     
+    // Bind the address
     int ret = bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
 
+    // Recieve a message and save who send it
     struct sockaddr_in sender_addr;
     socklen_t sender_size = sizeof(sender_addr);
     char msg[13];
     recvfrom(listener, msg, 12, 0, (struct sockaddr *) &sender_addr, &sender_size); 
     
+    // Check for correct message
     if(strncmp("EHLO iBuffer", msg, 12) == 0)
         printf("EHLO Recieved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
 
