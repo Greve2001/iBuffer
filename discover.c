@@ -8,7 +8,8 @@
 
 // Networking
 #define PORT_NUMBER 2207 
-#define BROADCAST_ADDR "0.0.0.0" 
+//#define BROADCAST_ADDR "0.0.0.0"          // For loopback broadcast
+#define BROADCAST_ADDR "255.255.255.255"    // For network broadcast
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
