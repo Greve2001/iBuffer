@@ -8,8 +8,8 @@
 
 // Networking
 #define PORT_NUMBER 2207 
-#define BROADCAST_ADDR "192.168.0.49"
-//#define BROADCAST_ADDR "255.255.255.255" 
+//#define BROADCAST_ADDR "192.168.0.49"
+#define BROADCAST_ADDR "0.0.0.0" 
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
