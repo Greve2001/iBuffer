@@ -4,6 +4,13 @@
 #include <string.h>
 #include <time.h>
 
+// Networking headers
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 bool validate_pass_phrase(char *);
 char *send_udp_broadcast(void);
 void listen_udp_broadcast(void);
