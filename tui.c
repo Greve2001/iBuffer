@@ -101,31 +101,6 @@ void moveCursor(char c){
     move(yStart, xPos);
 }
 
-void interpretChar2(char c, char* str, int* pos){
-    // Get better way to handle this.
-    int len = strlen(str);
-    if (len >= 99) return;
-
-    int x = *pos;
-
-    // Normal typing
-    if ((32 <= c && c <= 126)){
-        str[x] = c;
-        str[x+1] = '\0';
-        x++;
-    }
-    else if (c == 7){ // Return
-        str[x] = 0;
-        x--;
-    } else if (c == 4) { // Arrow Left
-        x--;
-    } else if (c == 5) { // Arrow Right
-        x++;
-    }
-
-    *pos = x;
-}
-
 void printStatus(){
     int numUsers = 1;
     char* discoveryStr = "Moist-Meat-Sofa";
