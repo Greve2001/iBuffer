@@ -18,7 +18,8 @@ WINDOW* mainWin;
 
 int strLength;
 int xPos;
-int yStart = 3;
+int xStart = 1;
+int yStart = 1;
 
 void tuiMain(){
     startTUI();
@@ -33,7 +34,12 @@ void startTUI(){
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
 
+    statWin = newwin(4, 50, 0, 0);
+    mainWin = newwin(50, 102, 4+0, 0);
+
     // Refreshing
+    wrefresh(statWin);
+    wrefresh(mainWin);
     refresh();
 
     xPos = 0;
@@ -43,6 +49,10 @@ void startTUI(){
 void stopTUI(){
     getch(); // Get char to end! 
 
+    werase(statWin);
+    werase(mainWin);
+    delwin(statWin);
+    delwin(mainWin);
     endwin();
 }
 
@@ -59,14 +69,20 @@ void bufferedWriting(){
 
         // Write to window
         clear(); // Clear window
-        printStatus();
+
         interpretChar(c, str);
-        printw("%s", str);
-        moveCursor(c);
+
+        printStatus();
+        mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
+        //moveCursor(c);
 
         //printw("\n%d\n", c); // Print char value
 
         refresh();
+        box(statWin, 0, 0);
+        box(mainWin, 0, 0);
+        wrefresh(statWin);
+        wrefresh(mainWin);
     }
     free(str);
 }
@@ -74,10 +90,10 @@ void bufferedWriting(){
 void interpretChar(char c, char* str){
     // Get better way to handle this.
     strLength = strlen(str);
-    if (strLength >= 99) return;
 
     // Normal typing
     if ((32 <= c && c <= 126)){
+        if (strLength >= 99) return;
         str[strLength] = c;
         str[strLength+1] = '\0';
     }
@@ -105,9 +121,8 @@ void printStatus(){
     int numUsers = 1;
     char* discoveryStr = "Moist-Meat-Sofa";
 
-    printw("# Active Users: \t%d\n", numUsers);
-    printw("# Discovery Keyword:\t%s\n", discoveryStr);
-    printw("\n");
+    mvwprintw(statWin, 1, xStart, "# Active Users: \t%d", numUsers);
+    mvwprintw(statWin, 2, xStart, "# Discovery Keyword:\t%s", discoveryStr);
 }
 
 
