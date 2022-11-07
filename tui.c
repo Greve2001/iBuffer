@@ -124,25 +124,3 @@ void printStatus(){
     mvwprintw(statWin, 1, xStart, "# Active Users: \t%d", numUsers);
     mvwprintw(statWin, 2, xStart, "# Discovery Keyword:\t%s", discoveryStr);
 }
-
-
-
-//////// Testing /////////
-void testWindow(){
-    WINDOW* testWin;
-
-    // Create window
-    char* str = "Why you not working!";
-    int width = strlen(str)+2;
-    int height = 3;
-
-    testWin = newwin(height, width, 0, 0);
-
-    // Append text
-    refresh(); // VERY IMPORTANT! Dont know why
-    mvwprintw(testWin, 1, 1, "%s", str);
-    box(testWin, 0, 0);
-
-    wrefresh(testWin); // Refresh
-
-}
