@@ -111,7 +111,7 @@ Hippopotamus
 Hoatzin
 Hoopoe
 Hornet
-Horse 
+Horse
 Human
 Hummingbird
 Hyena
@@ -145,7 +145,7 @@ Lion
 Lizard
 Llama
 Lobster
-Locust 
+Locust
 Loris
 Louse
 Lynx
@@ -193,8 +193,8 @@ Peafowl
 Pelican
 Penguin
 Pheasant
-Pig 
-Pigeon 
+Pig
+Pigeon
 Pika
 Polar bear
 Pony
@@ -205,10 +205,10 @@ Pug
 Quail
 Quelea
 Quetzal
-Rabbit 
+Rabbit
 Raccoon
 Ram
-Rat 
+Rat
 Raven
 Red deer
 Red panda
@@ -229,7 +229,7 @@ Seal
 Sea otter
 Serval
 Shark
-Sheep 
+Sheep
 Shrew
 Shrike
 Siamang
@@ -238,8 +238,8 @@ Skipper
 Skunk
 Sloth
 Snail
-Snake 
-Spider 
+Snake
+Spider
 Spoonbill
 Squid
 Squirrel
@@ -257,7 +257,7 @@ Toad
 Topi
 Toucan
 Turaco
-Turkey 
+Turkey
 Turtle
 Vicuña
 Vinegaroon
