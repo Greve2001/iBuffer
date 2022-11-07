@@ -9,11 +9,16 @@ void bufferedWriting();
 void printStatus();
 void interpretChar(char c, char* str);
 void interpretChar2(char c, char* str, int* pos);
+void moveCursor(char c);
 void startTUI();
 void stopTUI();
 
 WINDOW* statWin;
 WINDOW* mainWin;
+
+int strLength;
+int xPos;
+int yStart = 3;
 
 void tuiMain(){
     startTUI();
@@ -30,6 +35,9 @@ void startTUI(){
 
     // Refreshing
     refresh();
+
+    xPos = 0;
+    strLength = 0;
 }
 
 void stopTUI(){
@@ -40,7 +48,6 @@ void stopTUI(){
 
 void bufferedWriting(){
     char* str = malloc(sizeof(char)*100);
-    //int pos = 0;
 
     while (true)
     {
@@ -53,8 +60,11 @@ void bufferedWriting(){
         // Write to window
         clear(); // Clear window
         printStatus();
-        interpretChar(c, str);    
+        interpretChar(c, str);
         printw("%s", str);
+        moveCursor(c);
+
+        //printw("\n%d\n", c); // Print char value
 
         refresh();
     }
@@ -63,18 +73,32 @@ void bufferedWriting(){
 
 void interpretChar(char c, char* str){
     // Get better way to handle this.
-    int len = strlen(str);
-    if (len >= 99) return;
+    strLength = strlen(str);
+    if (strLength >= 99) return;
 
     // Normal typing
     if ((32 <= c && c <= 126)){
-        str[len] = c;
-        str[len+1] = '\0';
+        str[strLength] = c;
+        str[strLength+1] = '\0';
     }
     else if (c == 7){ // Return
-        str[len-1] = '\0';
-        str[len] = 0;
+        str[strLength-1] = '\0';
+        str[strLength] = 0;
     }
+}
+
+void moveCursor(char c){
+    if ((32 <= c && c <= 126)){ // Normal typing
+        xPos++;
+    }
+    else if (c == 7 || c == 4){ // Return and Arrow Left
+        if(xPos > 0) xPos--;
+    } 
+    else if (c == 5){ // Arrow Right
+        if (xPos < strLength) xPos++;
+    } 
+
+    move(yStart, xPos);
 }
 
 void interpretChar2(char c, char* str, int* pos){
