@@ -7,37 +7,14 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-void send_request(int client_socket) {
-    char* line = NULL;
-    size_t len = 0;
-    ssize_t nread;
-    char recv[100];
-    for(;;) {
-        printf("Ready to recieve command:\n");
-        fflush(stdout);
-        nread = getline(&line, &len, stdin);
-
-        if(nread == -1) {
-            free(line);             // free line even upon failure
-            exit(EXIT_FAILURE);
-        } 
-        else if(nread > 1) {
-            send(client_socket, line, sizeof(line), 0);
-            read(client_socket, recv, sizeof(recv));
-            printf("Contents of host buffer: %s", recv);
-        }
-    }
-    free(line);
-    exit(EXIT_SUCCESS);
-}
-
+void send_request(int server_socket);
 
 // TCP connection methods is for now explained in tcpserver.c
 int main(void) {
 
-    int client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (client_socket == -1) {
+    if (server_socket == -1) {
         printf("socket creation failed...\n");
         exit(0);
     }
@@ -53,17 +30,43 @@ int main(void) {
 
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
     inet_aton("127.0.0.1", &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
-    int status = connect(client_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
+    int status = connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
     if(status != 0) {
         printf("connection with the server failed...%i\n", status);
         exit(0);
     } else {
         printf("connected to the server..\n");
     }
-    
-    send_request(client_socket);
 
-    close(client_socket);
-    
+    char receive[100];
+    read(server_socket, receive, sizeof(receive)); // Reads welcome message
+    printf("Contents of host buffer: %s", receive);
+
+
+    send_request(server_socket);
+
+    close(server_socket);
+
     return 0;
+}
+
+void send_request(int server_socket) {
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t nread;
+    char recv[100];
+    for(;;) {
+        nread = getline(&line, &len, stdin);
+
+        if(nread == -1) {
+            free(line);             // free line even upon failure
+            exit(EXIT_FAILURE);
+        } 
+        send(server_socket, line, len * sizeof(char), 0);
+        read(server_socket, recv, sizeof(recv));
+        printf("Contents of host buffer: %s", recv);
+        fflush(stdout);
+    }
+    free(line);
+    exit(EXIT_SUCCESS);
 }
