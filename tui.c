@@ -74,11 +74,11 @@ void bufferedWriting(){
 
         printStatus();
         mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
-        //moveCursor(c);
+        moveCursor(c);
 
         //printw("\n%d\n", c); // Print char value
-
         refresh();
+
         box(statWin, 0, 0);
         box(mainWin, 0, 0);
         wrefresh(statWin);
@@ -94,12 +94,12 @@ void interpretChar(char c, char* str){
     // Normal typing
     if ((32 <= c && c <= 126)){
         if (strLength >= 99) return;
-        str[strLength] = c;
-        str[strLength+1] = '\0';
+        str[xPos] = c;
+        str[xPos+1] = '\0';
     }
     else if (c == 7){ // Return
-        str[strLength-1] = '\0';
-        str[strLength] = 0;
+        str[xPos+1-1] = '\0';
+        str[xPos+1] = 0;
     }
 }
 
@@ -114,7 +114,7 @@ void moveCursor(char c){
         if (xPos < strLength) xPos++;
     } 
 
-    move(yStart, xPos);
+    wmove(mainWin, yStart, xStart+xPos);
 }
 
 void printStatus(){
