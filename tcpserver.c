@@ -6,8 +6,10 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <pthread.h>
 
 void read_request(int client_socket);
+void* handle_connection(void* socket);
 
 int main(void) {
 
@@ -63,27 +65,22 @@ int main(void) {
 
     socklen_t addr_len = sizeof(server_addr);    
 
-    /**
-     * int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) - extracts the first connection request on the queue of the listening socket, sockfd, creates a new connected socket, and returns a new file descriptor referring to that socket.
-     * int sockfd - the file descriptor returned from socket(), and has bind() and listen().
-     * struct addr - the adress handled by the struct sockaddr_in
-     * socklen_t addrlen - must initialize it to contain the size (in bytes) of the structure pointed to by addr; on return it will contain the actual size of the peer address.
-     */
-    int client_socket = accept(server_socket, (struct sockaddr*) &server_addr, &addr_len);
-    
-    if(client_socket < 0) {
-        printf("Server accept failed");
-    } else {
-        printf("Server accepted the client");
-        char welcome_message[] = "Welcome to server. Ready to recieve a command.\n";
-        send(client_socket, welcome_message, sizeof(welcome_message), 0); 
+    struct sockaddr_in client_addr;
+
+    for(;;) {
+        /**
+         * int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) - extracts the first connection request on the queue of the listening socket, sockfd, creates a new connected socket, and returns a new file descriptor referring to that socket.
+         * int sockfd - the file descriptor returned from socket(), and has bind() and listen().
+         * struct addr - the adress handled by the struct sockaddr_in
+         * socklen_t addrlen - must initialize it to contain the size (in bytes) of the structure pointed to by addr; on return it will contain the actual size of the peer address.
+         */
+        int client_socket = accept(server_socket, (struct sockaddr*) &client_addr, &addr_len);
+
+        pthread_t thread;
+        pthread_create(&thread, NULL, handle_connection, &client_socket);
+
     }
-
-    read_request(client_socket);
-    char goodbye_message[] = "Server exit...";
-    write(client_socket, goodbye_message, sizeof(goodbye_message));
     close(server_socket);
-
     return 0;
 }
 
@@ -92,13 +89,31 @@ void read_request(int client_socket) {
     char argv[100];
     for(;;) {
         memset(argv, 0, sizeof(argv));
-        read(client_socket, argv, sizeof(argv));
-        
-        send(client_socket, argv, sizeof(argv), 0);
+        ssize_t len = read(client_socket, argv, sizeof(argv));
 
-        if(strcmp("exit", argv) == 0) {
+        send(client_socket, argv, len, 0);
+
+        if(strcmp("exit\n", argv) == 0) {
             break;
         }
 
     }
+}
+
+void* handle_connection(void* socket) {
+    int client_socket = *(int*) socket;
+
+    if(client_socket < 0) {
+        printf("Server accept failed\n");
+    } else {
+        printf("Server accepted the client\n");
+        fflush(stdout);
+        char welcome_message[] = "Welcome to server. Ready to recieve a command.\n";
+        send(client_socket, welcome_message, sizeof(welcome_message), 0); 
+    }
+
+    read_request(client_socket);
+    char goodbye_message[] = "Server exit...\n";
+    write(client_socket, goodbye_message, sizeof(goodbye_message));
+    close(client_socket);
 }
