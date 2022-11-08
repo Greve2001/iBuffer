@@ -19,14 +19,12 @@ int main(void) {
      * int type - specifies the communication semantics. SOCK_STREAM provides sequenced, reliable, two-way, connection-based byte streams (TCP).
      * int protocol - specifies a particular protocol to be used with the socket. Default is 0 when only a single protocol is used. Can be used to define a socket with several different protocols.
      */
-    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0); // filedescriptor
 
-    if (server_socket == -1) {
-        printf("socket creation failed...\n");
-        exit(0);
+    if (server_socket < 0) {
+        printf("Socket creation failed...\n");
+        exit(1);
     }
-    else
-        printf("Socket successfully created..\n");
 
     /* struct for handling internet addresses defined in <netinit/in.h>. 
      * struct sockaddr_in {
@@ -42,6 +40,7 @@ int main(void) {
      */
     struct sockaddr_in server_addr;
 
+    // Set port and IP
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(1504);
 
@@ -54,14 +53,19 @@ int main(void) {
      * struct addr - the adress handled by the struct sockaddr_in
      * socklen_t addrlen - the length of the struct
      */
-    bind(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
-
+    if (bind(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
+        printf("Binding to port failed...\n");
+        exit(1);
+    }
     /**
      * listen(int sockfd, int backlog) mark the socket as passive to accept incoming requests.
      * int sockfd - the file descriptor return from socket()
      * int backlog - the length of the queue of incoming requests. If connection is full the client recieve ECONNREFUSED. 
      */
-    listen(server_socket, 5);
+    // Listen for clients
+    if (listen(server_socket, 5) < 0) {
+        printf("Listening failed...\n")
+    }
 
     socklen_t addr_len = sizeof(server_addr);    
 
