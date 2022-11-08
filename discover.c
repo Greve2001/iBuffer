@@ -1,3 +1,4 @@
+#define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 #define MAX_PASS_LENGTH 1024
 #define MAX_PATH_LENGTH 1024
@@ -6,8 +7,8 @@
 
 // Networking
 #define PORT_NUMBER 2207 
-//#define BROADCAST_ADDR "0.0.0.0"          // For loopback broadcast
-#define BROADCAST_ADDR "255.255.255.255"    // For network broadcast
+#define BROADCAST_ADDR "0.0.0.0"          // For loopback broadcast
+//#define BROADCAST_ADDR "255.255.255.255"    // For network broadcast
 
 static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
@@ -17,7 +18,7 @@ void seed_rand(void)
     srand(time(0));
 }
 
-char *send_udp_broadcast(void) 
+void send_udp_broadcast(char ip_server[], int size, char *phrase)
 {
     // Create a socket
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -33,11 +34,10 @@ char *send_udp_broadcast(void)
     broadcast_addr.sin_addr.s_addr = inet_addr(BROADCAST_ADDR);
 
     // Send message
-    char message[] = "EHLO iBuffer";
-    sendto(sock, message, strlen(message) + 1, 0, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
+    sendto(sock, phrase, strlen(phrase) + 1, 0, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
+    recvfrom(sock, ip_server, size, 0, NULL, 0); 
 
     close(sock);
-    return "";
 }
 
 void listen_udp_broadcast(void) 
@@ -54,21 +54,61 @@ void listen_udp_broadcast(void)
     broadcast_addr.sin_family = AF_INET;
     broadcast_addr.sin_port = htons(PORT_NUMBER);
     broadcast_addr.sin_addr.s_addr = INADDR_ANY;
-    
+
     // Bind the address
     int ret = bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
 
     // Recieve a message and save who send it
     struct sockaddr_in sender_addr;
+    sender_addr.sin_family = AF_INET;
+    sender_addr.sin_port = htons(PORT_NUMBER);
+
     socklen_t sender_size = sizeof(sender_addr);
     char msg[13];
-    recvfrom(listener, msg, 12, 0, (struct sockaddr *) &sender_addr, &sender_size); 
-    
-    // Check for correct message
-    if(strncmp("EHLO iBuffer", msg, 12) == 0)
-        printf("EHLO Recieved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
+    recvfrom(listener, msg, sizeof(msg) - 1, 0, (struct sockaddr *) &sender_addr, &sender_size); 
 
+    // Check for correct message
+    if(strncmp(server_pass_phrase, msg, sizeof(server_pass_phrase) - 2) == 0)
+        printf("Validatation approved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
+
+    char local_ip[NI_MAXHOST];
+    get_local_ip(local_ip);
+    sendto(listener, local_ip, strlen(local_ip) + 1, 0, (struct sockaddr *) &sender_addr, sizeof(sender_addr));
+    
     close(listener);
+}
+
+// Modified example code from source:
+// man page getifaddrs
+char get_local_ip(char host[])
+{
+    struct ifaddrs *ifaddr;
+    int family, s;
+    host[0] = '\0';
+
+    if (getifaddrs(&ifaddr) == -1) {
+        perror("getifaddrs");
+    }
+
+    for (struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == NULL)
+            continue;
+
+        family = ifa->ifa_addr->sa_family;
+        if (family == AF_INET && (strstr(ifa->ifa_name, "wl") || strstr(ifa->ifa_name, "eth"))) {
+            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+                    host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+            }
+
+            break;
+        }
+    }
+
+    freeifaddrs(ifaddr);
+    return *host;
 }
 
 bool validate_pass_phrase(char *phrase) 
@@ -87,7 +127,7 @@ char *generate_pass_phrase(void)
         pass_fragment[i] = get_line_from_file(i, &length);
         size_sum += length;
     }
-    
+
     if(size_sum > 0)
         server_pass_phrase = (char *) malloc(sizeof(char) * (size_sum + RESOURCE_FILES));
     else
@@ -99,6 +139,7 @@ char *generate_pass_phrase(void)
         free(pass_fragment[i]);
     }
 
+    printf("%s\n", server_pass_phrase);
     return server_pass_phrase;
 }
 
@@ -154,7 +195,7 @@ int count_lines_in_file(FILE *fptr)
     while((c = fgetc(fptr)) != EOF)
         if(c == '\n')
             lines++;
-    
+
     // Reset the file pointer af count
     rewind(fptr);
     return lines;
