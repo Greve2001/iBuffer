@@ -20,6 +20,7 @@ int strLength;
 int xPos;
 int xStart = 1;
 int yStart = 1;
+int maxStrLength = 99;
 
 void tuiMain(){
     startTUI();
@@ -93,7 +94,7 @@ void interpretChar(char c, char* str){
 
     // Normal typing
     if ((32 <= c && c <= 126)){
-        if (strLength >= 99) return;
+        if (strLength >= maxStrLength) return;
         str[xPos] = c;
         str[xPos+1] = '\0';
     }
@@ -105,6 +106,7 @@ void interpretChar(char c, char* str){
 
 void moveCursor(char c){
     if ((32 <= c && c <= 126)){ // Normal typing
+        if (strLength >= maxStrLength) return;
         xPos++;
     }
     else if (c == 7 || c == 4){ // Return and Arrow Left
