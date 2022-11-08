@@ -13,6 +13,13 @@ void moveCursor(char c);
 void startTUI();
 void stopTUI();
 
+#define MAX_STRING_LENGTH   99
+#define CHAR_RANGE_START    32
+#define CHAR_RANGE_END      126
+#define LEFT_ARROW          4
+#define RIGHT_ARROW         5
+#define RETURN              7
+
 WINDOW* statWin;
 WINDOW* mainWin;
 
@@ -20,7 +27,7 @@ int strLength;
 int xPos;
 int xStart = 1;
 int yStart = 1;
-int maxStrLength = 99;
+
 
 void tuiMain(){
     startTUI();
@@ -93,26 +100,26 @@ void interpretChar(char c, char* str){
     strLength = strlen(str);
 
     // Normal typing
-    if ((32 <= c && c <= 126)){
-        if (strLength >= maxStrLength) return;
+    if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){
+        if (strLength >= MAX_STRING_LENGTH) return;
         str[xPos] = c;
         str[xPos+1] = '\0';
     }
-    else if (c == 7){ // Return
+    else if (c == RETURN){ // Return
         str[xPos+1-1] = '\0';
         str[xPos+1] = 0;
     }
 }
 
 void moveCursor(char c){
-    if ((32 <= c && c <= 126)){ // Normal typing
-        if (strLength >= maxStrLength) return;
+    if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){ // Normal typing
+        if (strLength >= MAX_STRING_LENGTH) return;
         xPos++;
     }
-    else if (c == 7 || c == 4){ // Return and Arrow Left
+    else if (c == RETURN || c == LEFT_ARROW){ // Return and Arrow Left
         if(xPos > 0) xPos--;
     } 
-    else if (c == 5){ // Arrow Right
+    else if (c == RIGHT_ARROW){ // Arrow Right
         if (xPos < strLength) xPos++;
     } 
 
