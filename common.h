@@ -16,9 +16,17 @@
 #include <linux/if_link.h>
 #include <ncurses.h> // TUI specific
 
+// TCP headers
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+
 // Main
-void host();
-void join();
+void host(void);
+void join(void);
 
 // Discover
 bool validate_pass_phrase(char *);
@@ -32,13 +40,20 @@ void free_pass_phrase(void);
 int count_lines_in_file(FILE *);
 
 // TUI
-void tuiMain();
-void testWindow();
-void bufferedWriting();
-void printStatus();
+void tuiMain(void);
+void testWindow(void);
+void bufferedWriting(void);
+void printStatus(void);
 void interpretChar(char c, char* str);
 void interpretChar2(char c, char* str, int* pos);
 void moveCursor(char c);
 void startTUI(char* pass_phrase);
-void stopTUI();
-int startupWindow();
+void stopTUI(void);
+int startupWindow(void);
+
+// TCP
+void read_request(int client_socket);
+void* handle_connection(void* socket);
+void transfer_msg(int server_socket);
+void start_tcp_server(char *);
+void start_tcp_client(char *);

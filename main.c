@@ -1,3 +1,4 @@
+#define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 
 int main(void) {
@@ -22,10 +23,14 @@ int main(void) {
 }
 
 
-void host(){
+void host(void){
     // Discover
     char* pass_phrase = generate_pass_phrase();
     run_listener();
+
+    char *host = "127.0.0.1";
+    start_tcp_server(host);
+
     // Start TUI
     startTUI(pass_phrase);
     bufferedWriting();
@@ -33,7 +38,7 @@ void host(){
 }
 
 
-void join(){
+void join(void){
     char ip_addr[NI_MAXHOST];
 
     // Input Keyword
@@ -43,6 +48,10 @@ void join(){
 
     // Broadcast
     send_udp_broadcast(ip_addr, NI_MAXHOST-1, key);
+
+
+    char *host = "127.0.0.1";
+    start_tcp_client(host);
 
     // Start TUI
     

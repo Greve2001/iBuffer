@@ -17,7 +17,7 @@ int yStart = 1;
 
 char* keyword;
 
-void tuiMain(){
+void tuiMain(void){
     ///startTUI();
     //bufferedWriting();
     //stopTUI();
@@ -45,7 +45,7 @@ void startTUI(char* pass_phrase){
     strLength = 0;
 }
 
-void stopTUI(){
+void stopTUI(void){
     getch(); // Get char to end! 
 
     werase(statWin);
@@ -55,7 +55,7 @@ void stopTUI(){
     endwin();
 }
 
-void bufferedWriting(){
+void bufferedWriting(void){
     char* str = malloc(sizeof(char)*100);
 
     while (true)
@@ -115,7 +115,7 @@ void moveCursor(char c){
     wmove(mainWin, yStart, xStart+xPos);
 }
 
-void printStatus(){
+void printStatus(void){
     int numUsers = 1;
 
     mvwprintw(statWin, 1, xStart, "# Active Users: \t%d", numUsers);
@@ -123,7 +123,7 @@ void printStatus(){
 }
 
 
-int startupWindow(){
+int startupWindow(void){
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
     curs_set(0);
