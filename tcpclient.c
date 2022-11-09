@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-void send_request(int server_socket);
+void transfer_msg(int server_socket);
 
 // TCP connection methods is for now explained in tcpserver.c
 int main(void) {
@@ -39,14 +39,14 @@ int main(void) {
     read(server_socket, receive, sizeof(receive)); // Reads welcome message
     printf("Welcome msg: %s", receive);
 
-    send_request(server_socket);
+    transfer_msg(server_socket);
 
     close(server_socket);
 
     return 0;
 }
 
-void send_request(int server_socket) {
+void transfer_msg(int server_socket) {
     char line[10] = "exit\n"; // hardcoded
     char recv[100];
 
