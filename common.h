@@ -40,7 +40,6 @@ void free_pass_phrase(void);
 int count_lines_in_file(FILE *);
 
 // TUI
-void tuiMain(void);
 void testWindow(void);
 void bufferedWriting(void);
 void printStatus(void);
@@ -50,6 +49,7 @@ void moveCursor(char c);
 void startTUI(char* pass_phrase);
 void stopTUI(void);
 int startupWindow(void);
+char* inputWindow(void);
 
 // TCP
 void read_request(int client_socket);
