@@ -16,6 +16,10 @@
 #include <linux/if_link.h>
 #include <ncurses.h> // TUI specific
 
+// Main
+void host();
+void join();
+
 // Discover
 bool validate_pass_phrase(char *);
 void send_udp_broadcast(char [], int, char *);

@@ -18,9 +18,9 @@ int yStart = 1;
 char* keyword;
 
 void tuiMain(){
-    startTUI();
-    bufferedWriting();
-    stopTUI();
+    ///startTUI();
+    //bufferedWriting();
+    //stopTUI();
 }
 
 void startTUI(char* pass_phrase){
@@ -32,13 +32,13 @@ void startTUI(char* pass_phrase){
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
 
-    statWin = newwin(4, 50, 0, 0);
-    mainWin = newwin(50, 102, 4+0, 0);
+    statWin = newwin(statHeight, statWidth+2, 0, 0);
+    mainWin = newwin(mainHeight, mainWidth+2, 4+0, 0);
 
     // Refreshing
+    refresh();
     wrefresh(statWin);
     wrefresh(mainWin);
-    refresh();
 
     xPos = 0;
     strLength = 0;
@@ -68,9 +68,8 @@ void bufferedWriting(){
         // Write to window
         clear(); // Clear window
 
-        interpretChar(c, str);
-
         printStatus();
+        interpretChar(c, str);
         mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
         moveCursor(c);
 
