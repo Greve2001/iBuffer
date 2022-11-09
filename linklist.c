@@ -68,6 +68,16 @@ void line_to_active_line(Line* line){
 
 }
 
+/*
+* This methods have 2 different uses, these 2 different functionalities are accessible using the bool flag that the method allows as it's second parameter.
+*
+* Firstly, it allows us to convert any active lines linked list of chars into a string. this is for the front end, so that it can easily call whatever is needed and get an updated string.
+*
+* Secondly, it is used to also free all the space used for the linked list.
+*
+* @para active_line, the line wished to getting transformed
+* @para free_active_line; if the line needs to stay as a linkedlist or not
+*/
 void active_line_to_line(Active_Line* active_line, bool free_active_line){
 	Line* line = active_line->original_line;
 	free(line->paragraph);
@@ -98,67 +108,20 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 	}
 	
 }
-/*
-
-//TODO: delete
-void list_line_for_edit(Line* li){
-	Active_Line* new_line= malloc(sizeof(Active_Line));
-	li->active_line = new_line;
-	new_line->original_line = li;
-	
-	Letter* last_inserted_letter;
-	for(int i = 0; li->paragraph[i] != '\000'; i++){
-		Letter* l = malloc(sizeof(Letter));
-		l->character = li->paragraph[i];
-		if(last_inserted_letter)
-			last_inserted_letter->next = l;
-		else
-			new_line->first_char = l;
-		last_inserted_letter = l;
-		
-	}
-	
-}
-
-//TODO: delete
-void delist_line_for_edit(Active_Line* line){
-	//allocate memory for the new array, and copy over each letter to it
-	char* delisted_line = malloc((line->linked_list_size + 1) * sizeof(char));
-	Letter* current_letter = line->first_char;
-	for(int i = 0; i < line->linked_list_size; i++){
-		delisted_line[i] = current_letter->character;
-		Letter* temp = current_letter;
-		current_letter = current_letter->next;
-		free(temp);
-	}
-	delisted_line[line->linked_list_size] = '\000';	//allows to operate the char array as a string, this will be used by the front_end to simplify.
-	
-	//here we need to deallocate the old array before we save the new.
-	free(line->original_line->paragraph);				//free the old array space
-	line->original_line->paragraph = delisted_line;		//saves the new array to the inactive list
-	
-	//Then we need to remove the active line from the linked list of active lines
-	Active_Line* current_active_line = active_first_line;
-	for(;current_active_line->next != line; current_active_line = current_active_line->next){
-		;
-	}
-	current_active_line->next = line->next;
-	line->original_line->active_line = NULL;
-	
-	//finaly we can free up our original line.
-	free(line);
-}
-*/
 
 /******************************************************************
 * These methods need public accessability on the local machine
 * 
 ******************************************************************/
 
-
+/*
+* When the front-end register the user clicking on a paragraph, they shall call this.
+* This ensures that the char array in converted into a linkedlist and prepared for use.
+*
+*/
 void clicked_on_line(int line_number){
 	if (users_active_line){
-		delist_line_for_edit(users_active_line);
+		active_line_to_line(users_active_line, true);
 		//TODO: make TCP sent a delist to the other clients
 	}
 	if(!line_number){ //if NULL is passed as parameter
@@ -169,7 +132,7 @@ void clicked_on_line(int line_number){
 	for(int i = 0; i < line_number; i++){
 		pointer_to_line = pointer_to_line->next;
 	}
-	list_line_for_edit(pointer_to_line);
+	line_to_active_line(pointer_to_line);
 		
 }
 
@@ -181,6 +144,8 @@ void clicked_on_line(int line_number){
 * param character: the char that is whished to be written
 */
 void write(int position, char character){
+	if(!users_active_line)
+		return;
 	if(character = '\n'){
 		//TODO: create new line method
 		return;
@@ -201,6 +166,14 @@ void write(int position, char character){
 * Must be parsed the numeric position of the character.
 */
 void delete(int position){
+	if(!users_active_line)
+		return;
+	if(!users_active_line->first_char){
+		//TODO: delete the active line.
+	}
+	if(position == 0){
+		//TODO: merge with previus linkedlist.
+	}
 	Letter* prev_character = users_active_line->first_char;
 	for(int i = 0; i < position-1; i++) prev_character = prev_character->next;
 	Letter* after_character = prev_character->next->next;
