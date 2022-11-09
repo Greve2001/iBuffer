@@ -14,12 +14,10 @@ int main(void) {
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (server_socket == -1) {
-        printf("socket creation failed...\n");
-        exit(0);
+    if (server_socket < 0) {
+        printf("Socket creation failed...\n");
+        exit(1);
     }
-    else
-        printf("Socket successfully created..\n");
 
 
     // TODO: struct is defined in both client and server, Refactor...
@@ -30,18 +28,16 @@ int main(void) {
 
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
     inet_aton("127.0.0.1", &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
+
     int status = connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
-    if(status != 0) {
-        printf("connection with the server failed...%i\n", status);
-        exit(0);
-    } else {
-        printf("connected to the server..\n");
-    }
+    if(status < 0) {
+        printf("Connection with the server failed...%i\n", status);
+        exit(1);
+    } 
 
     char receive[100];
     read(server_socket, receive, sizeof(receive)); // Reads welcome message
-    printf("Contents of host buffer: %s", receive);
-
+    printf("Welcome msg: %s", receive);
 
     send_request(server_socket);
 
