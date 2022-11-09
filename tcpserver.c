@@ -64,7 +64,7 @@ int main(void) {
      */
     // Listen for clients
     if (listen(server_socket, 5) < 0) {
-        printf("Listening failed...\n")
+        printf("Listening failed...\n");
     }
 
     socklen_t addr_len = sizeof(server_addr);    

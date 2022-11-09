@@ -47,22 +47,13 @@ int main(void) {
 }
 
 void send_request(int server_socket) {
-    char* line = NULL;
-    size_t len = 0;
-    ssize_t nread;
+    char line[10] = "exit\n"; // hardcoded
     char recv[100];
-    for(;;) {
-        nread = getline(&line, &len, stdin);
 
-        if(nread == -1) {
-            free(line);             // free line even upon failure
-            exit(EXIT_FAILURE);
-        } 
-        send(server_socket, line, len * sizeof(char), 0);
-        read(server_socket, recv, sizeof(recv));
-        printf("Contents of host buffer: %s", recv);
-        fflush(stdout);
-    }
-    free(line);
+    memset(recv, 0, sizeof(recv));
+    send(server_socket, line, sizeof(line), 0);
+    read(server_socket, recv, sizeof(recv));
+    printf("Contents of host buffer: %s", recv);
+
     exit(EXIT_SUCCESS);
 }
