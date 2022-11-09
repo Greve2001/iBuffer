@@ -1,18 +1,4 @@
-#include <ncurses.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-
-void testWindow();
-void bufferedWriting();
-void printStatus();
-void interpretChar(char c, char* str);
-void interpretChar2(char c, char* str, int* pos);
-void moveCursor(char c);
-void startTUI();
-void stopTUI();
-int startupWindow();
+#include "common.h"
 
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
@@ -29,18 +15,17 @@ int xPos;
 int xStart = 1;
 int yStart = 1;
 
+char* keyword;
 
 void tuiMain(){
-    startupWindow();
-    /*
     startTUI();
     bufferedWriting();
     stopTUI();
-    */
-    
 }
 
-void startTUI(){
+void startTUI(char* pass_phrase){
+    keyword = pass_phrase;
+
     int statWidth = 100, statHeight = 4;
     int mainWidth = 100, mainHeight = 50;
 
@@ -133,10 +118,9 @@ void moveCursor(char c){
 
 void printStatus(){
     int numUsers = 1;
-    char* discoveryStr = "Moist-Meat-Sofa";
 
     mvwprintw(statWin, 1, xStart, "# Active Users: \t%d", numUsers);
-    mvwprintw(statWin, 2, xStart, "# Discovery Keyword:\t%s", discoveryStr);
+    mvwprintw(statWin, 2, xStart, "# Discovery Keyword:\t%s", keyword);
 }
 
 
