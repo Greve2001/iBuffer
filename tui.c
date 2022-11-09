@@ -31,6 +31,7 @@ void startTUI(char* pass_phrase){
 
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
+    curs_set(1);
 
     statWin = newwin(statHeight, statWidth+2, 0, 0);
     mainWin = newwin(mainHeight, mainWidth+2, 4+0, 0);
@@ -73,7 +74,6 @@ void bufferedWriting(){
         mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
         moveCursor(c);
 
-        //printw("\n%d\n", c); // Print char value
         refresh();
 
         box(statWin, 0, 0);
