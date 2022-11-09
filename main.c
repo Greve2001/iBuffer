@@ -23,7 +23,7 @@ int main(void) {
 }
 
 
-void host(){
+void host(void){
     // Discover
     char* pass_phrase = generate_pass_phrase();
     run_listener();
@@ -38,7 +38,7 @@ void host(){
 }
 
 
-void join(){
+void join(void){
     char ip_addr[NI_MAXHOST];
 
     // Input Keyword
