@@ -7,19 +7,10 @@ int main(void) {
     switch (returnStatus)
     {
     case 0: // Host
-        // Discover
-        char* pass_phrase = generate_pass_phrase();
-        run_listener();
-        // Start TUI
-        startTUI(pass_phrase);
-        bufferedWriting();
-        stopTUI();
-
+        host();
         break;
     case 1: // Join
-        // Input Keyword
-        // Connect
-        // Start TUI
+        join();
         break;
 
     default: // Exit
@@ -28,4 +19,22 @@ int main(void) {
     }
 
     return EXIT_SUCCESS;
+}
+
+
+void host(){
+    // Discover
+    char* pass_phrase = generate_pass_phrase();
+    run_listener();
+    // Start TUI
+    startTUI(pass_phrase);
+    bufferedWriting();
+    stopTUI();
+}
+
+
+void join(){
+    // Input Keyword
+    // Connect
+    // Start TUI
 }
