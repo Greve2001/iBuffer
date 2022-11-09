@@ -43,6 +43,7 @@ void join(void){
 
     // Input Keyword
     char* key = malloc(sizeof(char)*100); // Make in tui
+    key = inputWindow();
     printf("Insert Key: ");
     scanf("%[^\n]", key);
 

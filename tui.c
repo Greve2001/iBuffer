@@ -17,12 +17,6 @@ int yStart = 1;
 
 char* keyword;
 
-void tuiMain(void){
-    ///startTUI();
-    //bufferedWriting();
-    //stopTUI();
-}
-
 void startTUI(char* pass_phrase){
     keyword = pass_phrase;
 
@@ -160,4 +154,27 @@ int startupWindow(void){
     endwin();
 
     return returnStatus;
+}
+
+char* inputWindow(void){
+    initscr(); cbreak(); noecho(); // Inital setup of screen
+    keypad(stdscr, TRUE); // Enables navigation with keyboard
+    curs_set(1);
+
+    WINDOW* inputWin = newwin(4, 30, 0, 0);
+    box(inputWin, 0, 0);
+    refresh();
+    
+    mvwprintw(inputWin, 1, 1, "Please enter passphrase: ");
+
+    wrefresh(inputWin);
+
+    char* str = malloc(sizeof(char)*100);
+    getstr(str);
+
+    werase(inputWin);
+    delwin(inputWin);
+    endwin();
+
+    return str;
 }
