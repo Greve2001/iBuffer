@@ -1,16 +1,7 @@
-#include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <arpa/inet.h>
-#include <string.h>
-
-void transfer_msg(int server_socket);
+#include "common.h"
 
 // TCP connection methods is for now explained in tcpserver.c
-int main(void) {
+void start_tcp_client(void) {
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -42,8 +33,6 @@ int main(void) {
     transfer_msg(server_socket);
 
     close(server_socket);
-
-    return 0;
 }
 
 void transfer_msg(int server_socket) {

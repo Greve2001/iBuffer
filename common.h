@@ -16,6 +16,14 @@
 #include <linux/if_link.h>
 #include <ncurses.h> // TUI specific
 
+// TCP headers
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+
 // Main
 void host();
 void join();
@@ -42,3 +50,10 @@ void moveCursor(char c);
 void startTUI(char* pass_phrase);
 void stopTUI();
 int startupWindow();
+
+// TCP
+void read_request(int client_socket);
+void* handle_connection(void* socket);
+void transfer_msg(int server_socket);
+void start_tcp_server(void);
+void start_tcp_client(void);
