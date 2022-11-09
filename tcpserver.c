@@ -1,17 +1,5 @@
-#include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <arpa/inet.h>
-#include <string.h>
-#include <pthread.h>
-
-void read_request(int client_socket);
-void* handle_connection(void* socket);
-
-int main(void) {
+#include "common.h"
+void start_tcp_server(void) {
 
     /**
      * socket(int domain, int type, int protocol) creates an endpoint for communication and returns a file descriptor that refers to that endpoint.
@@ -85,7 +73,6 @@ int main(void) {
 
     }
     close(server_socket);
-    return 0;
 }
 
 // For now this just recieves a request and sends it back
