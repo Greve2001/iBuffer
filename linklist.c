@@ -224,6 +224,10 @@ char* get_line(int line_number){
 	return line->paragraph;
 }
 
+/*
+* returns a pointer to an array of all the strings for each line
+*
+*/
 char** get_all_lines(){
 	if(list_of_lines)
 		free(list_of_lines);
@@ -236,6 +240,16 @@ char** get_all_lines(){
 		list_of_lines[i] = current_element->paragraph;
 		current_element = current_element->next;
 	}
+	return list_of_lines;
+}
+
+/*
+* Frees the malloc allocated memory for the pointers to the char* from get_all_lines
+*
+* This must be called when done using the char** from get_all_lines
+*/
+void free_list_of_lines(char** list_to_lines){
+	free(list_to_lines);
 }
 
 void free_all_space(){
