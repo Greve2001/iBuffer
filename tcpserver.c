@@ -1,5 +1,5 @@
 #include "common.h"
-void start_tcp_server(void) {
+void start_tcp_server(char * ip) {
 
     /**
      * socket(int domain, int type, int protocol) creates an endpoint for communication and returns a file descriptor that refers to that endpoint.
@@ -33,7 +33,7 @@ void start_tcp_server(void) {
     server_addr.sin_port = htons(1504);
 
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
-    inet_aton("127.0.0.1", &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
+    inet_aton(ip, &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
 
     /**
      * int bind(int sockfd, struct sockaddr *my_addr, socklen_t addrlen) assigns the address specified by addr to the socket referred to by the file descriptor sockfd.

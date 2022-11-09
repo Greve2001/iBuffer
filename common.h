@@ -55,5 +55,5 @@ int startupWindow();
 void read_request(int client_socket);
 void* handle_connection(void* socket);
 void transfer_msg(int server_socket);
-void start_tcp_server(void);
-void start_tcp_client(void);
+void start_tcp_server(char *);
+void start_tcp_client(char *);

@@ -1,7 +1,7 @@
 #include "common.h"
 
 // TCP connection methods is for now explained in tcpserver.c
-void start_tcp_client(void) {
+void start_tcp_client(char * ip) {
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -18,7 +18,7 @@ void start_tcp_client(void) {
     server_addr.sin_port = htons(1504);
 
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
-    inet_aton("127.0.0.1", &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
+    inet_aton(ip, &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
 
     int status = connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
     if(status < 0) {
