@@ -219,8 +219,10 @@ void delete(int position){
 char* get_line(int line_number){
 	Line* line = first_line;
 	for(int i = 0; i < line_number; i++) line = line->next;
+	
+	//checks if the current line is in use, and creates a string of it to print.
 	if(line->active_line)
-		;//TODO: line is current active, so we need to ensure that the string is updated before we try and return it
+		active_line_to_line(line->active_line,false);
 	return line->paragraph;
 }
 
