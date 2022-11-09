@@ -34,7 +34,16 @@ void host(){
 
 
 void join(){
+    char ip_addr[NI_MAXHOST];
+
     // Input Keyword
-    // Connect
+    char* key = malloc(sizeof(char)*100); // Make in tui
+    printf("Insert Key: ");
+    scanf("%[^\n]", key);
+
+    // Broadcast
+    send_udp_broadcast(ip_addr, NI_MAXHOST-1, key);
+
     // Start TUI
+    
 }
