@@ -42,8 +42,6 @@ void startTUI(char* pass_phrase){
 }
 
 void stopTUI(void){
-    getch(); // Get char to end! 
-
     werase(statWin);
     werase(mainWin);
     delwin(statWin);
@@ -123,24 +121,24 @@ int startupWindow(void){
     box(startupWin, 0, 0);
     refresh();
     
-    mvwprintw(startupWin, 1, 1, "Please enter '0' or '1'");
-    mvwprintw(startupWin, 3, 1, "0:\tHost Server");
-    mvwprintw(startupWin, 4, 1, "1:\tJoin Server");
-    mvwprintw(startupWin, 5, 1, "2:\tExit");
+    mvwprintw(startupWin, 1, 1, "Please enter '1', '2' or '3'");
+    mvwprintw(startupWin, 3, 1, "1:\tHost Server");
+    mvwprintw(startupWin, 4, 1, "2:\tJoin Server");
+    mvwprintw(startupWin, 5, 1, "3:\tExit");
     wrefresh(startupWin);
 
     int returnStatus = -1;
     while(true){
         char c = getch();
-        if (c == '0'){
+        if (c == '1'){
             returnStatus = 0; // Host
             break;
         }
-        if (c == '1'){
+        if (c == '2'){
             returnStatus = 1; // Join
             break;
         }
-        if (c == '2'){
+        if (c == '3'){
             returnStatus = -1; // Exit
             break;
         }
