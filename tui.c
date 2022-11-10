@@ -145,12 +145,13 @@ int startupWindow(void){
     werase(startupWin);
     delwin(startupWin);
     endwin();
+    clear();
 
     return returnStatus;
 }
 
 char* inputWindow(void){
-    initscr(); cbreak(); noecho(); // Inital setup of screen
+    initscr(); cbreak(); echo(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
     curs_set(1);
 
@@ -163,6 +164,7 @@ char* inputWindow(void){
     wrefresh(inputWin);
 
     char* str = malloc(sizeof(char)*100);
+    move(2,1); // Move Cursor
     getstr(str);
 
     werase(inputWin);

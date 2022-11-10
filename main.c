@@ -49,15 +49,13 @@ void join(void){
     // Input Keyword
     char* key = malloc(sizeof(char)*100); // Make in tui
     key = inputWindow();
-    printf("Insert Key: ");
-    scanf("%[^\n]", key);
 
     // Broadcast
-    send_udp_broadcast(ip_addr, NI_MAXHOST-1, key);
+    //send_udp_broadcast(ip_addr, NI_MAXHOST-1, key); // for TUI testing
 
 
     char *host = "127.0.0.1";
-    start_tcp_client(host);
+    //start_tcp_client(host); // for TUI testing
 
     // Start TUI
     
