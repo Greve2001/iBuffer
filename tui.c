@@ -32,6 +32,8 @@ void startTUI(char* pass_phrase){
     statWin = newwin(statHeight, statWidth+2, 0, 0);
     mainWin = newwin(mainHeight, mainWidth+2, 4+0, 0);
 
+    printStatus();
+
     // Refreshing
     refresh();
     wrefresh(statWin);
@@ -55,9 +57,7 @@ void bufferedWriting(char c){
     // Setup counters
     int len = strlen(str);
 
-    clear(); // Clear window
-
-    printStatus(); // Print status
+    curs_set(1);
 
     // Print
     interpretChar(c, str);
@@ -65,11 +65,7 @@ void bufferedWriting(char c){
 
     moveCursor(c); // Move cursor
 
-    refresh();
-
-    box(statWin, 0, 0);
     box(mainWin, 0, 0);
-    wrefresh(statWin);
     wrefresh(mainWin);
 }
 
@@ -106,9 +102,11 @@ void moveCursor(char c){
 
 void printStatus(void){
     int numUsers = 1;
-
+    curs_set(0);
     mvwprintw(statWin, 1, xStart, "# Active Users: \t%d", numUsers);
     mvwprintw(statWin, 2, xStart, "# Discovery Keyword:\t%s", keyword);
+    box(statWin, 0, 0);
+    wrefresh(statWin);
 }
 
 
