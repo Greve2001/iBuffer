@@ -37,6 +37,7 @@ void host(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
+        updateWindow("Test");
         bufferedWriting(c);
     }
     stopTUI();

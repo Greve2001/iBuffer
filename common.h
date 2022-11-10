@@ -50,6 +50,7 @@ void startTUI(char* pass_phrase);
 void stopTUI(void);
 int startupWindow(void);
 char* inputWindow(void);
+void updateWindow(char*);
 
 // TCP
 void read_request(int client_socket);

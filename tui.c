@@ -9,6 +9,7 @@
 
 WINDOW* statWin;
 WINDOW* mainWin;
+WINDOW* updateWin;
 
 int strLength;
 int xPos;
@@ -22,7 +23,8 @@ void startTUI(char* pass_phrase){
     keyword = pass_phrase;
     str = malloc(sizeof(char)*100);
 
-    int statWidth = 100, statHeight = 4;
+    int statWidth = 49, statHeight = 4;
+    int updateWidth = 49, updateHeight = 4;
     int mainWidth = 100, mainHeight = 50;
 
     initscr(); cbreak(); noecho(); // Inital setup of screen
@@ -30,14 +32,12 @@ void startTUI(char* pass_phrase){
     curs_set(1);
 
     statWin = newwin(statHeight, statWidth+2, 0, 0);
-    mainWin = newwin(mainHeight, mainWidth+2, 4+0, 0);
+    updateWin = newwin(updateHeight, updateWidth+2, 0, 51);
+    mainWin = newwin(mainHeight, mainWidth+2, 4, 0);
 
+    refresh(); // Important
     printStatus();
-
-    // Refreshing
-    refresh();
-    wrefresh(statWin);
-    wrefresh(mainWin);
+    updateWindow("");
 
     xPos = 0;
     strLength = 0;
@@ -45,8 +45,10 @@ void startTUI(char* pass_phrase){
 
 void stopTUI(void){
     werase(statWin);
+    werase(updateWin);
     werase(mainWin);
     delwin(statWin);
+    delwin(updateWin);
     delwin(mainWin);
     endwin();
 
@@ -56,7 +58,6 @@ void stopTUI(void){
 void bufferedWriting(char c){
     // Setup counters
     int len = strlen(str);
-
     curs_set(1);
 
     // Print
@@ -100,11 +101,12 @@ void moveCursor(char c){
     wmove(mainWin, yStart, xStart+xPos);
 }
 
+
 void printStatus(void){
     int numUsers = 1;
     curs_set(0);
-    mvwprintw(statWin, 1, xStart, "# Active Users: \t%d", numUsers);
-    mvwprintw(statWin, 2, xStart, "# Discovery Keyword:\t%s", keyword);
+    mvwprintw(statWin, 1, xStart, "# Users: \t%d", numUsers);
+    mvwprintw(statWin, 2, xStart, "# Keyword:\t%s", keyword);
     box(statWin, 0, 0);
     wrefresh(statWin);
 }
@@ -172,4 +174,12 @@ char* inputWindow(void){
     endwin();
 
     return str;
+}
+
+void updateWindow(char* str){
+    box(updateWin, 0, 0);
+
+    // Make update window have a scrolling input
+
+    wrefresh(updateWin);
 }
