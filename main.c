@@ -29,7 +29,7 @@ void host(void){
     run_listener();
 
     char *host = "127.0.0.1";
-    start_tcp_server(host);
+    //start_tcp_server(host);   // Uncomment becuase its makes the TUI stuck
 
     // Start TUI
     startTUI(pass_phrase);
@@ -37,7 +37,6 @@ void host(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
-
         bufferedWriting(c);
     }
     stopTUI();
