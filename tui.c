@@ -16,9 +16,11 @@ int xStart = 1;
 int yStart = 1;
 
 char* keyword;
+char* str;
 
 void startTUI(char* pass_phrase){
     keyword = pass_phrase;
+    str = malloc(sizeof(char)*100);
 
     int statWidth = 100, statHeight = 4;
     int mainWidth = 100, mainHeight = 50;
@@ -47,35 +49,30 @@ void stopTUI(void){
     delwin(statWin);
     delwin(mainWin);
     endwin();
+
+    free(str);
 }
 
-void bufferedWriting(void){
-    char* str = malloc(sizeof(char)*100);
+void bufferedWriting(char c){
+    // Setup counters
+    int len = strlen(str);
 
-    while (true)
-    {
-        // Setup counters
-        int len = strlen(str);
+    clear(); // Clear window
 
-        // Get input and process it
-        char c = getch();
+    printStatus(); // Print status
 
-        // Write to window
-        clear(); // Clear window
+    // Print
+    interpretChar(c, str);
+    mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
 
-        printStatus();
-        interpretChar(c, str);
-        mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
-        moveCursor(c);
+    moveCursor(c); // Move cursor
 
-        refresh();
+    refresh();
 
-        box(statWin, 0, 0);
-        box(mainWin, 0, 0);
-        wrefresh(statWin);
-        wrefresh(mainWin);
-    }
-    free(str);
+    box(statWin, 0, 0);
+    box(mainWin, 0, 0);
+    wrefresh(statWin);
+    wrefresh(mainWin);
 }
 
 void interpretChar(char c, char* str){

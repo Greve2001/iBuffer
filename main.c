@@ -33,7 +33,13 @@ void host(void){
 
     // Start TUI
     startTUI(pass_phrase);
-    bufferedWriting();
+    while (true)
+    {
+        char c = getch();
+        if (c == 27) break; // Escape key
+
+        bufferedWriting(c);
+    }
     stopTUI();
 }
 

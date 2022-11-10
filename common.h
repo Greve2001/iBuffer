@@ -41,7 +41,7 @@ int count_lines_in_file(FILE *);
 
 // TUI
 void testWindow(void);
-void bufferedWriting(void);
+void bufferedWriting(char c);
 void printStatus(void);
 void interpretChar(char c, char* str);
 void interpretChar2(char c, char* str, int* pos);
