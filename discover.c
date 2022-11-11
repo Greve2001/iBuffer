@@ -196,7 +196,8 @@ char *get_line_from_file(int resource_file_number, size_t *length)
         line_to_get = rand() % lines;
     else
         goto error;
-
+    
+    nread = getline(&line, length, fptr);
     for(int i = 0; i < line_to_get; i++)
         nread = getline(&line, length, fptr);
 
