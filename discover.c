@@ -114,20 +114,24 @@ char get_local_ip(char host[])
     int family, s;
     host[0] = '\0';
 
-    if (getifaddrs(&ifaddr) == -1) {
+    if (getifaddrs(&ifaddr) == -1) 
+    {
         perror("getifaddrs");
     }
 
-    for (struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+    for (struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) 
+    {
         if (ifa->ifa_addr == NULL)
             continue;
 
         family = ifa->ifa_addr->sa_family;
-        if (family == AF_INET && (strstr(ifa->ifa_name, "wl") || strstr(ifa->ifa_name, "eth"))) {
+        if (family == AF_INET && (strstr(ifa->ifa_name, "wl") || strstr(ifa->ifa_name, "eth"))) 
+        {
             s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
                     host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
-            if (s != 0) {
+            if (s != 0) 
+            {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
             }
 
@@ -162,7 +166,8 @@ char *generate_pass_phrase(void)
         return "";
 
     *server_pass_phrase = '\0';
-    for(int i = 0; i < RESOURCE_FILES; i++) {
+    for(int i = 0; i < RESOURCE_FILES; i++) 
+    {
         strcat(server_pass_phrase, pass_fragment[i]);
         free(pass_fragment[i]);
     }
@@ -198,7 +203,7 @@ char *get_line_from_file(int resource_file_number, size_t *length)
         goto error;
     
     nread = getline(&line, length, fptr);
-    for(int i = 0; i < line_to_get; i++)
+    for(int i = 0; i < line_to_get - 1; i++)
         nread = getline(&line, length, fptr);
 
 
@@ -207,7 +212,7 @@ char *get_line_from_file(int resource_file_number, size_t *length)
         goto error;
 
     // Remove trailing newline character from the line
-    line[strcspn(line, "\n")] = ' ';
+    line[strcspn(line, "\r\n")] = ' ';
 
 error:
     fclose(fptr);
