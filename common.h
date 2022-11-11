@@ -27,6 +27,7 @@
 // Main
 void host(void);
 void join(void);
+void writeToBuffer(char c);
 
 // Discover
 bool validate_pass_phrase(char *);
@@ -55,7 +56,7 @@ void updateWindow(char*);
 // TCP
 void read_request(int client_socket);
 void* handle_connection(void* socket);
-void transfer_msg(int server_socket);
+void transfer_msg(char c);
 void start_tcp_server(char *);
 void start_tcp_client(char *);
 void close_socket(void);
