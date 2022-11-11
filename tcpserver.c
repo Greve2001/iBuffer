@@ -97,17 +97,14 @@ void* handle_connection(void* socket) {
 
 // For now this just recieves a request and sends it back
 void read_request(int client_socket) {
-    char argv[100];
+    char c;
     for(;;) {
-        memset(argv, 0, sizeof(argv));
-        ssize_t len = read(client_socket, argv, sizeof(argv));
+        //memset(argv, 0, sizeof(argv));
+        ssize_t len = read(client_socket, &c, sizeof(c));
 
-        send(client_socket, argv, len, 0);
+        writeToBuffer(c);
 
-        if(strcmp("exit\n", argv) == 0) {
-            break;
-        }
-
+        //send(client_socket, argv, len, 0);
     }
     close(client_socket);
 }
