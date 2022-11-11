@@ -210,9 +210,21 @@ char *get_line_from_file(int resource_file_number, size_t *length)
     // Check if a reading error has occurred
     if(nread == -1)
         goto error;
-
+    
+    int first = 0;
     // Remove trailing newline character from the line
-    line[strcspn(line, "\r\n")] = ' ';
+    for(int i = 0; i < nread; i++)
+    {
+        char c = line[i];
+        if(c == '\n' || c == '\r' || c == ' ')
+        {
+            if(first == 0)
+                first = i;
+            line[i] = '\0';
+        }
+    }
+
+    line[first] = ' ';
 
 error:
     fclose(fptr);
