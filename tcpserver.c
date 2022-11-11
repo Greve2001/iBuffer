@@ -1,6 +1,8 @@
 #include "common.h"
 
 int own_socket;
+int last_client_socket; // Fix
+
 
 void start_tcp_server(char * ip) {
 
@@ -79,6 +81,7 @@ void start_tcp_server(char * ip) {
 
 void* handle_connection(void* socket) {
     int client_socket = *(int*) socket;
+    last_client_socket = client_socket; // TODO make linked list to handle this shit
 
     if(client_socket < 0) {
         updateWindow("Server accept failed");
@@ -90,23 +93,19 @@ void* handle_connection(void* socket) {
     }
 
     read_request(client_socket);
-    //char goodbye_message[] = "Server exit...";
-    //write(client_socket, goodbye_message, sizeof(goodbye_message));
-    //close(client_socket);
 }
 
 // For now this just recieves a request and sends it back
 void read_request(int client_socket) {
     char c;
     for(;;) {
-        //memset(argv, 0, sizeof(argv));
         ssize_t len = read(client_socket, &c, sizeof(c));
-
         writeToBuffer(c);
-
-        //send(client_socket, argv, len, 0);
     }
-    close(client_socket);
+}
+
+void send_buffer(char* buffer){
+    send(last_client_socket, buffer, sizeof(buffer), 0);
 }
 
 void close_server(void){

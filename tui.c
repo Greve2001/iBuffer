@@ -101,6 +101,12 @@ void moveCursor(char c){
     wmove(mainWin, yStart, xStart+xPos);
 }
 
+void printBuffer(char* buffer){
+    wclear(mainWin);
+    mvwprintw(mainWin, 1, 1, "%s", buffer);
+    box(mainWin, 0, 0);
+    wrefresh(mainWin);
+}
 
 void printStatus(void){
     int numUsers = 1;
@@ -182,4 +188,9 @@ void updateWindow(char* str){
     mvwprintw(updateWin, 1, 1, "%s", str);
     box(updateWin, 0, 0);
     wrefresh(updateWin);
+}
+
+
+char* getBuffer(void){
+    return str;
 }
