@@ -43,6 +43,7 @@ void host(void){
         bufferedWriting(c);
     }
     stopTUI();
+    close_server();
 }
 
 
@@ -71,5 +72,5 @@ void join(void){
         bufferedWriting(c);
     }
     stopTUI();
-    
+    close_socket();
 }

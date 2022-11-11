@@ -58,3 +58,5 @@ void* handle_connection(void* socket);
 void transfer_msg(int server_socket);
 void start_tcp_server(char *);
 void start_tcp_client(char *);
+void close_socket(void);
+void close_server(void);
