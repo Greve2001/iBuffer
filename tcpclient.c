@@ -6,7 +6,8 @@ void start_tcp_client(char * ip) {
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
     if (server_socket < 0) {
-        printf("Socket creation failed...\n");
+        //printf("Socket creation failed...\n");
+        updateWindow("Socket creation failed...");
         exit(1);
     }
 
@@ -22,17 +23,19 @@ void start_tcp_client(char * ip) {
 
     int status = connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
     if(status < 0) {
-        printf("Connection with the server failed...%i\n", status);
+        //printf("Connection with the server failed...%i\n", status);
+        updateWindow("Connection with the server failed...");
         exit(1);
     } 
 
     char receive[100];
     read(server_socket, receive, sizeof(receive)); // Reads welcome message
-    printf("Welcome msg: %s", receive);
+    //printf("Welcome msg: %s", receive);
+    updateWindow(receive);
 
     transfer_msg(server_socket);
 
-    close(server_socket);
+    //close(server_socket);
 }
 
 void transfer_msg(int server_socket) {
@@ -42,7 +45,5 @@ void transfer_msg(int server_socket) {
     memset(recv, 0, sizeof(recv));
     send(server_socket, line, sizeof(line), 0);
     read(server_socket, recv, sizeof(recv));
-    printf("Contents of host buffer: %s", recv);
-
-    exit(EXIT_SUCCESS);
+    //printf("Contents of host buffer: %s", recv);
 }
