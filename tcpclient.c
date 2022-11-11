@@ -1,9 +1,11 @@
 #include "common.h"
 
+int server_socket;
+
 // TCP connection methods is for now explained in tcpserver.c
 void start_tcp_client(char * ip) {
 
-    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
     if (server_socket < 0) {
         //printf("Socket creation failed...\n");
@@ -34,8 +36,6 @@ void start_tcp_client(char * ip) {
     updateWindow(receive);
 
     transfer_msg(server_socket);
-
-    //close(server_socket);
 }
 
 void transfer_msg(int server_socket) {
@@ -46,4 +46,9 @@ void transfer_msg(int server_socket) {
     send(server_socket, line, sizeof(line), 0);
     read(server_socket, recv, sizeof(recv));
     //printf("Contents of host buffer: %s", recv);
+}
+
+void close_socket(void){
+    int status = close(server_socket);
+    printf("Tried closing socket with status: %d\n", status);
 }

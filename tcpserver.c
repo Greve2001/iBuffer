@@ -1,4 +1,7 @@
 #include "common.h"
+
+int own_socket;
+
 void start_tcp_server(char * ip) {
 
     /**
@@ -7,10 +10,10 @@ void start_tcp_server(char * ip) {
      * int type - specifies the communication semantics. SOCK_STREAM provides sequenced, reliable, two-way, connection-based byte streams (TCP).
      * int protocol - specifies a particular protocol to be used with the socket. Default is 0 when only a single protocol is used. Can be used to define a socket with several different protocols.
      */
-    int server_socket = socket(AF_INET, SOCK_STREAM, 0); // filedescriptor
+    own_socket = socket(AF_INET, SOCK_STREAM, 0); // filedescriptor
 
-    if (server_socket < 0) {
-        printf("Socket creation failed...\n");
+    if (own_socket < 0) {
+        updateWindow("Socket creation failed...");
         exit(1);
     }
 
@@ -41,8 +44,8 @@ void start_tcp_server(char * ip) {
      * struct addr - the adress handled by the struct sockaddr_in
      * socklen_t addrlen - the length of the struct
      */
-    if (bind(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
-        printf("Binding to port failed...\n");
+    if (bind(own_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
+        updateWindow("Binding to port failed...");
         exit(1);
     }
     /**
@@ -51,8 +54,8 @@ void start_tcp_server(char * ip) {
      * int backlog - the length of the queue of incoming requests. If connection is full the client recieve ECONNREFUSED. 
      */
     // Listen for clients
-    if (listen(server_socket, 5) < 0) {
-        printf("Listening failed...\n");
+    if (listen(own_socket, 5) < 0) {
+        updateWindow("Listening failed...");
     }
 
     socklen_t addr_len = sizeof(server_addr);    
@@ -66,13 +69,30 @@ void start_tcp_server(char * ip) {
          * struct addr - the adress handled by the struct sockaddr_in
          * socklen_t addrlen - must initialize it to contain the size (in bytes) of the structure pointed to by addr; on return it will contain the actual size of the peer address.
          */
-        int client_socket = accept(server_socket, (struct sockaddr*) &client_addr, &addr_len);
+        int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
 
         pthread_t thread;
         pthread_create(&thread, NULL, handle_connection, &client_socket);
 
     }
-    close(server_socket);
+}
+
+void* handle_connection(void* socket) {
+    int client_socket = *(int*) socket;
+
+    if(client_socket < 0) {
+        updateWindow("Server accept failed");
+    } else {
+        updateWindow("Server accepted a client");
+        fflush(stdout);
+        char welcome_message[] = "Welcome to server. Ready to recieve a command.";
+        send(client_socket, welcome_message, sizeof(welcome_message), 0); 
+    }
+
+    read_request(client_socket);
+    //char goodbye_message[] = "Server exit...";
+    //write(client_socket, goodbye_message, sizeof(goodbye_message));
+    //close(client_socket);
 }
 
 // For now this just recieves a request and sends it back
@@ -89,22 +109,10 @@ void read_request(int client_socket) {
         }
 
     }
+    close(client_socket);
 }
 
-void* handle_connection(void* socket) {
-    int client_socket = *(int*) socket;
-
-    if(client_socket < 0) {
-        printf("Server accept failed");
-    } else {
-        printf("Server accepted the client");
-        fflush(stdout);
-        char welcome_message[] = "Welcome to server. Ready to recieve a command.";
-        send(client_socket, welcome_message, sizeof(welcome_message), 0); 
-    }
-
-    read_request(client_socket);
-    char goodbye_message[] = "Server exit...";
-    write(client_socket, goodbye_message, sizeof(goodbye_message));
-    close(client_socket);
+void close_server(void){
+    int status = close(own_socket);
+    printf("Attempted closing server with status: %d\n", status);
 }
