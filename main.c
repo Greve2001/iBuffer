@@ -69,8 +69,13 @@ void join(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
-        bufferedWriting(c);
+        transfer_msg(c);
     }
     stopTUI();
     close_socket();
+}
+
+
+void writeToBuffer(char c){
+    bufferedWriting(c);
 }
