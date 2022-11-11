@@ -35,6 +35,7 @@ void host(void){
 
     // Start TUI
     startTUI(pass_phrase);
+    updateWindow("");
     while (true)
     {
         char c = getch();
@@ -55,10 +56,20 @@ void join(void){
     // Broadcast
     //send_udp_broadcast(ip_addr, NI_MAXHOST-1, key); // for TUI testing
 
-
     char *host = "127.0.0.1";
-    //start_tcp_client(host); // for TUI testing
+    pthread_t thread;
+    
+    pthread_create(&thread, NULL, (void*) start_tcp_client, host);
 
     // Start TUI
+    startTUI("");
+    updateWindow("");
+    while (true)
+    {
+        char c = getch();
+        if (c == 27) break; // Escape key
+        bufferedWriting(c);
+    }
+    stopTUI();
     
 }

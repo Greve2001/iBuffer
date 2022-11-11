@@ -37,10 +37,10 @@ void startTUI(char* pass_phrase){
 
     refresh(); // Important
     printStatus();
-    updateWindow("");
 
     xPos = 0;
     strLength = 0;
+
 }
 
 void stopTUI(void){

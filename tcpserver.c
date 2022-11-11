@@ -95,16 +95,16 @@ void* handle_connection(void* socket) {
     int client_socket = *(int*) socket;
 
     if(client_socket < 0) {
-        printf("Server accept failed\n");
+        printf("Server accept failed");
     } else {
-        printf("Server accepted the client\n");
+        printf("Server accepted the client");
         fflush(stdout);
-        char welcome_message[] = "Welcome to server. Ready to recieve a command.\n";
+        char welcome_message[] = "Welcome to server. Ready to recieve a command.";
         send(client_socket, welcome_message, sizeof(welcome_message), 0); 
     }
 
     read_request(client_socket);
-    char goodbye_message[] = "Server exit...\n";
+    char goodbye_message[] = "Server exit...";
     write(client_socket, goodbye_message, sizeof(goodbye_message));
     close(client_socket);
 }
