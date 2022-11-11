@@ -27,9 +27,11 @@ void host(void){
     // Discover
     char* pass_phrase = generate_pass_phrase();
     run_listener();
-
+    
+    // Starting tcp server in a new thread
     char *host = "127.0.0.1";
-    //start_tcp_server(host);   // Uncomment becuase its makes the TUI stuck
+    pthread_t thread;
+    pthread_create(&thread, NULL, start_tcp_server(host), NULL);
 
     // Start TUI
     startTUI(pass_phrase);
