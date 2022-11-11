@@ -179,7 +179,8 @@ char* inputWindow(void){
 void updateWindow(char* str){
     box(updateWin, 0, 0);
 
-    // Make update window have a scrolling input
+    mvwprintw(updateWin, 1, 1, "# Latest Update: ");
+    mvwprintw(updateWin, 1, 2, "%s", str);
 
     wrefresh(updateWin);
 }
