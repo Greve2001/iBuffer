@@ -177,10 +177,11 @@ char* inputWindow(void){
 }
 
 void updateWindow(char* str){
+    curs_set(0);
+
+    wclear(updateWin);
     box(updateWin, 0, 0);
-
     mvwprintw(updateWin, 1, 1, "# Latest Update: ");
-    mvwprintw(updateWin, 1, 2, "%s", str);
-
+    mvwprintw(updateWin, 2, 1, "%s", str);
     wrefresh(updateWin);
 }

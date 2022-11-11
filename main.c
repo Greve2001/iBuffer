@@ -31,7 +31,7 @@ void host(void){
     // Starting tcp server in a new thread
     char *host = "127.0.0.1";
     pthread_t thread;
-    pthread_create(&thread, NULL, start_tcp_server(host), NULL);
+    pthread_create(&thread, NULL, (void*) start_tcp_server, host);
 
     // Start TUI
     startTUI(pass_phrase);
@@ -39,7 +39,6 @@ void host(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
-        updateWindow("Test");
         bufferedWriting(c);
     }
     stopTUI();
