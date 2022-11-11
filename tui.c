@@ -118,13 +118,13 @@ int startupWindow(void){
     curs_set(0);
 
     WINDOW* startupWin = newwin(7, 30, 0, 0);
-    box(startupWin, 0, 0);
     refresh();
     
     mvwprintw(startupWin, 1, 1, "Please enter '1', '2' or '3'");
     mvwprintw(startupWin, 3, 1, "1:\tHost Server");
     mvwprintw(startupWin, 4, 1, "2:\tJoin Server");
     mvwprintw(startupWin, 5, 1, "3:\tExit");
+    box(startupWin, 0, 0);
     wrefresh(startupWin);
 
     int returnStatus = -1;
@@ -158,11 +158,10 @@ char* inputWindow(void){
     curs_set(1);
 
     WINDOW* inputWin = newwin(4, 30, 0, 0);
-    box(inputWin, 0, 0);
     refresh();
     
     mvwprintw(inputWin, 1, 1, "Please enter passphrase: ");
-
+    box(inputWin, 0, 0);
     wrefresh(inputWin);
 
     char* str = malloc(sizeof(char)*100);
@@ -180,8 +179,7 @@ void updateWindow(char* str){
     curs_set(0);
 
     wclear(updateWin);
+    mvwprintw(updateWin, 1, 1, "%s", str);
     box(updateWin, 0, 0);
-    mvwprintw(updateWin, 1, 1, "# Latest Update: ");
-    mvwprintw(updateWin, 2, 1, "%s", str);
     wrefresh(updateWin);
 }
