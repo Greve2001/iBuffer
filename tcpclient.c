@@ -34,17 +34,14 @@ void start_tcp_client(char * ip) {
     read(server_socket, receive, sizeof(receive)); // Reads welcome message
     //printf("Welcome msg: %s", receive);
     updateWindow(receive);
-
-    transfer_msg(server_socket);
 }
 
-void transfer_msg(int server_socket) {
-    char line[10] = "exit\n"; // hardcoded
-    char recv[100];
+void transfer_msg(char c) {
+    //char recv[100];
 
-    memset(recv, 0, sizeof(recv));
-    send(server_socket, line, sizeof(line), 0);
-    read(server_socket, recv, sizeof(recv));
+    //memset(recv, 0, sizeof(recv));
+    send(server_socket, &c, sizeof(c), 0);
+    //read(server_socket, recv, sizeof(recv));
     //printf("Contents of host buffer: %s", recv);
 }
 
