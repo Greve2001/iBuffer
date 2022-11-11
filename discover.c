@@ -15,9 +15,9 @@ static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
 
 char *clients[NUMBER_OF_CLI];
-bool new_clients;
 
 pthread_mutex_t clients_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t clients_cond = PTHREAD_COND_INITIALIZER;
 
 void send_udp_broadcast(char ip_server[], int size, char *phrase)
 {
@@ -93,8 +93,8 @@ void *listen_udp_broadcast(void)
 
             pthread_mutex_lock(&clients_lock);
             clients[c++] = tmp; 
-            new_clients = true;
             pthread_mutex_unlock(&clients_lock);
+            pthread_cond_signal(&clients_cond);
 
             char local_ip[NI_MAXHOST];
             get_local_ip(local_ip);
