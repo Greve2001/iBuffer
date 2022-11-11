@@ -46,17 +46,21 @@ void bufferedWriting(char);
 void printStatus(void);
 void interpretChar(char c, char* str);
 void interpretChar2(char c, char* str, int* pos);
+void printBuffer(char* buffer);
 void moveCursor(char c);
 void startTUI(char* pass_phrase);
 void stopTUI(void);
 int startupWindow(void);
 char* inputWindow(void);
 void updateWindow(char*);
+char* getBuffer(void);
 
 // TCP
 void read_request(int client_socket);
 void* handle_connection(void* socket);
 void transfer_msg(char c);
+void send_buffer(char* buffer);
+void read_response(void);
 void start_tcp_server(char *);
 void start_tcp_client(char *);
 void close_socket(void);
