@@ -9,14 +9,15 @@
 #define PORT_NUMBER 2207 
 #define BROADCAST_ADDR "0.0.0.0"          // For loopback broadcast
 //#define BROADCAST_ADDR "255.255.255.255"    // For network broadcast
+#define NUMBER_OF_CLI 5
 
 static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
 
-void seed_rand(void) 
-{
-    srand(time(0));
-}
+char *clients[NUMBER_OF_CLI];
+bool new_clients;
+
+pthread_mutex_t clients_lock = PTHREAD_MUTEX_INITIALIZER;
 
 void send_udp_broadcast(char ip_server[], int size, char *phrase)
 {
@@ -73,6 +74,7 @@ void *listen_udp_broadcast(void)
 
     socklen_t sender_size = sizeof(sender_addr);
     char msg[MAX_PASS_LENGTH];
+    int c = 0;
 
     for(;;)
     {
@@ -82,6 +84,18 @@ void *listen_udp_broadcast(void)
         if(strncmp(server_pass_phrase, msg, strlen(server_pass_phrase) - 1) == 0)
         {
             printf("Validatation approved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
+            char *tmp = (char *) malloc(sizeof(char) * strlen(inet_ntoa(sender_addr.sin_addr)));
+            tmp = inet_ntoa(sender_addr.sin_addr);
+            
+            // Temporary limitation of number of clients
+            if(c >= NUMBER_OF_CLI)
+                break;
+
+            pthread_mutex_lock(&clients_lock);
+            clients[c++] = tmp; 
+            new_clients = true;
+            pthread_mutex_unlock(&clients_lock);
+
             char local_ip[NI_MAXHOST];
             get_local_ip(local_ip);
             sendto(listener, local_ip, strlen(local_ip) + 1, 0, (struct sockaddr *) &sender_addr, sizeof(sender_addr));
