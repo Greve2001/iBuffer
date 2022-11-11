@@ -78,4 +78,6 @@ void join(void){
 
 void writeToBuffer(char c){
     bufferedWriting(c);
+    char* str = getBuffer();
+    send_buffer(str);
 }
