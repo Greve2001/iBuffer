@@ -41,6 +41,8 @@ void host(void){
         char c = getch();
         if (c == 27) break; // Escape key
         bufferedWriting(c);
+        char* str = getBuffer();
+        send_buffer(str, getCursorPos());
     }
     stopTUI();
     close_server();
