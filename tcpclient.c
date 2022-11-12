@@ -43,9 +43,11 @@ void transfer_msg(char c) {
 
 void read_response(void) {
     for(;;) {
-        char argv[100];
-        ssize_t len = read(server_socket, argv, sizeof(argv));
-        printBuffer(argv);
+        char argv1[100];
+        int argv2[2]; // Does not work
+        ssize_t len1 = read(server_socket, argv1, sizeof(argv1));
+        //ssize_t len2 = read(server_socket, argv2, sizeof(argv2)); // Does not work
+        printBuffer(argv1, 0);
     }
 }
 

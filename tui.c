@@ -101,10 +101,13 @@ void moveCursor(char c){
     wmove(mainWin, yStart, xStart+xPos);
 }
 
-void printBuffer(char* buffer){
+void printBuffer(char* buffer, int cursorPos){
+    curs_set(1);
+
     wclear(mainWin);
     mvwprintw(mainWin, 1, 1, "%s", buffer);
     box(mainWin, 0, 0);
+    wmove(mainWin, 1, cursorPos);
     wrefresh(mainWin);
 }
 
@@ -193,4 +196,8 @@ void updateWindow(char* str){
 
 char* getBuffer(void){
     return str;
+}
+
+int getCursorPos(void){
+    return xPos;
 }
