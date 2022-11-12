@@ -72,7 +72,7 @@ void join(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
-        if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN)
+        if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
             transfer_msg(c);
     }
     closeProgram();
