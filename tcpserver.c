@@ -3,6 +3,7 @@
 int own_socket;
 int last_client_socket; // Fix
 
+bool running;
 
 void start_tcp_server(char * ip) {
 
@@ -13,6 +14,7 @@ void start_tcp_server(char * ip) {
      * int protocol - specifies a particular protocol to be used with the socket. Default is 0 when only a single protocol is used. Can be used to define a socket with several different protocols.
      */
     own_socket = socket(AF_INET, SOCK_STREAM, 0); // filedescriptor
+    running = true;
 
     if (own_socket < 0) {
         updateWindow("Socket creation failed...");
@@ -64,7 +66,7 @@ void start_tcp_server(char * ip) {
 
     struct sockaddr_in client_addr;
 
-    for(;;) {
+    while(running) {
         /**
          * int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) - extracts the first connection request on the queue of the listening socket, sockfd, creates a new connected socket, and returns a new file descriptor referring to that socket.
          * int sockfd - the file descriptor returned from socket(), and has bind() and listen().
@@ -95,12 +97,17 @@ void* handle_connection(void* socket) {
     read_request(client_socket);
 }
 
-// For now this just recieves a request and sends it back
+// Receives chars from client
 void read_request(int client_socket) {
     char c;
     for(;;) {
-        ssize_t len = read(client_socket, &c, sizeof(c));
-        writeToBuffer(c);
+        read(client_socket, &c, sizeof(c));
+        if (c != 0)
+            writeToBuffer(c);
+        else
+            break;
+
+        close_server(); // Best way to do it yet
     }
 }
 
@@ -111,5 +118,6 @@ void send_buffer(char* buffer, int cursor_x){
 
 void close_server(void){
     int status = close(own_socket);
+    running = false;
     printf("Attempted closing server with status: %d\n", status);
 }
