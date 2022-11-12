@@ -51,12 +51,17 @@ void bufferedWriting(char c){
     // Print
     interpretChar(c);
     char* line1 = get_all_lines()[0];
+
+    // !!!!!!!!
     mvwprintw(mainWin, 1, xStart, "%s", line1); // Print string
+    printf("\n---%s---\n", get_line(0));
 
     moveCursor(c); // Move cursor
 
     box(mainWin, 0, 0);
     wrefresh(mainWin);
+
+    //free_list_of_lines(get_all_lines()); // Clean Up
 }
 
 void interpretChar(char c){

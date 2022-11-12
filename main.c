@@ -40,7 +40,11 @@ void host(void){
     // Start TUI
     startTUI(pass_phrase);
     updateWindow("");
+
+    // !!!!!!!
     make_new_line(0); // Linked list
+    line_to_active_line( /* TODO*/); // Quick implementation
+
     while (server_running)
     {
         char c = getch();
