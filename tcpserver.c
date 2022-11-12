@@ -104,8 +104,9 @@ void read_request(int client_socket) {
     }
 }
 
-void send_buffer(char* buffer){
+void send_buffer(char* buffer, int cursor_x){
     send(last_client_socket, buffer, sizeof(buffer), 0);
+    //send(last_client_socket, &cursor_x, sizeof(cursor_x), 0); // Does not work
 }
 
 void close_server(void){
