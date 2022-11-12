@@ -24,13 +24,37 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
 #define CHAR_RANGE_END      126
 #define LEFT_ARROW          4
 #define RIGHT_ARROW         5
 #define RETURN              7
+
+// Structs
+struct Active_Line; //Forward decleration
+
+//for saving the individual lines
+typedef struct Lines{
+	struct Lines* next;
+	struct Active_Line* active_line;
+	char* paragraph;
+} Line;
+
+//for saving the active lines
+typedef struct Letters{
+	struct Letters* next;
+	char character;
+} Letter;
+
+
+typedef struct Active_Line{
+	struct Active_Line* next;	//pointer to next data in the linked list
+	Line* original_line;		//used to either delete or save it when finished editing
+	Letter* first_char;			//the first char the paragraph
+	int linked_list_size;
+} Active_Line;
+
 
 // Main
 void host(void);
@@ -53,7 +77,7 @@ int count_lines_in_file(FILE *);
 void testWindow(void);
 void bufferedWriting(char);
 void printStatus(void);
-void interpretChar(char c, char* str);
+void interpretChar(char c);
 void printBuffer(char*, int);
 void moveCursor(char c);
 void startTUI(char* pass_phrase);
@@ -74,3 +98,15 @@ void start_tcp_server(char *);
 void start_tcp_client(char *);
 void close_socket(void);
 void close_server(void);
+
+// Linked List
+void make_new_line(int previus_line);
+void write_char(int position, char character);
+void delete_char(int position);
+void line_to_active_line(Line* line);
+void active_line_to_line(Active_Line* active_line, bool free_active_line);
+void clicked_on_line(int line_number);
+char* get_line(int line_number);
+char** get_all_lines();
+void free_list_of_lines(char** list_to_lines);
+void free_all_space(void);
