@@ -106,9 +106,8 @@ void read_request(int client_socket) {
             writeToBuffer(c);
         else
             break;
-
-        close_server(); // Best way to do it yet
     }
+    closeProgram();
 }
 
 void send_buffer(char* buffer, int cursor_x){

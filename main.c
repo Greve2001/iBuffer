@@ -1,6 +1,9 @@
 #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 
+bool server_running = true;
+bool client_running = true;
+
 int main(void) {
     srand(time(0));
 
@@ -36,7 +39,7 @@ void host(void){
     // Start TUI
     startTUI(pass_phrase);
     updateWindow("");
-    while (true)
+    while (server_running)
     {
         char c = getch();
         if (c == 27) break; // Escape key
@@ -44,10 +47,8 @@ void host(void){
         char* str = getBuffer();
         send_buffer(str, getCursorPos());
     }
-    stopTUI();
-    close_server();
+    closeProgram();
 }
-
 
 void join(void){
     char ip_addr[NI_MAXHOST];
@@ -67,20 +68,30 @@ void join(void){
     // Start TUI
     startTUI("");
     updateWindow("");
-    while (true)
+    while (client_running)
     {
         char c = getch();
         if (c == 27) break; // Escape key
         if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN)
             transfer_msg(c);
     }
-    stopTUI();
-    close_socket();
+    closeProgram();
 }
-
 
 void writeToBuffer(char c){
     bufferedWriting(c);
     char* str = getBuffer();
     send_buffer(str, getCursorPos());
+}
+
+
+void closeProgram(void){
+    server_running = false;
+    client_running = false;
+
+    close_socket();
+    close_server();
+
+    stopTUI();
+    exit(EXIT_SUCCESS);
 }
