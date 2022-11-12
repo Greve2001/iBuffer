@@ -1,5 +1,6 @@
 #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
+#include "linklist.h"
 
 bool server_running = true;
 bool client_running = true;
@@ -39,6 +40,7 @@ void host(void){
     // Start TUI
     startTUI(pass_phrase);
     updateWindow("");
+    make_new_line(0); // Linked list
     while (server_running)
     {
         char c = getch();
@@ -78,7 +80,7 @@ void join(void){
     closeProgram();
 }
 
-void writeToBuffer(char c){
+void writeToBuffer(char c){ // Called from Client
     bufferedWriting(c);
     char* str = getBuffer();
     send_buffer(str, strlen(str), getCursorPos());

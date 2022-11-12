@@ -1,7 +1,4 @@
-#include <stdbool.h>
-#include <stdlib.h>
-
-#include "linklist.h"
+#include "common.h"
 
 // buffered lines
 static int size = 0;
@@ -143,7 +140,7 @@ void clicked_on_line(int line_number){
 * param position: the numneric position of the previus element on the line.
 * param character: the char that is whished to be written
 */
-void write(int position, char character){
+void write_char(int position, char character){
 	if(!users_active_line)
 		return;
 	
@@ -199,7 +196,7 @@ void write(int position, char character){
 *
 * Must be parsed the numeric position of the character.
 */
-void delete(int position){
+void delete_char(int position){
 	if(!users_active_line)
 		return;
 	if(!users_active_line->first_char){
@@ -254,7 +251,7 @@ void free_list_of_lines(char** list_to_lines){
 	free(list_to_lines);
 }
 
-void free_all_space(){
+void free_all_space(void){
 	;//TODO: free it all, need to make list of what needs to be free'ed and deal with the seperately
 	//this is only for use when the program is closed to free up the memory
 }
