@@ -48,7 +48,11 @@ void read_response(void) {
         int argv2[2]; // Does not work
         ssize_t len1 = read(server_socket, argv1, sizeof(argv1));
         //ssize_t len2 = read(server_socket, argv2, sizeof(argv2)); // Does not work
-        printBuffer(argv1, 0);
+
+        if (len1 != -1 && len1 != 0)
+            printBuffer(argv1, 0);
+        else
+            closeProgram();
     }
 }
 
