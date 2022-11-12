@@ -41,6 +41,7 @@ void transfer_msg(char c) {
     send(server_socket, &c, sizeof(c), 0);
 }
 
+// Reads the buffer send by clients
 void read_response(void) {
     for(;;) {
         char argv1[100];

@@ -1,12 +1,5 @@
 #include "common.h"
 
-#define MAX_STRING_LENGTH   99
-#define CHAR_RANGE_START    32
-#define CHAR_RANGE_END      126
-#define LEFT_ARROW          4
-#define RIGHT_ARROW         5
-#define RETURN              7
-
 WINDOW* statWin;
 WINDOW* mainWin;
 WINDOW* updateWin;
