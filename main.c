@@ -45,7 +45,7 @@ void host(void){
         if (c == 27) break; // Escape key
         bufferedWriting(c);
         char* str = getBuffer();
-        send_buffer(str, getCursorPos());
+        send_buffer(str, strlen(str), getCursorPos());
     }
     closeProgram();
 }
@@ -81,7 +81,7 @@ void join(void){
 void writeToBuffer(char c){
     bufferedWriting(c);
     char* str = getBuffer();
-    send_buffer(str, getCursorPos());
+    send_buffer(str, strlen(str), getCursorPos());
 }
 
 
