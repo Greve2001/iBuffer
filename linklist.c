@@ -230,7 +230,7 @@ char* get_line(int line_number){
 * returns a pointer to an array of all the strings for each line
 *
 */
-char** get_all_lines(){
+char * * get_all_lines(){
 	if(list_of_lines)
 		free(list_of_lines);
 	list_of_lines = malloc(size * sizeof(char*));
