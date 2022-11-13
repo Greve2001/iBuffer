@@ -127,6 +127,7 @@ int startupWindow(void){
     mvwprintw(startupWin, 4, 1, "2:\tJoin Server");
     mvwprintw(startupWin, 5, 1, "3:\tExit");
     box(startupWin, 0, 0);
+
     wrefresh(startupWin);
 
     int returnStatus = -1;
