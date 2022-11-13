@@ -31,7 +31,7 @@ void start_tcp_client(char * ip) {
     read(server_socket, receive, sizeof(receive)); // Reads welcome message
     updateWindow(receive);
 
-    // Listeneer for response from server
+    // Listen for response from server
     read_response();
 }
 

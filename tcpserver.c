@@ -101,8 +101,8 @@ void* handle_connection(void* socket) {
 void read_request(int client_socket) {
     char c;
     for(;;) {
-        ssize_t len1 = read(client_socket, &c, sizeof(c));
-        if (len1 != -1 && len1 != 0){
+        ssize_t len = read(client_socket, &c, sizeof(c));
+        if (len != -1 && len != 0){
 
             writeToBuffer(c);
 
@@ -110,7 +110,6 @@ void read_request(int client_socket) {
         else
             break;
     }
-    closeProgram();
 }
 
 void send_buffer(char* buffer, int len, int cursor_x){
