@@ -9,7 +9,7 @@ void start_tcp_client(char * ip) {
 
     if (server_socket < 0) {
         updateWindow("Socket creation failed...");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
 
@@ -20,12 +20,12 @@ void start_tcp_client(char * ip) {
     server_addr.sin_port = htons(1504);
 
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
-    inet_aton(ip, &server_addr.sin_addr); // Can use INADDR_ANY for automatic filling in the IP
+    inet_aton(ip, &server_addr.sin_addr);
 
     int status = connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
     if(status < 0) {
         updateWindow("Connection with the server failed...");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     char receive[100];
@@ -33,8 +33,7 @@ void start_tcp_client(char * ip) {
     updateWindow(receive);
 
     // Listeneer for response from server
-    pthread_t thread;
-    pthread_create(&thread, NULL, (void*) read_response, NULL);
+    read_response();
 }
 
 void transfer_msg(char c) {
@@ -44,15 +43,14 @@ void transfer_msg(char c) {
 // Reads the buffer send by clients
 void read_response(void) {
     for(;;) {
-        char argv1[100];
-        int argv2[2]; // Does not work
-        ssize_t len1 = read(server_socket, argv1, sizeof(argv1));
-        //ssize_t len2 = read(server_socket, argv2, sizeof(argv2)); // Does not work
+        char recv[100];
+        memset(recv, 0, sizeof(recv));
+        ssize_t len1 = read(server_socket, recv, sizeof(recv));
 
         if (len1 != -1 && len1 != 0)
-            printBuffer(argv1, 0);
+            printBuffer(recv, 0);
         else
-            closeProgram();
+            close_socket();
     }
 }
 
