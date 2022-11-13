@@ -22,8 +22,7 @@ void start_tcp_client(char * ip) {
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
     inet_aton(ip, &server_addr.sin_addr);
 
-    int status = connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr));
-    if(status < 0) {
+    if (connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
         updateWindow("Connection with the server failed...");
         exit(EXIT_FAILURE);
     }
