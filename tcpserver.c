@@ -90,7 +90,7 @@ void* handle_connection(void* socket) {
     } else {
         updateWindow("Server accepted a client");
         fflush(stdout);
-        char welcome_message[] = "Welcome to server. Ready to recieve a command.";
+        char welcome_message[] = "Welcome to server!";
         send(client_socket, welcome_message, sizeof(welcome_message), 0); 
     }
 
