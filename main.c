@@ -43,9 +43,7 @@ void host(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
-        bufferedWriting(c);
-        char* str = getBuffer();
-        send_buffer(str, strlen(str), getCursorPos());
+        writeToBuffer(c);
     }
     closeProgram();
 }
@@ -78,6 +76,8 @@ void join(void){
     closeProgram();
 }
 
+// Called from Client and Host
+// Here we should handle mutex!!!
 void writeToBuffer(char c){
     bufferedWriting(c);
     char* str = getBuffer();
