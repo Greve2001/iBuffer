@@ -4,8 +4,16 @@
 bool server_running = true;
 bool client_running = true;
 
+static pthread_mutex_t lock; // Main Lock
+
 int main(void) {
     srand(time(0));
+
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        printf("\n Mutex init failed\n");
+        exit(EXIT_FAILURE);
+    }
 
     int returnStatus = startupWindow();
     switch (returnStatus)
@@ -43,7 +51,9 @@ void host(void){
     {
         char c = getch();
         if (c == 27) break; // Escape key
+
         writeToBuffer(c);
+
     }
     closeProgram();
 }
@@ -79,9 +89,17 @@ void join(void){
 // Called from Client and Host
 // Here we should handle mutex!!!
 void writeToBuffer(char c){
+    int status = pthread_mutex_trylock(&lock);
+    if (status != 0)
+        return;
+
     bufferedWriting(c);
     char* str = getBuffer();
     send_buffer(str, strlen(str), getCursorPos());
+
+
+    sleep(1);
+    pthread_mutex_unlock(&lock);
 }
 
 
@@ -91,6 +109,8 @@ void closeProgram(void){
 
     close_socket();
     close_server();
+
+    pthread_mutex_destroy(&lock);
 
     stopTUI();
     exit(EXIT_SUCCESS);

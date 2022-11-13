@@ -24,7 +24,6 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
 #define CHAR_RANGE_END      126
@@ -37,6 +36,7 @@ void host(void);
 void join(void);
 void writeToBuffer(char c);
 void closeProgram(void);
+void* get_lock(void);
 
 // Discover
 bool validate_pass_phrase(char *);
