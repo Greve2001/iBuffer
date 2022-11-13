@@ -85,8 +85,6 @@ void join(void){
     }
 
     close_socket();
-    if (pthread_join(&thread, NULL) != 0)
-        perror("Error joining thread...")
     stopTUI();
 }
 
