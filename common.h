@@ -64,13 +64,15 @@ void updateWindow(char*);
 char* getBuffer(void);
 int getCursorPos(void);
 
-// TCP
-void read_request(int client_socket);
-void* handle_connection(void* socket);
-void transfer_msg(char c);
-void send_buffer(char*, int, int);
-void read_response(void);
-void start_tcp_server(char *);
+// TCP client
 void start_tcp_client(char *);
+void transfer_msg(char c);
+void read_response(void);
 void close_socket(void);
+
+// TCP server
+void start_tcp_server(char *);
+void* handle_connection(void* socket);
+void read_request(int client_socket);
+void send_buffer(char*, int, int);
 void close_server(void);
