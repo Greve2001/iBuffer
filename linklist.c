@@ -34,6 +34,7 @@ void make_new_line(int previus_line){
 	else
 		last_line->next = new;
 	last_line = new;
+	size++;
 }
 
 /**************************************************************
@@ -43,12 +44,16 @@ void make_new_line(int previus_line){
 void line_to_active_line(Line* line){
 	Active_Line* new_active_line = malloc(sizeof(Active_Line));
 	new_active_line->original_line = line;
-	active_last_line->next = new_active_line;
-	active_last_line = new_active_line;
 	line->active_line = new_active_line;
 	
+	if(active_first_line)
+		active_last_line->next = new_active_line;
+	else
+		active_first_line = new_active_line;
+	active_last_line = new_active_line;
+	
 	if(!line->paragraph){
-		//TODO: does not contain any letters, must be handled differently
+		new_active_line -> linked_list_size = 0;
 		return;
 	}
 	
@@ -77,12 +82,15 @@ void line_to_active_line(Line* line){
 */
 void active_line_to_line(Active_Line* active_line, bool free_active_line){
 	Line* line = active_line->original_line;
-	free(line->paragraph);
+	if(line->paragraph)
+		free(line->paragraph);
 	
 	int size = active_line->linked_list_size;
 	
 	if(size == 0){
-		;//TODO: nothing on the line
+		line->paragraph = malloc(sizeof(char));
+		line->paragraph[0] = '\000';
+		return;
 	}
 	char* paragraph = malloc((size + 1)* sizeof(char));
 	Letter* letter = active_line -> first_char;
@@ -144,7 +152,7 @@ void write_char(int position, char character){
 	if(!users_active_line)
 		return;
 	
-	if(character = '\n'){
+	/*if(character == '\n'){
 		if(position == 0){
 			//TODO: insert a new paragraph before this one.
 		}
@@ -179,15 +187,21 @@ void write_char(int position, char character){
 		users_active_line = new_al;
 		
 		return;
-	}
+	}*/
 	
 	Letter* new_letter = malloc(sizeof(Letter));
 	new_letter -> character = character;
+	if(!users_active_line->first_char){
+		users_active_line->first_char = new_letter;
+		users_active_line->linked_list_size++;
+		return;
+	}
 	Letter* prev_letter = users_active_line->first_char;
-	for(int i = 0; i<position; i++) prev_letter = prev_letter->next;
+	for(int i = 0; i<position-1; i++) prev_letter = prev_letter->next;
 	users_active_line->linked_list_size++;
 	new_letter->next = prev_letter->next;
 	prev_letter->next = new_letter;
+	
 }
 
 
@@ -206,7 +220,7 @@ void delete_char(int position){
 		//TODO: merge with previus linkedlist.
 	}
 	Letter* prev_character = users_active_line->first_char;
-	for(int i = 0; i < position-1; i++) prev_character = prev_character->next;
+	for(int i = 0; i < position; i++) prev_character = prev_character->next;
 	Letter* after_character = prev_character->next->next;
 	free(prev_character->next);
 	prev_character->next = after_character;
@@ -228,7 +242,7 @@ char* get_line(int line_number){
 *
 */
 char** get_all_lines(){
-	if(list_of_lines)
+	if(list_of_lines && sizeof(list_of_lines) > 0)
 		free(list_of_lines);
 	list_of_lines = malloc(size * sizeof(char*));
 	Line* current_element = first_line;
