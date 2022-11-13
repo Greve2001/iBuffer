@@ -43,7 +43,7 @@ void host(void){
 
     // !!!!!!!
     make_new_line(0); // Linked list
-    line_to_active_line( /* TODO*/); // Quick implementation
+    clicked_on_line(0);
 
     while (server_running)
     {
