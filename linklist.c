@@ -234,7 +234,7 @@ char** get_all_lines(){
 	Line* current_element = first_line;
 	for(int i = 0; i < size; i++){
 		if(current_element->active_line){
-			//TODO: is active, so we need to update the string before returning it
+			active_line_to_line(current_element->active_line,false);
 		}
 		list_of_lines[i] = current_element->paragraph;
 		current_element = current_element->next;
