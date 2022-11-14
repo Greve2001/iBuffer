@@ -1,6 +1,3 @@
-#include <bits/types/struct_timeval.h>
-#include <sys/select.h>
-#include <unistd.h>
 #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 #define MAX_PASS_LENGTH 1024
