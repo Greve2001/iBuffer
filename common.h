@@ -14,15 +14,9 @@
 #include <netdb.h>
 #include <ifaddrs.h>
 #include <linux/if_link.h>
+#include <bits/types/struct_timeval.h>
+#include <sys/select.h>
 #include <ncurses.h> // TUI specific
-
-// TCP headers
-#include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <pthread.h>
 
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
