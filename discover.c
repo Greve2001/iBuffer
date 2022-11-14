@@ -1,3 +1,6 @@
+#include <bits/types/struct_timeval.h>
+#include <sys/select.h>
+#include <unistd.h>
 #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 #define MAX_PASS_LENGTH 1024
@@ -34,9 +37,18 @@ void send_udp_broadcast(char ip_server[], int size, char *phrase)
     broadcast_addr.sin_port = htons(PORT_NUMBER);
     broadcast_addr.sin_addr.s_addr = inet_addr(BROADCAST_ADDR);
 
+    fd_set set;
+    struct timeval timeout = {1, 0};
+
+    FD_ZERO(&set);
+    FD_SET(sock, &set);
+
     // Send message
     sendto(sock, phrase, strlen(phrase) + 1, 0, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
-    recvfrom(sock, ip_server, size, 0, NULL, 0); 
+    // Use select to time out socket
+    // source https://www.gnu.org/software/libc/manual/html_node/Waiting-for-I_002fO.html
+    if(select(FD_SETSIZE, &set, NULL, NULL, &timeout))
+        recvfrom(sock, ip_server, size, 0, NULL, 0); 
 
     close(sock);
 }
