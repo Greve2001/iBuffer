@@ -102,8 +102,11 @@ void read_request(int client_socket) {
     char c;
     for(;;) {
         ssize_t len1 = read(client_socket, &c, sizeof(c));
-        if (len1 != -1 && len1 != 0)
+        if (len1 != -1 && len1 != 0){
+
             writeToBuffer(c);
+
+        }
         else
             break;
     }
