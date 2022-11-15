@@ -92,7 +92,7 @@ void *listen_udp_broadcast(void)
         // Check for correct message
         if(strncmp(server_pass_phrase, msg, strlen(server_pass_phrase) - 1) == 0)
         {
-            printf("Validatation approved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
+            //printf("Validatation approved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
             char *tmp = (char *) malloc(sizeof(char) * strlen(inet_ntoa(sender_addr.sin_addr)));
             tmp = inet_ntoa(sender_addr.sin_addr);
             
@@ -181,7 +181,7 @@ char *generate_pass_phrase(void)
         free(pass_fragment[i]);
     }
 
-    printf("%s\n", server_pass_phrase);
+    //printf("%s\n", server_pass_phrase);
     return server_pass_phrase;
 }
 
