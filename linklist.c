@@ -42,13 +42,10 @@ void make_new_line(int previus_line){
 *
 ***************************************************************/
 void line_to_active_line(Line* line){
-	printf("TEST: line to active line - start\n");
 	Active_Line* new_active_line = malloc(sizeof(Active_Line));
 	users_active_line = new_active_line;
 	new_active_line->original_line = line;
 	line->active_line = new_active_line;
-	
-	printf("TEST: 1\n");
 	
 	if(active_first_line)
 		active_last_line->next = new_active_line;
@@ -61,8 +58,6 @@ void line_to_active_line(Line* line){
 		return;
 	}
 	
-	printf("TEST: 2\n");
-	
 	Letter* last_letter = malloc(sizeof(Letter));
 	last_letter->character = line->paragraph[0];
 	new_active_line->first_char = last_letter;
@@ -73,9 +68,6 @@ void line_to_active_line(Line* line){
 		last_letter->character = line->paragraph[i];
 		new_active_line->linked_list_size++;
 	}
-	
-	printf("TEST: line to active line - end\n");
-
 }
 
 /*
@@ -142,9 +134,7 @@ void clicked_on_line(int line_number){
 	for(int i = 0; i < line_number; i++){
 		pointer_to_line = pointer_to_line->next;
 	}
-	printf("coming from right place\n");
 	line_to_active_line(pointer_to_line);
-		
 }
 
 
@@ -234,13 +224,11 @@ void delete_char(int position){
 }
 
 char* get_line(int line_number){
-	printf("test\n");
 	Line* line = first_line;
 	for(int i = 0; i < line_number; i++) line = line->next;
 	
 	//checks if the current line is in use, and creates a string of it to print.
 	if(line->active_line){
-		printf("test2\n");
 		active_line_to_line(line->active_line,false);
 	}
 	return line->paragraph;
