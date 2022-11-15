@@ -40,7 +40,11 @@ void host(void){
     run_listener();
     
     // Starting tcp server in a new thread
-    char *host = "127.0.0.1";
+    char host[NI_MAXHOST];
+    get_local_ip(host);
+
+    printf(" "); // I have no fucking clue why this does fixes a segfault!
+
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_server, host);
 
@@ -64,16 +68,14 @@ void host(void){
 }
 
 void join(void){
-    char ip_addr[NI_MAXHOST];
-
     // Input Keyword
     char* key = malloc(sizeof(char)*100); // Make in tui
     key = inputWindow();
 
     // Broadcast
-    //send_udp_broadcast(ip_addr, NI_MAXHOST-1, key); // for TUI testing
-
-    char *host = "127.0.0.1";
+    char host[NI_MAXHOST];
+    send_udp_broadcast(host, sizeof(host), key); // for TUI testing
+    
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_client, host);
 
