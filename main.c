@@ -104,7 +104,7 @@ void writeToBuffer(char c){
     send_buffer(str, strlen(str), getCursorPos());
 
 
-    sleep(1);
+    // sleep(1);
     pthread_mutex_unlock(&lock);
 }
 
