@@ -101,8 +101,8 @@ void write_to_buffer(char c) {
     if (status != 0)
         return;
 
-    bufferedWriting(c); // tui.c
-    char* str = getBuffer();
+    buffered_writing(c); // tui.c
+    char* str = get_buffer();
     send_buffer(str, strlen(str)); // tcpserver.c
 
     pthread_mutex_unlock(&lock);
