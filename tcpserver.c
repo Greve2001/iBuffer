@@ -19,7 +19,7 @@ void start_tcp_server(char * ip)
 
     if (own_socket < 0) 
     {
-        updateWindow("Socket creation failed...");
+        update_window("Socket creation failed...");
         exit(1);
     }
 
@@ -52,7 +52,7 @@ void start_tcp_server(char * ip)
      */
     if (bind(own_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) 
     {
-        updateWindow("Binding to port failed...");
+        update_window("Binding to port failed...");
         exit(1);
     }
     /**
@@ -63,7 +63,7 @@ void start_tcp_server(char * ip)
     // Listen for clients
     if (listen(own_socket, 5) < 0) 
     {
-        updateWindow("Listening failed...");
+        update_window("Listening failed...");
     }
 
     socklen_t addr_len = sizeof(server_addr);    
@@ -93,11 +93,11 @@ void* handle_connection(void* socket)
 
     if(client_socket < 0) 
     {
-        updateWindow("Server accept failed");
+        update_window("Server accept failed");
     } 
     else 
     {
-        updateWindow("Server accepted a client");
+        update_window("Server accepted a client");
         fflush(stdout);
         char welcome_message[] = "Welcome to server!";
         send(client_socket, welcome_message, sizeof(welcome_message), 0); 
@@ -116,7 +116,7 @@ void read_request(int client_socket)
         if (len != -1 && len != 0)
         {
 
-            writeToBuffer(c);
+            write_to_buffer(c);
 
         }
         else

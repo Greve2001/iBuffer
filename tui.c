@@ -12,7 +12,7 @@ int yStart = 1;
 
 char* keyword;
 
-void startTUI(char* pass_phrase){
+void start_tui(char* pass_phrase){
     keyword = pass_phrase;
 
     int statWidth = 49, statHeight = 4;
@@ -28,14 +28,14 @@ void startTUI(char* pass_phrase){
     mainWin = newwin(mainHeight, mainWidth+2, 4, 0);
 
     refresh(); // Important
-    printStatus();
+    print_status();
 
     xPos = 0;
     strLength = 0;
 
 }
 
-void stopTUI(void){
+void stop_tui(void){
     werase(statWin);
     werase(updateWin);
     werase(mainWin);
@@ -45,11 +45,11 @@ void stopTUI(void){
     endwin();
 }
 
-void bufferedWriting(char c){
+void buffered_writing(char c){
     curs_set(1);
 
     // Print
-    interpretChar(c);
+    interpret_char(c);
     char* line1 = get_all_lines()[0];
     strLength = strlen(line1);
 
@@ -57,7 +57,7 @@ void bufferedWriting(char c){
     wclear(mainWin);
     mvwprintw(mainWin, 1, xStart, "%s", line1); // Print string
 
-    moveCursor(c); // Move cursor
+    move_cursor(c); // Move cursor
 
     box(mainWin, 0, 0);
     wrefresh(mainWin);
@@ -65,7 +65,7 @@ void bufferedWriting(char c){
     //free_list_of_lines(get_all_lines()); // Clean Up
 }
 
-void interpretChar(char c){
+void interpret_char(char c){
     // Get better way to handle this.
 
     // Normal typing
@@ -77,7 +77,7 @@ void interpretChar(char c){
     }
 }
 
-void moveCursor(char c){
+void move_cursor(char c){
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){ // Normal typing
         if (strLength >= MAX_STRING_LENGTH) return;
         xPos++;
@@ -92,7 +92,7 @@ void moveCursor(char c){
     wmove(mainWin, yStart, xStart+xPos);
 }
 
-void printBuffer(char* buffer, int cursorPos){
+void print_buffer(char* buffer, int cursorPos){
     curs_set(1);
 
     wclear(mainWin);
@@ -102,7 +102,7 @@ void printBuffer(char* buffer, int cursorPos){
     wrefresh(mainWin);
 }
 
-void printStatus(void){
+void print_status(void){
     int numUsers = 1;
     curs_set(0);
     wclear(statWin);
@@ -113,7 +113,7 @@ void printStatus(void){
 }
 
 
-int startupWindow(void){
+int startup_window(void){
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
     curs_set(0);
@@ -154,7 +154,7 @@ int startupWindow(void){
     return returnStatus;
 }
 
-char* inputWindow(void){
+char* input_window(void){
     initscr(); cbreak(); echo(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
     curs_set(1);
@@ -177,7 +177,7 @@ char* inputWindow(void){
     return str;
 }
 
-void updateWindow(char* str){
+void update_window(char* str){
     curs_set(0);
 
     wclear(updateWin);
@@ -187,10 +187,10 @@ void updateWindow(char* str){
 }
 
 
-char* getBuffer(void){
+char* get_buffer(void){
     return get_all_lines()[0]; // Quick fix.
 }
 
-int getCursorPos(void){
+int get_cursor_pos(void){
     return xPos;
 }
