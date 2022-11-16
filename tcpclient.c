@@ -13,7 +13,7 @@ void start_tcp_client(char * ip)
 
     if (server_socket < 0) 
     {
-        updateWindow("Socket creation failed...");
+        update_window("Socket creation failed...");
         exit(EXIT_FAILURE);
     }
 
@@ -30,7 +30,7 @@ void start_tcp_client(char * ip)
     // connect socket to the server address
     if (connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) 
     {
-        updateWindow("Connection with the server failed...");
+        update_window("Connection with the server failed...");
         exit(EXIT_FAILURE);
     }
 
@@ -55,7 +55,7 @@ void read_response(void)
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
 
         if (len1 != -1 && len1 != 0)
-            printBuffer(recv, 0);
+            print_buffer(recv, 0);
         else
             break;
     }
