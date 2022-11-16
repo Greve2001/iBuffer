@@ -14,7 +14,7 @@ void start_tcp_server(char * ip)
     own_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (own_socket < 0) 
     {
-        updateWindow("Socket creation failed...");
+        update_window("Socket creation failed...");
         exit(1);
     }
 
@@ -33,14 +33,14 @@ void start_tcp_server(char * ip)
     // assign address to socket
     if (bind(own_socket, (struct sockaddr*) &server_addr, addr_len) < 0) 
     {
-        updateWindow("Binding to port failed...");
+        update_window("Binding to port failed...");
         exit(1);
     }
 
     // Mark socket as a socket that will listen for connections
     // * max queue lenght = 5. If the queue is full the client trying to connect will receive ECONNREFUSED    
     if (listen(own_socket, 5) < 0) 
-        updateWindow("Listening failed...");
+        update_window("Listening failed...");
 
     struct sockaddr_in client_addr;
     
@@ -67,10 +67,10 @@ void* handle_connection(void* socket)
     last_client_socket = client_socket; // TODO make linked list to handle this shit
 
     if(client_socket < 0) 
-        updateWindow("Server accept failed...");
+        update_window("Server accept failed...");
     else 
     {
-        updateWindow("Server accepted a client");
+        update_window("Server accepted a client");
         fflush(stdout);
 
         char welcome_message[] = "Welcome to server!";
@@ -92,8 +92,8 @@ void read_request(int client_socket)
     {
         ssize_t len = read(client_socket, &c, sizeof(c));
         if (len != -1 && len != 0)
-            writeToBuffer(c); // main.c
-        else 
+            write_to_buffer(c); // main.c
+        else
             break;
     }
 }
