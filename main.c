@@ -3,7 +3,6 @@
 #include "linklist.h"
 
 bool server_running = true;
-bool client_running = true;
 
 static pthread_mutex_t lock; // Main Lock
 
@@ -41,7 +40,11 @@ void host(void){
     run_listener();
     
     // Starting tcp server in a new thread
-    char *host = "127.0.0.1";
+    char host[NI_MAXHOST];
+    get_local_ip(host);
+
+    printf(" "); // I have no fucking clue why this does fixes a segfault!
+
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_server, host);
 
@@ -49,9 +52,8 @@ void host(void){
     startTUI(pass_phrase);
     updateWindow("");
 
-    // !!!!!!!
-    make_new_line(0); // Linked list
-    clicked_on_line(0);
+    // for initial backend setup
+    init();
 
     while (server_running)
     {
@@ -65,36 +67,37 @@ void host(void){
 }
 
 void join(void){
-    char ip_addr[NI_MAXHOST];
-
     // Input Keyword
     char* key = malloc(sizeof(char)*100); // Make in tui
     key = inputWindow();
 
     // Broadcast
-    //send_udp_broadcast(ip_addr, NI_MAXHOST-1, key); // for TUI testing
-
-    char *host = "127.0.0.1";
-    pthread_t thread;
+    char host[NI_MAXHOST];
+    send_udp_broadcast(host, sizeof(host), key); // for TUI testing
     
+    pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_client, host);
 
     // Start TUI
     startTUI("");
     updateWindow("");
-    while (client_running)
+    for (;;)
     {
-        char c = getch();
-        if (c == 27) break; // Escape key
+        char c = getch(); // Escape key
+        if (c == 27) 
+            break;
+
         if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
             transfer_msg(c);
     }
-    closeProgram();
+
+    close_socket();
+    stopTUI();
 }
 
 // Called from Client and Host
 // Here we should handle mutex!!!
-void writeToBuffer(char c){
+void writeToBuffer(char c) {
     int status = pthread_mutex_trylock(&lock);
     if (status != 0)
         return;
@@ -103,15 +106,11 @@ void writeToBuffer(char c){
     char* str = getBuffer();
     send_buffer(str, strlen(str), getCursorPos());
 
-
-    sleep(1);
     pthread_mutex_unlock(&lock);
 }
 
-
-void closeProgram(void){
+void closeProgram(void) {
     server_running = false;
-    client_running = false;
 
     close_socket();
     close_server();

@@ -279,6 +279,11 @@ void free_all_space(void){
 	//this is only for use when the program is closed to free up the memory
 }
 
+void init(void){
+	make_new_line(0);
+    clicked_on_line(0);
+}
+
 /***********
 * Methods that can be called from the socket module
 *
