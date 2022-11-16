@@ -52,9 +52,8 @@ void host(void){
     startTUI(pass_phrase);
     updateWindow("");
 
-    // !!!!!!!
-    make_new_line(0); // Linked list
-    clicked_on_line(0);
+    // for initial backend setup
+    init();
 
     while (server_running)
     {
