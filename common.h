@@ -49,6 +49,12 @@ typedef struct Active_Line{
 	int linked_list_size;
 } Active_Line;
 
+typedef struct Message
+{
+    int x;
+    int y;
+    char message[100];
+} Message;
 
 // Main
 void host(void);
@@ -107,4 +113,7 @@ char* get_line(int line_number);
 char** get_all_lines();
 void free_list_of_lines(char** list_to_lines);
 void free_all_space(void);
-void init(void);
+
+// Parser/serialize
+Message* parser(char* string) 
+char* serialize(Message* message) 
