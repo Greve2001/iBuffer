@@ -47,7 +47,6 @@ void line_to_active_line(Line* line){
 	new_active_line->original_line = line;
 	line->active_line = new_active_line;
 	
-	
 	if(active_first_line)
 		active_last_line->next = new_active_line;
 	else
@@ -69,7 +68,6 @@ void line_to_active_line(Line* line){
 		last_letter->character = line->paragraph[i];
 		new_active_line->linked_list_size++;
 	}
-
 }
 
 /*
@@ -137,7 +135,6 @@ void clicked_on_line(int line_number){
 		pointer_to_line = pointer_to_line->next;
 	}
 	line_to_active_line(pointer_to_line);
-		
 }
 
 
