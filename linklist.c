@@ -151,42 +151,9 @@ void write_char(int position, char character){
 	if(!users_active_line)
 		return;
 	
-	/*if(character == '\n'){
-		if(position == 0){
-			//TODO: insert a new paragraph before this one.
-		}
-		if(position == users_active_line->linked_list_size){
-			//TODO: make a new paragraph after the current one, and move active line.
-		}
-		
-		//finds the letter previus to the split
-		Letter* l = users_active_line->first_char;
-		for(int i = 0; i < position - 1; i++) l = l->next;
-		
-		
-		//Dealing with the pointers in the linked list of Lines.
-		
-		//Save the position of the next line in the list
-		Line* temp = users_active_line->original_line->next;
-		//allocate space for the new line
-		Line* new = malloc(sizeof(Line));
-		//changing the pointers to input the new line
-		users_active_line->original_line->next = new;
-		new->next = temp;
-		
-		//creating an aditional active line for splitting the characters.
-		Active_Line* new_al = malloc(sizeof(Active_Line));
-		new_al->first_char = l->next;
-		
-		// then disconnecting the 2 linked lists
-		l->next = NULL;
-		
-		//Finaly to transform the old active_line back into a regular line.
-		active_line_to_line(users_active_line, true);
-		users_active_line = new_al;
-		
+	//hard locks the line if amount of letters is above 98 (this shouldn't be ther in later version
+	if(users_active_line->linked_list_size > 98)
 		return;
-	}*/
 	
 	Letter* new_letter = (Letter*) malloc(sizeof(Letter));
 	new_letter -> character = character;

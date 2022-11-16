@@ -47,13 +47,14 @@ void host(void){
 
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_server, host);
+    
+    // for initial backend setup
+    init();
 
     // Start TUI
     startTUI(pass_phrase);
     updateWindow("");
 
-    // for initial backend setup
-    init();
 
     while (server_running)
     {
