@@ -107,3 +107,4 @@ char* get_line(int line_number);
 char** get_all_lines();
 void free_list_of_lines(char** list_to_lines);
 void free_all_space(void);
+void init(void);
