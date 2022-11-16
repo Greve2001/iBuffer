@@ -255,13 +255,17 @@ char **get_all_lines(){
 		free(list_of_lines);
 		
 	list_of_lines = (char**) malloc(size * sizeof(char*));
+	printf("\nTEST: size: %d, sizeof char*: %d ,malloced: %d\n", size , sizeof(char*) , size * sizeof(char*));
 	Line* current_element = first_line;
 	for(int i = 0; i < size; i++){
 		if(current_element->active_line)
 		{
 			active_line_to_line(current_element->active_line,false);
 		}
-		list_of_lines[i] = current_element->paragraph;
+		if(current_element -> paragraph)
+			list_of_lines[i] = current_element->paragraph;
+		else
+			list_of_lines[i] = NULL;
 		current_element = current_element->next;
 	}
 	return list_of_lines;
