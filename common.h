@@ -61,6 +61,7 @@ void host(void);
 void join(void);
 void writeToBuffer(char c);
 void closeProgram(void);
+void* get_lock(void);
 
 // Discover
 bool validate_pass_phrase(char *);

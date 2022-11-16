@@ -51,10 +51,11 @@ void bufferedWriting(char c){
     // Print
     interpretChar(c);
     char* line1 = get_all_lines()[0];
+    strLength = strlen(line1);
 
     // !!!!!!!!
+    wclear(mainWin);
     mvwprintw(mainWin, 1, xStart, "%s", line1); // Print string
-    printf("\n---%s---\n", get_line(0));
 
     moveCursor(c); // Move cursor
 
@@ -104,6 +105,7 @@ void printBuffer(char* buffer, int cursorPos){
 void printStatus(void){
     int numUsers = 1;
     curs_set(0);
+    wclear(statWin);
     mvwprintw(statWin, 1, xStart, "# Users: \t%d", numUsers);
     mvwprintw(statWin, 2, xStart, "# Keyword:\t%s", keyword);
     box(statWin, 0, 0);
