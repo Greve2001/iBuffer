@@ -83,8 +83,8 @@ void join(void){
     updateWindow("");
     for (;;)
     {
-        char c = getch(); // Escape key
-        if (c == 27) 
+        char c = getch();
+        if (c == 27) // Escape key
             break;
 
         if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
@@ -112,8 +112,8 @@ void writeToBuffer(char c) {
 void closeProgram(void) {
     server_running = false;
 
-    close_socket();
-    close_server();
+    close_socket(); // close all sockets
+    close_server(); 
 
     pthread_mutex_destroy(&lock);
 

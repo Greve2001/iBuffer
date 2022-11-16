@@ -4,15 +4,14 @@ int own_socket;
 int last_client_socket; // Fix
 
 /*
-* Start tcp server
-* - Create socket
+* Start TCP server
 * @param ip is the Internet host address
 */
 void start_tcp_server(char * ip) 
 {
-    // create endpoint for communication and return a file descriptor that refers to that endpoint.
+    // endpoint for communication -> file descriptor that refers to the endpoint.
     // * AF_INET is IPv4. SOCK_STREAM provides TCP. Default protocol is 0 when only a single protocol is used.
-    own_socket = socket(AF_INET, SOCK_STREAM, 0); // filedescriptor
+    own_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (own_socket < 0) 
     {
         updateWindow("Socket creation failed...");
@@ -23,8 +22,8 @@ void start_tcp_server(char * ip)
     struct sockaddr_in server_addr;
 
     // set port and address family
-    server_addr.sin_port = htons(1504);
     server_addr.sin_family = AF_INET; // TCP
+    server_addr.sin_port = htons(1504); // random not reserved TCP socket
     
     // converts from the IPv4 numbers-and-dots notation into binary form
     inet_aton(ip, &server_addr.sin_addr); 
@@ -38,8 +37,8 @@ void start_tcp_server(char * ip)
         exit(1);
     }
 
-    // Listen for clients
-    // * if the queue is full (max 5) the client trying to connect will receive ECONNREFUSED    
+    // Mark socket as a socket that will listen for connections
+    // * max queue lenght = 5. If the queue is full the client trying to connect will receive ECONNREFUSED    
     if (listen(own_socket, 5) < 0) 
         updateWindow("Listening failed...");
 
