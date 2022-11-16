@@ -18,12 +18,18 @@
 #include <sys/select.h>
 #include <ncurses.h> // TUI specific
 
+#define _GNU_SOURCE     	/* To get defns of NI_MAXSERV and NI_MAXHOST */
+
+#define NUMBER_OF_CLI 		5
+
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
 #define CHAR_RANGE_END      126
 #define LEFT_ARROW          4
 #define RIGHT_ARROW         5
 #define RETURN              7
+
+char *clients_ip[NUMBER_OF_CLI];
 
 // Structs
 struct Active_Line; //Forward decleration
