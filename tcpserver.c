@@ -61,7 +61,7 @@ void start_tcp_server(char * ip)
      * int backlog - the length of the queue of incoming requests. If connection is full the client recieve ECONNREFUSED. 
      */
     // Listen for clients
-    if (listen(own_socket, 5) < 0) 
+    if (listen(own_socket, NUMBER_OF_CLI) < 0) 
     {
         updateWindow("Listening failed...");
     }
@@ -126,8 +126,12 @@ void read_request(int client_socket)
 
 void send_buffer(char* buffer, int len, int cursor_x)
 {
+    for (size_t i = 0; i < NUMBER_OF_CLI; i++)
+    {
+        // Make this loop through all sockets.
+    }
+    
     send(last_client_socket, buffer, sizeof(char)*len, 0);
-    //send(last_client_socket, &cursor_x, sizeof(cursor_x), 0); // Does not work
 }
 
 void close_server(void)
