@@ -173,48 +173,13 @@ void write_char(int position, char character)
 		
 	if(character == '\n')
 	{
-		if(users_active_line->original_line == first_line)
-		{
-			make_new_line(0);
-			return;
-		}
+		Line* temp = first_line;
 		int line_count = 1;
-		Line* line_point = first_line;
-		for(; users_active_line -> original_line != line_point ; line_point = line_point -> next)
+		for( ; users_active_line -> original_line != temp ; temp = temp -> next)
 		{
-			line_count++;
+			line_count ++;
 		}
 		make_new_line(line_count);
-		
-		Active_Line* old_line = users_active_line;
-		line_to_active_line(old_line -> original_line -> next);
-		Active_Line* new_line = active_last_line;
-		
-		if(position == 0)
-		{
-			new_line -> linked_list_size = old_line -> linked_list_size;
-			new_line -> first_char = old_line -> first_char;
-			old_line -> linked_list_size = 0 ;
-			old_line -> first_char = NULL;
-			active_line_to_line(old_line, true);
-		}
-		
-		new_line -> linked_list_size = old_line -> linked_list_size - position;
-		old_line -> linked_list_size = old_line -> linked_list_size - new_line -> linked_list_size;
-		
-		Letter* letter_for_count = users_active_line -> first_char;
-		for(int i = 1; i < position ; i++)
-		{
-			letter_for_count = letter_for_count -> next;
-		}
-		
-		new_line -> first_char = letter_for_count -> next;
-		letter_for_count -> next = NULL;
-		
-		active_line_to_line(old_line,true);	
-		
-		return;
-		
 	}
 	
 	//hard locks the line if amount of letters is above 98 (this shouldn't be ther in later version
@@ -297,7 +262,6 @@ char **get_all_lines(){
 			active_line_to_line(current_element->active_line,false);
 		}
 		list_of_lines[i] = current_element->paragraph;
-		//printf("%s\n", current_element->paragraph);
 		current_element = current_element->next;
 	}
 	return list_of_lines;
@@ -321,6 +285,11 @@ void free_all_space(void){
 void init(void){
 	make_new_line(0);
     clicked_on_line(0);
+}
+
+int get_amount_of_lines(void)
+{
+	return size;
 }
 
 /***********
