@@ -59,8 +59,8 @@ typedef struct Active_Line{
 // Main
 void host(void);
 void join(void);
-void writeToBuffer(char c);
-void closeProgram(void);
+void write_to_buffer(char c);
+void close_program(void);
 void* get_lock(void);
 
 // Discover
@@ -75,19 +75,18 @@ void free_pass_phrase(void);
 int count_lines_in_file(FILE *);
 
 // TUI
-void testWindow(void);
-void bufferedWriting(char);
-void printStatus(void);
-void interpretChar(char c);
-void printBuffer(char*, int);
-void moveCursor(char c);
-void startTUI(char* pass_phrase);
-void stopTUI(void);
-int startupWindow(void);
-char* inputWindow(void);
-void updateWindow(char*);
-char* getBuffer(void);
-int getCursorPos(void);
+void start_tui(char* pass_phrase);
+void stop_tui(void);
+void interpret_char(char c);
+void buffered_writing(char);
+void print_buffer(char*, int);
+void print_status(void);
+int startup_window(void);
+char* input_window(void);
+void update_window(char*);
+void move_cursor(char c);
+int get_cursor_pos(void);
+char* get_buffer(void);
 
 // TCP client
 void start_tcp_client(char *);
