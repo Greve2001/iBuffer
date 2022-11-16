@@ -3,7 +3,6 @@
 // buffered lines
 static int size = 0;
 static Line* first_line;
-static Line* last_line;
 
 
 // active lines
@@ -22,19 +21,36 @@ static char** list_of_lines;
 * These methods is used for handleing the buffered lines only
 *
 ************************************************************/
-void make_new_line(int previus_line){
+void make_new_line(int new_line_number){
 	Line* new = (Line*) malloc(sizeof(Line));
 
 	if(!new){
 		;//TODO: error handling for malloc error
 	}
+	size++;
 	
 	if(!first_line)
+	{
 		first_line = new;
-	else
-		last_line->next = new;
-	last_line = new;
-	size++;
+		size = 1;
+		return;
+	}
+	
+	if(new_line_number == 0)
+	{
+		new->next = first_line;
+		first_line = new;
+		return;
+	}
+	
+	Line* prev_line = first_line;
+	for(int i = 1; i < new_line_number; i++)
+	{
+		prev_line = prev_line->next;
+	}
+	new->next = prev_line->next;
+	prev_line->next = new;
+	return;
 }
 
 /**************************************************************
@@ -128,13 +144,16 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 * This ensures that the char array in converted into a linkedlist and prepared for use.
 *
 */
-void clicked_on_line(int line_number){
-	if (users_active_line){
+void clicked_on_line(int line_number)
+{
+	if (users_active_line)
+	{
 		active_line_to_line(users_active_line, true);
 		//TODO: make TCP sent a delist to the other clients
 	}
 	Line* pointer_to_line = first_line;
-	for(int i = 0; i < line_number; i++){
+	for(int i = 0; i < line_number; i++)
+	{
 		pointer_to_line = pointer_to_line->next;
 	}
 	line_to_active_line(pointer_to_line);
@@ -147,13 +166,61 @@ void clicked_on_line(int line_number){
 * param position: the numneric position of the previus element on the line.
 * param character: the char that is whished to be written
 */
-void write_char(int position, char character){
+void write_char(int position, char character)
+{
 	if(!users_active_line)
 		return;
+		
+	if(character == '\n')
+	{
+		if(users_active_line->original_line == first_line)
+		{
+			make_new_line(0);
+			return;
+		}
+		int line_count = 1;
+		Line* line_point = first_line;
+		for(; users_active_line -> original_line != line_point ; line_point = line_point -> next)
+		{
+			line_count++;
+		}
+		make_new_line(line_count);
+		
+		Active_Line* old_line = users_active_line;
+		line_to_active_line(old_line -> original_line -> next);
+		Active_Line* new_line = active_last_line;
+		
+		if(position == 0)
+		{
+			new_line -> linked_list_size = old_line -> linked_list_size;
+			new_line -> first_char = old_line -> first_char;
+			old_line -> linked_list_size = 0 ;
+			old_line -> first_char = NULL;
+			active_line_to_line(old_line, true);
+		}
+		
+		new_line -> linked_list_size = old_line -> linked_list_size - position;
+		old_line -> linked_list_size = old_line -> linked_list_size - new_line -> linked_list_size;
+		
+		Letter* letter_for_count = users_active_line -> first_char;
+		for(int i = 1; i < position ; i++)
+		{
+			letter_for_count = letter_for_count -> next;
+		}
+		
+		new_line -> first_char = letter_for_count -> next;
+		letter_for_count -> next = NULL;
+		
+		active_line_to_line(old_line,true);	
+		
+		return;
+		
+	}
 	
 	//hard locks the line if amount of letters is above 98 (this shouldn't be ther in later version
 	if(users_active_line->linked_list_size > 98)
 		return;
+	
 	
 	Letter* new_letter = (Letter*) malloc(sizeof(Letter));
 	new_letter -> character = character;
@@ -218,17 +285,19 @@ char* get_line(int line_number){
 * returns a pointer to an array of all the strings for each line
 *
 */
-char * * get_all_lines(){
+char **get_all_lines(){
 	if(list_of_lines)
 		free(list_of_lines);
 		
 	list_of_lines = (char**) malloc(size * sizeof(char*));
 	Line* current_element = first_line;
 	for(int i = 0; i < size; i++){
-		if(current_element->active_line){
+		if(current_element->active_line)
+		{
 			active_line_to_line(current_element->active_line,false);
 		}
 		list_of_lines[i] = current_element->paragraph;
+		//printf("%s\n", current_element->paragraph);
 		current_element = current_element->next;
 	}
 	return list_of_lines;
