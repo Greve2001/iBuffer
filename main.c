@@ -41,10 +41,8 @@ void host(void){
     
     // Starting tcp server in a new thread
     char host[NI_MAXHOST];
-    //get_local_ip(host);
-
-    printf(" "); // I have no fucking clue why this does fixes a segfault!
-
+    get_local_ip(host);
+    
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_server, host);
     
