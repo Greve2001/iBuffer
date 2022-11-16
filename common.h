@@ -115,5 +115,5 @@ void free_list_of_lines(char** list_to_lines);
 void free_all_space(void);
 
 // Parser/serialize
-Message* parser(char* string) 
-char* serialize(Message* message) 
+Message* parser(char* string);
+char* serialize(Message* message);
