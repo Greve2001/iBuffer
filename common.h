@@ -97,10 +97,6 @@ void send_buffer(char*, int, int);
 void close_server(void);
 
 // Linked List
-void make_new_line(int previus_line);
-void write_char(int position, char character);
-void delete_char(int position);
-void line_to_active_line(Line* line);
 void active_line_to_line(Active_Line* active_line, bool free_active_line);
 void clicked_on_line(int line_number);
 char* get_line(int line_number);

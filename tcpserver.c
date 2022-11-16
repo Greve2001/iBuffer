@@ -5,7 +5,8 @@ int last_client_socket; // Fix
 
 bool running;
 
-void start_tcp_server(char * ip) {
+void start_tcp_server(char * ip) 
+{
 
     /**
      * socket(int domain, int type, int protocol) creates an endpoint for communication and returns a file descriptor that refers to that endpoint.
@@ -16,7 +17,8 @@ void start_tcp_server(char * ip) {
     own_socket = socket(AF_INET, SOCK_STREAM, 0); // filedescriptor
     running = true;
 
-    if (own_socket < 0) {
+    if (own_socket < 0) 
+    {
         updateWindow("Socket creation failed...");
         exit(1);
     }
@@ -48,7 +50,8 @@ void start_tcp_server(char * ip) {
      * struct addr - the adress handled by the struct sockaddr_in
      * socklen_t addrlen - the length of the struct
      */
-    if (bind(own_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
+    if (bind(own_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) 
+    {
         updateWindow("Binding to port failed...");
         exit(1);
     }
@@ -58,7 +61,8 @@ void start_tcp_server(char * ip) {
      * int backlog - the length of the queue of incoming requests. If connection is full the client recieve ECONNREFUSED. 
      */
     // Listen for clients
-    if (listen(own_socket, 5) < 0) {
+    if (listen(own_socket, 5) < 0) 
+    {
         updateWindow("Listening failed...");
     }
 
@@ -66,7 +70,8 @@ void start_tcp_server(char * ip) {
 
     struct sockaddr_in client_addr;
 
-    while(running) {
+    while(running) 
+    {
         /**
          * int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) - extracts the first connection request on the queue of the listening socket, sockfd, creates a new connected socket, and returns a new file descriptor referring to that socket.
          * int sockfd - the file descriptor returned from socket(), and has bind() and listen().
@@ -81,13 +86,17 @@ void start_tcp_server(char * ip) {
     }
 }
 
-void* handle_connection(void* socket) {
+void* handle_connection(void* socket) 
+{
     int client_socket = *(int*) socket;
     last_client_socket = client_socket; // TODO make linked list to handle this shit
 
-    if(client_socket < 0) {
+    if(client_socket < 0) 
+    {
         updateWindow("Server accept failed");
-    } else {
+    } 
+    else 
+    {
         updateWindow("Server accepted a client");
         fflush(stdout);
         char welcome_message[] = "Welcome to server!";
@@ -98,11 +107,14 @@ void* handle_connection(void* socket) {
 }
 
 // Receives chars from client
-void read_request(int client_socket) {
+void read_request(int client_socket) 
+{
     char c;
-    for(;;) {
+    for(;;) 
+    {
         ssize_t len = read(client_socket, &c, sizeof(c));
-        if (len != -1 && len != 0){
+        if (len != -1 && len != 0)
+        {
 
             writeToBuffer(c);
 
@@ -112,12 +124,14 @@ void read_request(int client_socket) {
     }
 }
 
-void send_buffer(char* buffer, int len, int cursor_x){
+void send_buffer(char* buffer, int len, int cursor_x)
+{
     send(last_client_socket, buffer, sizeof(char)*len, 0);
     //send(last_client_socket, &cursor_x, sizeof(cursor_x), 0); // Does not work
 }
 
-void close_server(void){
+void close_server(void)
+{
     int status = close(own_socket);
     running = false;
     printf("Attempted closing server with status: %d\n", status);
