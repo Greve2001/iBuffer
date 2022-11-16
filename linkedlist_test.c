@@ -38,8 +38,8 @@ int main(void){
 	test = get_all_lines();
 	num_test = get_amount_of_lines();
 	printf("%d\n", num_test);
-	//printf("%s\n", test[0]);
-	//printf("%s\n", test[1]);
+	printf("%s\n", test[0]);
+	printf("%s\n", test[1]);
 	/*
 	write_char(0,'a');
 	
