@@ -102,9 +102,9 @@ void writeToBuffer(char c) {
     if (status != 0)
         return;
 
-    bufferedWriting(c);
+    bufferedWriting(c); // tui.c
     char* str = getBuffer();
-    send_buffer(str, strlen(str), getCursorPos());
+    send_buffer(str, strlen(str)); // tcpserver.c
 
     pthread_mutex_unlock(&lock);
 }
