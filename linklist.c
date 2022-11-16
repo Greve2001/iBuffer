@@ -180,7 +180,7 @@ void delete_char(int position){
 	if(!users_active_line)
 		return;
 	if(!users_active_line->first_char){
-		//TODO: delete the active line.
+		return;//TODO: delete the active line.
 	}
 	if(position > users_active_line->linked_list_size)
 		return;
