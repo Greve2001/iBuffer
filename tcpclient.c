@@ -3,11 +3,13 @@
 int server_socket;
 
 // TCP connection methods is for now explained in tcpserver.c
-void start_tcp_client(char * ip) {
+void start_tcp_client(char * ip) 
+{
 
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (server_socket < 0) {
+    if (server_socket < 0) 
+    {
         updateWindow("Socket creation failed...");
         exit(EXIT_FAILURE);
     }
@@ -22,7 +24,8 @@ void start_tcp_client(char * ip) {
     // "Ascii to Network (aton)" and "Network to Ascii (ntoa)" converts IP addresses from a dots-and-number string to a struct in_addr and back
     inet_aton(ip, &server_addr.sin_addr);
 
-    if (connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
+    if (connect(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) 
+    {
         updateWindow("Connection with the server failed...");
         exit(EXIT_FAILURE);
     }
@@ -35,13 +38,16 @@ void start_tcp_client(char * ip) {
     read_response();
 }
 
-void transfer_msg(char c) {
+void transfer_msg(char c) 
+{
     send(server_socket, &c, sizeof(c), 0);
 }
 
 // Reads the buffer send by clients
-void read_response(void) {
-    for(;;) {
+void read_response(void) 
+{
+    for(;;) 
+    {
         char recv[100];
         memset(recv, 0, sizeof(recv));
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
@@ -49,11 +55,13 @@ void read_response(void) {
         if (len1 != -1 && len1 != 0)
             printBuffer(recv, 0);
         else
-            close_socket();
+            break;
     }
+    pthread_exit(NULL);
 }
 
-void close_socket(void){
+void close_socket(void)
+{
     int status = close(server_socket);
     printf("Tried closing socket with status: %d\n", status);
 }

@@ -212,11 +212,21 @@ void delete_char(int position){
 	if(!users_active_line->first_char){
 		//TODO: delete the active line.
 	}
+	if(position > users_active_line->linked_list_size)
+		return;
 	if(position == 0){
 		//TODO: merge with previus linkedlist.
+		return;
+	}
+	if(position == 1){
+		Letter* temp = users_active_line->first_char;
+		users_active_line->first_char = temp->next;
+		free(temp);
+		users_active_line->linked_list_size--;
+		return;
 	}
 	Letter* prev_character = users_active_line->first_char;
-	for(int i = 0; i < position; i++) prev_character = prev_character->next;
+	for(int i = 0; i < position - 2; i++) prev_character = prev_character->next;
 	Letter* after_character = prev_character->next->next;
 	free(prev_character->next);
 	prev_character->next = after_character;
