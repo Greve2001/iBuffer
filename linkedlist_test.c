@@ -2,6 +2,8 @@
 #include "linklist.h"
 
 int main(void){
+	
+
 	make_new_line(0);
 	clicked_on_line(0);
 	
@@ -33,7 +35,7 @@ int main(void){
 	write_char(3,'\n');
 	
 	
-	//clicked_on_line(1);
+	clicked_on_line(1);
 	
 	test = get_all_lines();
 	num_test = get_amount_of_lines();

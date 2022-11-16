@@ -180,6 +180,7 @@ void write_char(int position, char character)
 			line_count ++;
 		}
 		make_new_line(line_count);
+		return;
 	}
 	
 	//hard locks the line if amount of letters is above 98 (this shouldn't be ther in later version
@@ -262,10 +263,15 @@ char **get_all_lines(){
 		{
 			active_line_to_line(current_element->active_line,false);
 		}
-		if(current_element -> paragraph)
+		if(current_element -> paragraph){
+			printf("TEST: paragraph exisisted\n");
 			list_of_lines[i] = current_element->paragraph;
-		else
+		}
+		else{
+			printf("TEST: paragraph didn't exsist\n");
 			list_of_lines[i] = NULL;
+		}
+		printf("%s\n" , current_element->next ? "next does exsist" : "next doesn't exsist");
 		current_element = current_element->next;
 	}
 	return list_of_lines;
