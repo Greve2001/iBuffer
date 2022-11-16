@@ -3,15 +3,26 @@
 
 int main(void){
 	make_new_line(0);
-	printf("test4\n");
 	clicked_on_line(0);
 
-	write_char(0,'a');
 	
+	for(int i = 0; i < 5; i++){
+		write_char(i,'a'+i);
+	}
+	delete_char(1);
 
-	printf("test11\n");
 	char** test = get_all_lines();
 	printf("%s\n", test[0]);
-	printf("test12\n");
+	
+	delete_char(6);
+
+	test = get_all_lines();
+	printf("%s\n", test[0]);
+	
+	delete_char(4);
+
+	test = get_all_lines();
+	printf("%s\n", test[0]);
+	
 
 }
