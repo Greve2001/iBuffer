@@ -12,6 +12,10 @@ int yStart = 1;
 
 char* keyword;
 
+/**
+ * Starts the ncurses Text User Interface.
+ * Initializes variables and preset windows.
+*/
 void start_tui(char* pass_phrase){
     keyword = pass_phrase;
 
@@ -35,6 +39,9 @@ void start_tui(char* pass_phrase){
 
 }
 
+/**
+ * Stop the TUI by deleting the windows and deallocating them properly
+*/
 void stop_tui(void){
     werase(statWin);
     werase(updateWin);
@@ -45,6 +52,10 @@ void stop_tui(void){
     endwin();
 }
 
+/**
+ * Takes a character and writes it to the buffer.
+ * Updates the cursor position and refreshes the screen with new string.
+*/
 void buffered_writing(char c){
     curs_set(1);
 
@@ -65,6 +76,10 @@ void buffered_writing(char c){
     //free_list_of_lines(get_all_lines()); // Clean Up
 }
 
+/**
+ * Interprets the char, if its valid and whether the char is for adding to string,
+ * or if its for deleting.
+*/
 void interpret_char(char c){
     // Get better way to handle this.
 
@@ -77,6 +92,10 @@ void interpret_char(char c){
     }
 }
 
+/**
+ * Moves the cursor and updates its position variables.
+ * (Primarily used internally)
+*/
 void move_cursor(char c){
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){ // Normal typing
         if (strLength >= MAX_STRING_LENGTH) return;
@@ -92,6 +111,10 @@ void move_cursor(char c){
     wmove(mainWin, yStart, xStart+xPos);
 }
 
+/**
+ * Prints the entire buffer on the screen.
+ * Takes the cursor position to correctly show where last write or delete was.
+*/
 void print_buffer(char* buffer, int cursorPos){
     curs_set(1);
 
@@ -102,6 +125,10 @@ void print_buffer(char* buffer, int cursorPos){
     wrefresh(mainWin);
 }
 
+/**
+ * Prints the status window. Displays the amount of users and the keyword for the server
+ * This has to be called again for the window to refresh, should the variables have changed.
+*/
 void print_status(void){
     int numUsers = 1;
     curs_set(0);
@@ -112,7 +139,11 @@ void print_status(void){
     wrefresh(statWin);
 }
 
-
+/**
+ * Launches the startup window, that ask the user options for what to do.
+ * Returns the integer of the choice selected by user.
+ * (start_tui() must be called first.)
+*/
 int startup_window(void){
     initscr(); cbreak(); noecho(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
@@ -154,6 +185,11 @@ int startup_window(void){
     return returnStatus;
 }
 
+/**
+ * Launches the input window, that asks the user for the keyword.
+ * Returns a char* to the inputted string from the user.
+ * (start_tui() must be called first)
+*/
 char* input_window(void){
     initscr(); cbreak(); echo(); // Inital setup of screen
     keypad(stdscr, TRUE); // Enables navigation with keyboard
@@ -177,6 +213,10 @@ char* input_window(void){
     return str;
 }
 
+/**
+ * Refreshes the update window with the inputted string.
+ * Used for showing updates to the user.
+*/
 void update_window(char* str){
     curs_set(0);
 
@@ -186,11 +226,17 @@ void update_window(char* str){
     wrefresh(updateWin);
 }
 
-
+/**
+ * A middle-man function that returns the buffer, 
+ * !which currently is a single line!
+*/
 char* get_buffer(void){
     return get_all_lines()[0]; // Quick fix.
 }
 
+/**
+ * Provides the cursor's position on screen.
+*/
 int get_cursor_pos(void){
     return xPos;
 }
