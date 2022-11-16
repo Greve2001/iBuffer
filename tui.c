@@ -1,4 +1,5 @@
 #include "common.h"
+#include "linklist.h"
 
 WINDOW* statWin;
 WINDOW* mainWin;
@@ -10,11 +11,9 @@ int xStart = 1;
 int yStart = 1;
 
 char* keyword;
-char* str;
 
 void startTUI(char* pass_phrase){
     keyword = pass_phrase;
-    str = malloc(sizeof(char)*100);
 
     int statWidth = 49, statHeight = 4;
     int updateWidth = 49, updateHeight = 4;
@@ -44,38 +43,37 @@ void stopTUI(void){
     delwin(updateWin);
     delwin(mainWin);
     endwin();
-
-    free(str);
 }
 
 void bufferedWriting(char c){
-    // Setup counters
-    int len = strlen(str);
     curs_set(1);
 
     // Print
-    interpretChar(c, str);
-    mvwprintw(mainWin, 1, xStart, "%s", str); // Print string
+    interpretChar(c);
+    char* line1 = get_all_lines()[0];
+    strLength = strlen(line1);
+
+    // !!!!!!!!
+    wclear(mainWin);
+    mvwprintw(mainWin, 1, xStart, "%s", line1); // Print string
 
     moveCursor(c); // Move cursor
 
     box(mainWin, 0, 0);
     wrefresh(mainWin);
+
+    //free_list_of_lines(get_all_lines()); // Clean Up
 }
 
-void interpretChar(char c, char* str){
+void interpretChar(char c){
     // Get better way to handle this.
-    strLength = strlen(str);
 
     // Normal typing
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){
-        if (strLength >= MAX_STRING_LENGTH) return;
-        str[xPos] = c;
-        str[xPos+1] = '\0';
+        write_char(xPos, c);
     }
     else if (c == RETURN){ // Return
-        str[xPos+1-1] = '\0';
-        str[xPos+1] = 0;
+        delete_char(xPos);
     }
 }
 
@@ -107,6 +105,7 @@ void printBuffer(char* buffer, int cursorPos){
 void printStatus(void){
     int numUsers = 1;
     curs_set(0);
+    wclear(statWin);
     mvwprintw(statWin, 1, xStart, "# Users: \t%d", numUsers);
     mvwprintw(statWin, 2, xStart, "# Keyword:\t%s", keyword);
     box(statWin, 0, 0);
@@ -127,6 +126,7 @@ int startupWindow(void){
     mvwprintw(startupWin, 4, 1, "2:\tJoin Server");
     mvwprintw(startupWin, 5, 1, "3:\tExit");
     box(startupWin, 0, 0);
+
     wrefresh(startupWin);
 
     int returnStatus = -1;
@@ -188,7 +188,7 @@ void updateWindow(char* str){
 
 
 char* getBuffer(void){
-    return str;
+    return get_all_lines()[0]; // Quick fix.
 }
 
 int getCursorPos(void){
