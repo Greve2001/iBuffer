@@ -82,8 +82,8 @@ void join(void){
     update_window("");
     for (;;)
     {
-        char c = getch(); // Escape key
-        if (c == 27) 
+        char c = getch();
+        if (c == 27) // Escape key
             break;
 
         if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
@@ -101,9 +101,9 @@ void write_to_buffer(char c) {
     if (status != 0)
         return;
 
-    buffered_writing(c);
+    buffered_writing(c); // tui.c
     char* str = get_buffer();
-    send_buffer(str, strlen(str), get_cursor_pos());
+    send_buffer(str, strlen(str)); // tcpserver.c
 
     pthread_mutex_unlock(&lock);
 }
@@ -111,8 +111,8 @@ void write_to_buffer(char c) {
 void close_program(void) {
     server_running = false;
 
-    close_socket();
-    close_server();
+    close_socket(); // close all sockets
+    close_server(); 
 
     pthread_mutex_destroy(&lock);
 
