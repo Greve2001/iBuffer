@@ -7,7 +7,7 @@
 [] add code comments  (all)
 [] uniforming formatting (all)
 [] quality assure connections!  
-[] multiple clients (look into) (frederik)  
+[x] multiple clients (frederik)  
 
 ## Things to do
 [] write different scenarios that you cause deadlocks and livelocks (buffer corruption, writer crashing, reader crashing, server disapear, network disappear)  
