@@ -1,7 +1,7 @@
 #include "common.h"
 
 int own_socket;
-int last_client_socket; // Fix
+int client_sockets[NUMBER_OF_CLI];
 
 bool running;
 
@@ -70,6 +70,8 @@ void start_tcp_server(char * ip)
 
     struct sockaddr_in client_addr;
 
+    // Save client socket connections. Make new thread for each connection
+    int clients_connected = 0;
     while(running) 
     {
         /**
@@ -78,18 +80,23 @@ void start_tcp_server(char * ip)
          * struct addr - the adress handled by the struct sockaddr_in
          * socklen_t addrlen - must initialize it to contain the size (in bytes) of the structure pointed to by addr; on return it will contain the actual size of the peer address.
          */
-        int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
+        if (clients_connected < NUMBER_OF_CLI)
+        {
+            client_sockets[clients_connected] = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
 
-        pthread_t thread;
-        pthread_create(&thread, NULL, handle_connection, &client_socket);
+            pthread_t thread;
+            pthread_create(&thread, NULL, handle_connection, &client_sockets[clients_connected]);
 
+            clients_connected++;
+        }
+        else
+            break;
     }
 }
 
 void* handle_connection(void* socket) 
 {
     int client_socket = *(int*) socket;
-    last_client_socket = client_socket; // TODO make linked list to handle this shit
 
     if(client_socket < 0) 
     {
@@ -115,9 +122,7 @@ void read_request(int client_socket)
         ssize_t len = read(client_socket, &c, sizeof(c));
         if (len != -1 && len != 0)
         {
-
             write_to_buffer(c);
-
         }
         else
             break;
@@ -128,10 +133,13 @@ void send_buffer(char* buffer, int len, int cursor_x)
 {
     for (size_t i = 0; i < NUMBER_OF_CLI; i++)
     {
-        // Make this loop through all sockets.
+        if (&client_sockets[i] != NULL)
+        {
+            send(client_sockets[i], buffer, sizeof(char)*len, 0);
+        }
     }
     
-    send(last_client_socket, buffer, sizeof(char)*len, 0);
+    
 }
 
 void close_server(void)

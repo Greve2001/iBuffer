@@ -12,7 +12,7 @@
 static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
 
-
+char *clients[NUMBER_OF_CLI]; // Added this to make it run
 
 pthread_mutex_t clients_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t clients_cond = PTHREAD_COND_INITIALIZER;
