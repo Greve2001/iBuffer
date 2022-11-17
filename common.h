@@ -29,8 +29,6 @@
 #define RIGHT_ARROW         5
 #define RETURN              7
 
-char *clients_ip[NUMBER_OF_CLI];
-
 // Structs
 struct Active_Line; //Forward decleration
 
