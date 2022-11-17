@@ -15,8 +15,6 @@ int xStart = 1, yStart = 1;
 
 char* keyword;
 
-
-
 /**
  * Starts the ncurses Text User Interface.
  * Initializes variables and preset windows.
@@ -139,14 +137,11 @@ void print_buffer(char* buffer, int cursorPos){
  * This has to be called again for the window to refresh, should the variables have changed.
 */
 void print_status(void){
-    int numUsers = 1;
-
     curs_set(0); // Cursor invisible to not make cursor dart around.
 
     // Print statuses
     wclear(statWin);
-    mvwprintw(statWin, 1, xStart, "# Users: \t%d", numUsers);
-    mvwprintw(statWin, 2, xStart, "# Keyword:\t%s", keyword);
+    mvwprintw(statWin, 1, xStart, "# Keyword:\t%s", keyword);
 
     // Refresh updates
     box(statWin, 0, 0);
