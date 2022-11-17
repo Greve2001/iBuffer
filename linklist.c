@@ -62,7 +62,6 @@ void remove_next_linked_list_node(void *ptr)
 	void *temp = *(void**) ptr;
 	*(void**) ptr = **(void***) ptr;
 	free(temp);
-	
 }
 
 /*
