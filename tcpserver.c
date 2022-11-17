@@ -120,8 +120,6 @@ void send_buffer(char* buffer, int len)
             send(client_sockets[i], buffer, sizeof(char)*len, 0);
         }
     }
-    
-    
 }
 
 void close_server(void)
