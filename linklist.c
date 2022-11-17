@@ -149,14 +149,17 @@ void clicked_on_line(int line_number)
 	if (users_active_line)
 	{
 		active_line_to_line(users_active_line, true);
-		//TODO: make TCP sent a delist to the other clients
 	}
 	Line* pointer_to_line = first_line;
-	for(int i = 0; i < line_number; i++)
+	if(line_number != 0)
 	{
-		pointer_to_line = pointer_to_line->next;
+		for(int i = 0; i < line_number; i++)
+		{
+			pointer_to_line = pointer_to_line->next;
+		}
 	}
 	line_to_active_line(pointer_to_line);
+	users_active_line = pointer_to_line->active_line;
 }
 
 
@@ -183,7 +186,7 @@ void write_char(int position, char character)
 		return;
 	}
 	
-	//hard locks the line if amount of letters is above 98 (this shouldn't be ther in later version
+	//hard locks the line if amount of letters is above 98 (this shouldn't be there in later version)
 	if(users_active_line->linked_list_size > 98)
 		return;
 	
@@ -256,22 +259,16 @@ char **get_all_lines(){
 		free(list_of_lines);
 		
 	list_of_lines = (char**) malloc(size * sizeof(char*));
-	printf("\nTEST: size: %d, sizeof char*: %d ,malloced: %d\n", size , sizeof(char*) , size * sizeof(char*));
 	Line* current_element = first_line;
 	for(int i = 0; i < size; i++){
 		if(current_element->active_line)
 		{
 			active_line_to_line(current_element->active_line,false);
 		}
-		if(current_element -> paragraph){
-			printf("TEST: paragraph exisisted\n");
+		if(current_element -> paragraph)
 			list_of_lines[i] = current_element->paragraph;
-		}
-		else{
-			printf("TEST: paragraph didn't exsist\n");
+		else
 			list_of_lines[i] = NULL;
-		}
-		printf("%s\n" , current_element->next ? "next does exsist" : "next doesn't exsist");
 		current_element = current_element->next;
 	}
 	return list_of_lines;
