@@ -96,7 +96,7 @@ void close_socket(void);
 void start_tcp_server(char *);
 void* handle_connection(void* socket);
 void read_request(int client_socket);
-void send_buffer(char*, int, int);
+void send_buffer(char*, int);
 void close_server(void);
 
 // Linked List
