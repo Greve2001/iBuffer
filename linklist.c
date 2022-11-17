@@ -59,6 +59,9 @@ void make_new_line(int new_line_number){
 */
 void remove_next_linked_list_node(void *ptr)
 {
+	void *temp = *(void**) ptr;
+	*(void**) ptr = **(void***) ptr;
+	free(temp);
 	
 }
 
@@ -83,6 +86,7 @@ void remove_first_node_in_linked_list(void *ptr)
 		Letter *to_delete = (Letter*) *(Active_Line**) ptr;
 		ptr = to_delete -> next;
 		free(to_delete);
+		return;
 	}
 	free(ptr);
 }
