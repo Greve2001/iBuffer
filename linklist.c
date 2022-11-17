@@ -4,7 +4,6 @@
 static int size = 0;
 static Line* first_line;
 
-
 // active lines
 static int active_users = 0;
 static Active_Line* active_first_line;
@@ -23,6 +22,7 @@ static char** list_of_lines;
 ************************************************************/
 void make_new_line(int new_line_number){
 	Line* new = (Line*) malloc(sizeof(Line));
+	new -> paragraph = NULL;
 
 	if(!new){
 		;//TODO: error handling for malloc error
@@ -53,9 +53,46 @@ void make_new_line(int new_line_number){
 	return;
 }
 
-/**************************************************************
-* Methods for changing in between being a linked list and an array
+/*
 *
+*
+*/
+void remove_next_linked_list_node(void *ptr)
+{
+	
+}
+
+/*
+*
+* @param pointer to the first element in any of the 3 linked list
+*/
+void remove_first_node_in_linked_list(void *ptr)
+{
+	if(first_line == ptr)
+	{
+		first_line = *(Line**) ptr;
+	}
+	else if(active_first_line == ptr)
+	{
+		active_first_line = *(Active_Line**) ptr;
+	}
+	else
+	{
+		//this is fordeleting a Letter from a letter linked list.
+		//Expected type of the void pointer is a pointer to the active_line where we wishes to remove the first node.
+		Letter *to_delete = (Letter*) *(Active_Line**) ptr;
+		ptr = to_delete -> next;
+		free(to_delete);
+	}
+	free(ptr);
+}
+
+
+/**************************************************************
+* When a paragraph is clicked by the user, we prepare it for beign altered.
+*
+* @param &Line line
+* @return nothing
 ***************************************************************/
 void line_to_active_line(Line* line){
 	
@@ -74,6 +111,7 @@ void line_to_active_line(Line* line){
 	
 	if(!line->paragraph){
 		new_active_line -> linked_list_size = 0;
+		new_active_line -> first_char = NULL;
 		return;
 	}
 	
@@ -123,7 +161,7 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 		}else
 			letter = letter -> next;
 	}
-	paragraph[size] = '\000';
+	paragraph[size] = '\0';
 	line->paragraph = paragraph;
 	
 	
