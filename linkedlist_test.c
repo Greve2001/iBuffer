@@ -55,6 +55,14 @@ int main(void){
 	assert_equal(test[0], "bcd");
 	assert_equal(test[1], "k");
 	
-	//clicked_on_line(0);
+	clicked_on_line(0);
+	
+	write_char(2,'t');
+	
+	test = get_all_lines();
+	assert_equal(test[0], "bctd");
+	assert_equal(test[1], "k");
+	
+	return 0;
 
 }
