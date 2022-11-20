@@ -31,6 +31,7 @@
 #define LEFT_ARROW          4
 #define RIGHT_ARROW         5
 #define RETURN              7
+#define ALT_NEWLINE			'`'
 
 // Structs
 struct Active_Line; //Forward decleration
@@ -86,13 +87,14 @@ void start_tui(char* pass_phrase);
 void stop_tui(void);
 void interpret_char(char c);
 void buffered_writing(char);
-void print_buffer(char**, int, int);
+void print_buffer(char* , int, int);
 void print_status(void);
 int startup_window(void);
 char* input_window(void);
 void update_window(char*);
 void move_cursor(char c);
-int get_cursor_pos(void);
+int get_cursor_xPos(void);
+int get_cursor_yPos(void);
 char* get_buffer(void);
 
 // TCP client
