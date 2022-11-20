@@ -1,3 +1,5 @@
+#ifndef COMMON_H
+#define COMMON_H
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -125,3 +127,4 @@ int get_amount_of_lines(void);
 // Parser/serialize
 Message* parser(char* string);
 char* serialize(Message* message);
+#endif
