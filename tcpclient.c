@@ -55,7 +55,8 @@ void read_response(void)
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
 
         if (len1 != -1 && len1 != 0)
-            print_buffer(recv, 0);
+            ;// Should be made to handle char** from parser
+            //print_buffer(recv, 0);
         else
             break;
     }

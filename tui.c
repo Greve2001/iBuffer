@@ -63,15 +63,8 @@ void buffered_writing(char c){
     curs_set(1); // Makes cursor visible
 
     interpret_char(c);
-
-    // Get new length of buffer
-    char* line = get_buffer();
-    strLength = strlen(line);
-
-    wclear(mainWin); // Clear window so that ghosting does not occur
-    mvwprintw(mainWin, yStart+yPos, xStart, "%s", line); // Print line
-
-    move_cursor(c); // Move cursor
+    move_cursor(c);
+    print_buffer(get_all_lines(), xPos, yPos);
 
     // Draw Box outline and refresh
     box(mainWin, 0, 0);
@@ -144,24 +137,27 @@ void move_cursor(char c){
         xPos = 0;
         clicked_on_line(yPos);   
     }
-
-    wmove(mainWin, yStart+yPos, xStart+xPos);
 }
 
 /**
  * Prints the entire buffer on the screen.
  * Takes the cursor position to correctly show where last write or delete was.
 */
-void print_buffer(char* buffer, int cursorPos){
+void print_buffer(char** buffer, int cursorX, int cursorY){
     curs_set(1); // Cursor visible
 
     // Clear window and print buffer
     wclear(mainWin);
-    mvwprintw(mainWin, 1, 1, "%s", buffer);
+    
+    int n_lines = get_amount_of_lines();
+    for (size_t i = 0; i < n_lines; i++)
+    {
+        mvwprintw(mainWin, yStart+i, xStart, "%s", buffer[i]); // Print line
+    }
 
     // Draw box and move cursor
     box(mainWin, 0, 0);
-    wmove(mainWin, 1, cursorPos);
+    wmove(mainWin, cursorY+yStart, cursorX+xStart);
 
     wrefresh(mainWin); // Refresh to show updates
 }
