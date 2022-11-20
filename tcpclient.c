@@ -51,12 +51,15 @@ void read_response(void)
 {
     for(;;) 
     {
-        char recv[100] = {0};
+        char recv[200] = {0};
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
-        Message *msg = parser(recv);
+        
 
         if (len1 != -1 && len1 != 0)
+        {
+            Message *msg = parser(recv);
             print_buffer(msg->message, 0);
+        }
         else
             break;
     }
