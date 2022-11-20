@@ -92,7 +92,7 @@ void interpret_char(char c){
     else if (c == '\n')
     {
         update_window("New Line!");
-        make_new_line(1);
+        make_new_line(yPos);
     }
 }
 
@@ -101,6 +101,8 @@ void interpret_char(char c){
  * (Primarily used internally)
 */
 void move_cursor(char c){
+    strLength = strlen(get_line(yPos));
+
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
         if (strLength >= MAX_STRING_LENGTH) return;
@@ -120,6 +122,7 @@ void move_cursor(char c){
         {
             yPos--; 
             xPos = 0;
+            clicked_on_line(yPos);  
         }
     }
     else if (c == UP_ARROW)
@@ -128,14 +131,14 @@ void move_cursor(char c){
         {
             yPos++; 
             xPos = 0;
+            clicked_on_line(yPos);  
         }
     }
     else if (c == NEWLINE)
     {
-        make_new_line();
         yPos++;
         xPos = 0;
-        clicked_on_line(yPos);   
+        clicked_on_line(yPos);  
     }
 }
 
