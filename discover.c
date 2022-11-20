@@ -214,7 +214,6 @@ char *generate_pass_phrase(void)
         free(pass_fragment[i]);
     }
 
-    //printf("%s\n", server_pass_phrase);
     return server_pass_phrase;
 }
 
