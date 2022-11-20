@@ -1,4 +1,5 @@
 #include "common.h"
+#include <string.h>
 
 int server_socket;
 
@@ -50,13 +51,15 @@ void read_response(void)
 {
     for(;;) 
     {
-        char recv[100];
-        memset(recv, 0, sizeof(recv));
+        char recv[200] = {0};
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
+        
 
         if (len1 != -1 && len1 != 0)
-            ;// Should be made to handle char** from parser
-            //print_buffer(recv, 0);
+        {
+            Message *msg = parser(recv);
+            print_buffer(msg->message, 0);
+        }
         else
             break;
     }
@@ -67,9 +70,11 @@ void read_response(void)
 * Send character to server
 * @param c is the character you want to send
 */
-void transfer_msg(char c) 
+void transfer_msg(Message msg) 
 {
-    send(server_socket, &c, sizeof(c), 0);
+    char *ser_msg = serialize(&msg);
+    send(server_socket, ser_msg, sizeof(char) * strlen(ser_msg), 0);
+    free(ser_msg);
 }
 
 /**
