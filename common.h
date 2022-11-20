@@ -35,6 +35,9 @@
 #define RETURN              7
 #define ALT_NEWLINE			'x'
 
+static int x_cursors[NUMBER_OF_CLI+1];
+static int y_cursors[NUMBER_OF_CLI+1];
+
 // Structs
 struct Active_Line; //Forward decleration
 
@@ -69,7 +72,7 @@ typedef struct Message
 // Main
 void host(void);
 void join(void);
-void write_to_buffer(char c);
+void write_to_buffer(char c, int socket_number);
 void close_program(void);
 void* get_lock(void);
 
@@ -87,14 +90,14 @@ int count_lines_in_file(FILE *);
 // TUI
 void start_tui(char* pass_phrase);
 void stop_tui(void);
-void interpret_char(char c);
-void buffered_writing(char);
+void interpret_char(char c, int);
+void buffered_writing(char, int);
 void print_buffer(char* , int, int);
 void print_status(void);
 int startup_window(void);
 char* input_window(void);
 void update_window(char*);
-void move_cursor(char c);
+void move_cursor(char c, int);
 int get_cursor_xPos(void);
 int get_cursor_yPos(void);
 char* get_buffer(void);
@@ -107,8 +110,8 @@ void close_socket(void);
 
 // TCP server
 void start_tcp_server(char *);
-void* handle_connection(void* socket);
-void read_request(int client_socket);
+void* handle_connection(void* socket_number);
+void read_request(int client_socket, int socket_number);
 void send_buffer(char*, int);
 void close_server(void);
 
