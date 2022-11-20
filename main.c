@@ -2,6 +2,9 @@
 #include "common.h"
 #include "linklist.h"
 
+int x_cursors[NUMBER_OF_CLI+1];
+int y_cursors[NUMBER_OF_CLI+1];
+
 bool server_running = true;
 
 static pthread_mutex_t lock; // Main Lock
