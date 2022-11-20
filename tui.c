@@ -59,12 +59,16 @@ void stop_tui(void){
  * Takes a character and writes it to the buffer.
  * Updates the cursor position and refreshes the screen with new string.
 */
-void buffered_writing(char c){
+void buffered_writing(char c, int socket_number){
     curs_set(1); // Makes cursor visible
 
-    interpret_char(c);
-    move_cursor(c);
-    print_buffer(get_all_lines()[yPos], xPos, yPos);
+    interpret_char(c, socket_number);
+    move_cursor(c, socket_number);
+
+    int* x = &x_cursors[socket_number];
+    int* y = &y_cursors[socket_number];
+
+    print_buffer(get_all_lines()[*y], *x, *y);
 
     // Draw Box outline and refresh
     box(mainWin, 0, 0);
@@ -77,22 +81,24 @@ void buffered_writing(char c){
  * Interprets the char, if its valid and whether the char is for adding to string,
  * or if its for deleting.
 */
-void interpret_char(char c){
+void interpret_char(char c, int socket_number){
     // Get better way to handle this.
+    int* x = &x_cursors[socket_number];
+    int* y = &y_cursors[socket_number];
 
     // Normal typing
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     {
-        write_char(xPos, c);
+        write_char(*x, c);
     }
     else if (c == RETURN)
     { // Return
-        delete_char(xPos);
+        delete_char(*x);
     }
     else if (c == '\n')
     {
         update_window("New Line!");
-        make_new_line(yPos);
+        make_new_line(*y);
     }
 }
 
@@ -100,45 +106,48 @@ void interpret_char(char c){
  * Moves the cursor and updates its position variables.
  * (Primarily used internally)
 */
-void move_cursor(char c){
-    strLength = strlen(get_line(yPos));
+void move_cursor(char c, int socket_number){
+    int* x = &x_cursors[socket_number];
+    int* y = &y_cursors[socket_number];
+
+    strLength = strlen(get_line(*y));
 
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
         if (strLength >= MAX_STRING_LENGTH) return;
-        xPos++;
+        *x++;
     }
     else if (c == RETURN || c == LEFT_ARROW)
     { // Return and Arrow Left
-        if(xPos > 0) xPos--;
+        if(*x > 0) *x--;
     } 
     else if (c == RIGHT_ARROW)
     { // Arrow Right
-        if (xPos < strLength) xPos++;
+        if (*x < strLength) *x++;
     }
     else if (c == DOWN_ARROW)
     {
-        if (yPos > 0)
+        if (*y > 0)
         {
-            yPos--; 
-            xPos = 0;
-            clicked_on_line(yPos);  
+            *y--; 
+            *x = 0;
+            clicked_on_line(*y);  
         }
     }
     else if (c == UP_ARROW)
     {
-        if (yPos < mainHeight-2 && yPos < get_amount_of_lines()-1)
+        if (*y < mainHeight-2 && *y < get_amount_of_lines()-1)
         {
-            yPos++; 
-            xPos = 0;
-            clicked_on_line(yPos);  
+            *y++; 
+            *x = 0;
+            clicked_on_line(*y);  
         }
     }
     else if (c == NEWLINE)
     {
-        yPos++;
-        xPos = 0;
-        clicked_on_line(yPos);  
+        *y++;
+        *x = 0;
+        clicked_on_line(*y);  
     }
 }
 
