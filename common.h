@@ -18,6 +18,10 @@
 #include <sys/select.h>
 #include <ncurses.h> // TUI specific
 
+#define _GNU_SOURCE     	/* To get defns of NI_MAXSERV and NI_MAXHOST */
+
+#define NUMBER_OF_CLI 		5
+
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
 #define CHAR_RANGE_END      126
@@ -59,8 +63,8 @@ typedef struct Message
 // Main
 void host(void);
 void join(void);
-void writeToBuffer(char c);
-void closeProgram(void);
+void write_to_buffer(char c);
+void close_program(void);
 void* get_lock(void);
 
 // Discover
@@ -75,19 +79,18 @@ void free_pass_phrase(void);
 int count_lines_in_file(FILE *);
 
 // TUI
-void testWindow(void);
-void bufferedWriting(char);
-void printStatus(void);
-void interpretChar(char c);
-void printBuffer(char*, int);
-void moveCursor(char c);
-void startTUI(char* pass_phrase);
-void stopTUI(void);
-int startupWindow(void);
-char* inputWindow(void);
-void updateWindow(char*);
-char* getBuffer(void);
-int getCursorPos(void);
+void start_tui(char* pass_phrase);
+void stop_tui(void);
+void interpret_char(char c);
+void buffered_writing(char);
+void print_buffer(char*, int);
+void print_status(void);
+int startup_window(void);
+char* input_window(void);
+void update_window(char*);
+void move_cursor(char c);
+int get_cursor_pos(void);
+char* get_buffer(void);
 
 // TCP client
 void start_tcp_client(char *);
@@ -99,20 +102,20 @@ void close_socket(void);
 void start_tcp_server(char *);
 void* handle_connection(void* socket);
 void read_request(int client_socket);
-void send_buffer(char*, int, int);
+void send_buffer(char*, int);
 void close_server(void);
 
 // Linked List
 void make_new_line(int previus_line);
 void write_char(int position, char character);
 void delete_char(int position);
-void line_to_active_line(Line* line);
-void active_line_to_line(Active_Line* active_line, bool free_active_line);
 void clicked_on_line(int line_number);
 char* get_line(int line_number);
 char** get_all_lines();
 void free_list_of_lines(char** list_to_lines);
 void free_all_space(void);
+void init(void);
+int get_amount_of_lines(void);
 
 // Parser/serialize
 Message* parser(char* string);
