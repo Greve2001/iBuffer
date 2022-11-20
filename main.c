@@ -59,7 +59,7 @@ void host(void){
         char c = getch();
         if (c == 27) break; // Escape key
 
-        write_to_buffer(c);
+        write_to_buffer(c, NUMBER_OF_CLI);
 
     }
     close_program();
@@ -107,12 +107,12 @@ void join(void){
 
 // Called from Client and Host
 // Here we should handle mutex!!!
-void write_to_buffer(char c) {
+void write_to_buffer(char c, int socket_number) {
     int status = pthread_mutex_trylock(&lock);
     if (status != 0)
         return;
 
-    buffered_writing(c); // tui.c
+    buffered_writing(c, socket_number); // tui.c
     char* str = get_buffer();
     send_buffer(str, strlen(str)); // tcpserver.c
 

@@ -56,7 +56,7 @@ void start_tcp_server(char * ip)
             client_sockets[clients_connected] = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
 
             pthread_t thread;
-            pthread_create(&thread, NULL, handle_connection, &client_sockets[clients_connected]);
+            pthread_create(&thread, NULL, (void*) handle_connection, (void*) &clients_connected);
 
             clients_connected++;
         }
@@ -70,9 +70,9 @@ void start_tcp_server(char * ip)
 * - send welcome message to newly connected client 
 * @param socket is the file descriptor refering the newly connected socket
 */
-void* handle_connection(void* socket) 
+void* handle_connection(void* socket_number) 
 {
-    int client_socket = *(int*) socket;
+    int client_socket = client_sockets[*(int*)socket_number];
 
     if(client_socket < 0) 
         update_window("Server accept failed...");
@@ -85,14 +85,14 @@ void* handle_connection(void* socket)
         send(client_socket, welcome_message, sizeof(welcome_message), 0); 
     }
 
-    read_request(client_socket);
+    read_request(client_socket, *(int*)socket_number);
 }
 
 /** 
 * Receive characters from client and write to buffer (ref: main.c)
 * @param client_socket is the file descriptor refering the connected socket of the client
 */
-void read_request(int client_socket) 
+void read_request(int client_socket, int socket_number) 
 {
     Message *pmsg;
     char msg[200] = {0};
@@ -109,7 +109,7 @@ void read_request(int client_socket)
             if (c == ALT_NEWLINE) 
                 c = NEWLINE;
 
-            write_to_buffer(c); // main.c
+            write_to_buffer(c, socket_number); // main.c
         }
         else
             break;
@@ -128,8 +128,8 @@ void send_buffer(char* buffer, int len)
         if (&client_sockets[i] != NULL)
         {
             Message msg;
-            msg.x = get_cursor_xPos();
-            msg.y = get_cursor_yPos();
+            msg.x = x_cursors[i];
+            msg.y = y_cursors[i];
             memset(msg.message, 0, 100);
 
             if (buffer[0] != '\0')
