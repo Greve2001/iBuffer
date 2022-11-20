@@ -112,6 +112,11 @@ void write_to_buffer(char c, int socket_number) {
     if (status != 0)
         return;
 
+    
+    char temp[100];
+    sprintf(temp, "Sock: %d  xPos: %d", socket_number, x_cursors[socket_number]);
+    update_window(temp);
+    
     buffered_writing(c, socket_number); // tui.c
     char* str = get_buffer();
     send_buffer(str, strlen(str)); // tcpserver.c

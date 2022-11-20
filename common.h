@@ -33,8 +33,8 @@
 #define RETURN              7
 #define ALT_NEWLINE			'x'
 
-static int x_cursors[NUMBER_OF_CLI+1];
-static int y_cursors[NUMBER_OF_CLI+1];
+extern int x_cursors[NUMBER_OF_CLI+1];
+extern int y_cursors[NUMBER_OF_CLI+1];
 
 // Structs
 struct Active_Line; //Forward decleration
