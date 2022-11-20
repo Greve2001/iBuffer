@@ -125,9 +125,10 @@ void send_buffer(char* buffer, int len)
             Message msg;
             msg.x = 0; // Temp
             msg.y = 0; // Temp
+            memset(msg.message, 0, 100);
             strcat(msg.message, buffer);
             char* msg_string = serialize(&msg);
-            send(client_sockets[i], serialize(&msg), sizeof(char)*strlen(msg_string), 0);
+            send(client_sockets[i], msg_string, sizeof(char)*strlen(msg_string), 0);
         }
     }
 }
