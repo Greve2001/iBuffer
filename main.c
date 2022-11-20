@@ -15,7 +15,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    int returnStatus = startupWindow();
+    int returnStatus = startup_window();
     switch (returnStatus)
     {
     case 0: // Host
@@ -41,9 +41,7 @@ void host(void){
     
     // Starting tcp server in a new thread
     char host[NI_MAXHOST];
-    //get_local_ip(host);
-
-    printf(" "); // I have no fucking clue why this does fixes a segfault!
+    get_local_ip(host);
 
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_server, host);
@@ -52,8 +50,8 @@ void host(void){
     init();
 
     // Start TUI
-    startTUI(pass_phrase);
-    updateWindow("");
+    start_tui(pass_phrase);
+    update_window("");
 
 
     while (server_running)
@@ -61,16 +59,16 @@ void host(void){
         char c = getch();
         if (c == 27) break; // Escape key
 
-        writeToBuffer(c);
+        write_to_buffer(c);
 
     }
-    closeProgram();
+    close_program();
 }
 
 void join(void){
     // Input Keyword
     char* key = malloc(sizeof(char)*100); // Make in tui
-    key = inputWindow();
+    key = input_window();
 
     // Broadcast
     char host[NI_MAXHOST];
@@ -80,12 +78,12 @@ void join(void){
     pthread_create(&thread, NULL, (void*) start_tcp_client, host);
 
     // Start TUI
-    startTUI("");
-    updateWindow("");
+    start_tui("");
+    update_window("");
     for (;;)
     {
-        char c = getch(); // Escape key
-        if (c == 27) 
+        char c = getch();
+        if (c == 27) // Escape key
             break;
 
         if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
@@ -93,31 +91,31 @@ void join(void){
     }
 
     close_socket();
-    stopTUI();
+    stop_tui();
 }
 
 // Called from Client and Host
 // Here we should handle mutex!!!
-void writeToBuffer(char c) {
+void write_to_buffer(char c) {
     int status = pthread_mutex_trylock(&lock);
     if (status != 0)
         return;
 
-    bufferedWriting(c);
-    char* str = getBuffer();
-    send_buffer(str, strlen(str), getCursorPos());
+    buffered_writing(c); // tui.c
+    char* str = get_buffer();
+    send_buffer(str, strlen(str)); // tcpserver.c
 
     pthread_mutex_unlock(&lock);
 }
 
-void closeProgram(void) {
+void close_program(void) {
     server_running = false;
 
-    close_socket();
-    close_server();
+    close_socket(); // close all sockets
+    close_server(); 
 
     pthread_mutex_destroy(&lock);
 
-    stopTUI();
+    stop_tui();
     exit(EXIT_SUCCESS);
 }
