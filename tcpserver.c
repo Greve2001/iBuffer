@@ -131,7 +131,12 @@ void send_buffer(char* buffer, int len)
             msg.x = get_cursor_xPos();
             msg.y = get_cursor_yPos();
             memset(msg.message, 0, 100);
-            strcat(msg.message, buffer);
+
+            if (buffer[0] != '\0')
+                strcat(msg.message, buffer);
+            else 
+                msg.message[0] = ' ';
+
             char* msg_string = serialize(&msg);
             send(client_sockets[i], msg_string, sizeof(char)*strlen(msg_string), 0);
         }

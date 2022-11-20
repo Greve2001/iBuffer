@@ -31,7 +31,7 @@
 #define LEFT_ARROW          4
 #define RIGHT_ARROW         5
 #define RETURN              7
-#define ALT_NEWLINE			'`'
+#define ALT_NEWLINE			'x'
 
 // Structs
 struct Active_Line; //Forward decleration
