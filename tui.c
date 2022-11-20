@@ -65,10 +65,7 @@ void buffered_writing(char c, int socket_number){
     interpret_char(c, socket_number);
     move_cursor(c, socket_number);
 
-    int* x = &x_cursors[socket_number];
-    int* y = &y_cursors[socket_number];
-
-    print_buffer(get_all_lines()[*y], *x, *y);
+    print_buffer(get_all_lines()[y_cursors[socket_number]], x_cursors[socket_number], y_cursors[socket_number]);
 
     // Draw Box outline and refresh
     box(mainWin, 0, 0);
@@ -83,22 +80,20 @@ void buffered_writing(char c, int socket_number){
 */
 void interpret_char(char c, int socket_number){
     // Get better way to handle this.
-    int* x = &x_cursors[socket_number];
-    int* y = &y_cursors[socket_number];
 
     // Normal typing
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     {
-        write_char(*x, c);
+        write_char(x_cursors[socket_number], c);
     }
     else if (c == RETURN)
     { // Return
-        delete_char(*x);
+        delete_char(x_cursors[socket_number]);
     }
     else if (c == '\n')
     {
         update_window("New Line!");
-        make_new_line(*y);
+        make_new_line(y_cursors[socket_number]);
     }
 }
 
@@ -107,47 +102,44 @@ void interpret_char(char c, int socket_number){
  * (Primarily used internally)
 */
 void move_cursor(char c, int socket_number){
-    int* x = &x_cursors[socket_number];
-    int* y = &y_cursors[socket_number];
-
-    strLength = strlen(get_line(*y));
+    strLength = strlen(get_line(y_cursors[socket_number]));
 
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
         if (strLength >= MAX_STRING_LENGTH) return;
-        *x++;
+        x_cursors[socket_number]++;
     }
     else if (c == RETURN || c == LEFT_ARROW)
     { // Return and Arrow Left
-        if(*x > 0) *x--;
+        if(x_cursors[socket_number] > 0) x_cursors[socket_number]--;
     } 
     else if (c == RIGHT_ARROW)
     { // Arrow Right
-        if (*x < strLength) *x++;
+        if (x_cursors[socket_number] < strLength) x_cursors[socket_number]++;
     }
     else if (c == DOWN_ARROW)
     {
-        if (*y > 0)
+        if (y_cursors[socket_number] > 0)
         {
-            *y--; 
-            *x = 0;
-            clicked_on_line(*y);  
+            y_cursors[socket_number]--; 
+            x_cursors[socket_number] = 0;
+            clicked_on_line(y_cursors[socket_number]);  
         }
     }
     else if (c == UP_ARROW)
     {
-        if (*y < mainHeight-2 && *y < get_amount_of_lines()-1)
+        if (y_cursors[socket_number] < mainHeight-2 && y_cursors[socket_number] < get_amount_of_lines()-1)
         {
-            *y++; 
-            *x = 0;
-            clicked_on_line(*y);  
+            y_cursors[socket_number]++; 
+            x_cursors[socket_number] = 0;
+            clicked_on_line(y_cursors[socket_number]);  
         }
     }
     else if (c == NEWLINE)
     {
-        *y++;
-        *x = 0;
-        clicked_on_line(*y);  
+        y_cursors[socket_number]++;
+        x_cursors[socket_number] = 0;
+        clicked_on_line(y_cursors[socket_number]);  
     }
 }
 
