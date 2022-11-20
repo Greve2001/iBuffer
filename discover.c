@@ -1,4 +1,3 @@
-#define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 #define MAX_PASS_LENGTH 1024
 #define MAX_PATH_LENGTH 1024
@@ -9,12 +8,11 @@
 #define PORT_NUMBER 2207 
 #define BROADCAST_ADDR "0.0.0.0"          // For loopback broadcast
 //#define BROADCAST_ADDR "255.255.255.255"    // For network broadcast
-#define NUMBER_OF_CLI 5
 
 static char *server_pass_phrase;
 static char *gen_files[] = {"animal_list.txt", "verb_list.txt", "adjective_list.txt"};
 
-char *clients[NUMBER_OF_CLI];
+char *clients[NUMBER_OF_CLI]; // Added this to make it run
 
 pthread_mutex_t clients_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t clients_cond = PTHREAD_COND_INITIALIZER;
