@@ -58,7 +58,7 @@ void read_response(void)
         if (len1 != -1 && len1 != 0)
         {
             Message *msg = parser(recv);
-            print_buffer(msg->message, 0);
+            print_buffer(msg->message, 0, 0);
         }
         else
             break;
