@@ -8,7 +8,7 @@ Message* parser(char* string)
 {
     Message* message = (Message*) malloc(sizeof(Message));
     char* token;
-    char* delim = "\n{}";
+    char* delim = "{;}";
     // Get first line of 
     token = strtok(string, delim);
     message->x = atoi(token);
@@ -25,15 +25,14 @@ char* serialize(Message* message)
 {
     char *result = (char *) calloc(1, sizeof(*message) + 100);
     result[0] = '{';
-    result[1] = '\n';
-    result[2] = '\0';
+    result[1] = '\0';
     char conv[5];
-    sprintf(conv, "%d\n", message->x);
+    sprintf(conv, "%d;", message->x);
     strcat(result, conv); 
-    sprintf(conv, "%d\n", message->y);
+    sprintf(conv, "%d;", message->y);
     strcat(result, conv); 
     strcat(result, message->message);
-    strcat(result, "\n}");
+    strcat(result, "}");
 
     return result;
 }
