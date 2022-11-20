@@ -53,9 +53,10 @@ void read_response(void)
     {
         char recv[100] = {0};
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
+        Message *msg = parser(recv);
 
         if (len1 != -1 && len1 != 0)
-            print_buffer(recv, 0);
+            print_buffer(msg->message, 0);
         else
             break;
     }

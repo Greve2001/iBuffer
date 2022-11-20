@@ -92,6 +92,7 @@ void join(void){
             msg.x = get_cursor_pos();
             msg.y = 0;  // TODO Implement function get y
             msg.message[0] = c;
+            msg.message[1] = '\0';
             transfer_msg(msg);
         }
     }
