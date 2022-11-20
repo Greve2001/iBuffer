@@ -20,7 +20,9 @@ static char** list_of_lines;
 * These methods is used for handleing the buffered lines only
 *
 ************************************************************/
-void make_new_line(int new_line_number){
+int number_of_lines = 1;
+
+void make_new_line(){
 	Line* new = (Line*) malloc(sizeof(Line));
 	new -> paragraph = NULL;
 
@@ -36,7 +38,7 @@ void make_new_line(int new_line_number){
 		return;
 	}
 	
-	if(new_line_number == 0)
+	if(number_of_lines == 0)
 	{
 		new->next = first_line;
 		first_line = new;
@@ -44,12 +46,14 @@ void make_new_line(int new_line_number){
 	}
 	
 	Line* prev_line = first_line;
-	for(int i = 1; i < new_line_number; i++)
+	for(int i = 1; i < number_of_lines; i++)
 	{
 		prev_line = prev_line->next;
 	}
 	new->next = prev_line->next;
 	prev_line->next = new;
+
+	number_of_lines++;
 	return;
 }
 
@@ -215,6 +219,7 @@ void write_char(int position, char character)
 	if(!users_active_line)
 		return;
 		
+	/*
 	if(character == '\n')
 	{
 		Line* temp = first_line;
@@ -226,7 +231,8 @@ void write_char(int position, char character)
 		make_new_line(line_count);
 		return;
 	}
-	
+	*/
+
 	//hard locks the line if amount of letters is above 98 (this shouldn't be there in later version)
 	if(users_active_line->linked_list_size > 98)
 		return;

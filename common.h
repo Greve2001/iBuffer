@@ -25,6 +25,9 @@
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
 #define CHAR_RANGE_END      126
+#define NEWLINE				'\n'
+#define UP_ARROW			2
+#define DOWN_ARROW			3
 #define LEFT_ARROW          4
 #define RIGHT_ARROW         5
 #define RETURN              7
@@ -100,7 +103,7 @@ void send_buffer(char*, int);
 void close_server(void);
 
 // Linked List
-void make_new_line(int previus_line);
+void make_new_line();
 void write_char(int position, char character);
 void delete_char(int position);
 void clicked_on_line(int line_number);

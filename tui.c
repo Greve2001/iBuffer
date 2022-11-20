@@ -10,7 +10,7 @@ int updateWidth = 49, updateHeight = 4;
 int mainWidth = 100, mainHeight = 50;
 
 int strLength;
-int xPos;
+int xPos, yPos;
 int xStart = 1, yStart = 1;
 
 char* keyword;
@@ -38,6 +38,7 @@ void start_tui(char* pass_phrase){
 
     // Set variables
     xPos = 0;
+    yPos = 0;
     strLength = 0;
 }
 
@@ -64,11 +65,11 @@ void buffered_writing(char c){
     interpret_char(c);
 
     // Get new length of buffer
-    char* line1 = get_all_lines()[0];
-    strLength = strlen(line1);
+    char* line = get_buffer();
+    strLength = strlen(line);
 
     wclear(mainWin); // Clear window so that ghosting does not occur
-    mvwprintw(mainWin, 1, xStart, "%s", line1); // Print line
+    mvwprintw(mainWin, yStart+yPos, xStart, "%s", line); // Print line
 
     move_cursor(c); // Move cursor
 
@@ -87,11 +88,18 @@ void interpret_char(char c){
     // Get better way to handle this.
 
     // Normal typing
-    if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){
+    if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
+    {
         write_char(xPos, c);
     }
-    else if (c == RETURN){ // Return
+    else if (c == RETURN)
+    { // Return
         delete_char(xPos);
+    }
+    else if (c == '\n')
+    {
+        update_window("New Line!");
+        make_new_line(1);
     }
 }
 
@@ -100,18 +108,44 @@ void interpret_char(char c){
  * (Primarily used internally)
 */
 void move_cursor(char c){
-    if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END)){ // Normal typing
+    if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
+    { // Normal typing
         if (strLength >= MAX_STRING_LENGTH) return;
         xPos++;
     }
-    else if (c == RETURN || c == LEFT_ARROW){ // Return and Arrow Left
+    else if (c == RETURN || c == LEFT_ARROW)
+    { // Return and Arrow Left
         if(xPos > 0) xPos--;
     } 
-    else if (c == RIGHT_ARROW){ // Arrow Right
+    else if (c == RIGHT_ARROW)
+    { // Arrow Right
         if (xPos < strLength) xPos++;
-    } 
+    }
+    else if (c == DOWN_ARROW)
+    {
+        if (yPos > 0)
+        {
+            yPos--; 
+            xPos = 0;
+        }
+    }
+    else if (c == UP_ARROW)
+    {
+        if (yPos < mainHeight-2 && yPos < get_amount_of_lines()-1)
+        {
+            yPos++; 
+            xPos = 0;
+        }
+    }
+    else if (c == NEWLINE)
+    {
+        make_new_line();
+        yPos++;
+        xPos = 0;
+        clicked_on_line(yPos);   
+    }
 
-    wmove(mainWin, yStart, xStart+xPos);
+    wmove(mainWin, yStart+yPos, xStart+xPos);
 }
 
 /**
@@ -253,7 +287,7 @@ void update_window(char* str){
  * !which currently is a single line!
 */
 char* get_buffer(void){
-    return get_all_lines()[0]; // Quick fix.
+    return get_all_lines()[yPos]; // Quick fix.
 }
 
 /**
