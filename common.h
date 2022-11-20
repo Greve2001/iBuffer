@@ -94,7 +94,7 @@ char* get_buffer(void);
 
 // TCP client
 void start_tcp_client(char *);
-void transfer_msg(char c);
+void transfer_msg(Message);
 void read_response(void);
 void close_socket(void);
 
