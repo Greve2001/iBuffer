@@ -94,13 +94,18 @@ void* handle_connection(void* socket)
 */
 void read_request(int client_socket) 
 {
-    char c;
+    Message *pmsg;
+    char msg[200] = {0};
 
     for(;;) 
     {
-        ssize_t len = read(client_socket, &c, sizeof(c));
+        ssize_t len = read(client_socket, &msg, sizeof(msg));
+        
         if (len != -1 && len != 0)
-            write_to_buffer(c); // main.c
+        {
+            pmsg = parser(msg);
+            write_to_buffer(pmsg->message[0]); // main.c
+        }
         else
             break;
     }
