@@ -3,8 +3,6 @@
 // buffered lines
 static int size = 0;
 static Line* first_line;
-static Line* last_line;
-
 
 // active lines
 static int active_users = 0;
@@ -22,24 +20,82 @@ static char** list_of_lines;
 * These methods is used for handleing the buffered lines only
 *
 ************************************************************/
-void make_new_line(int previus_line){
+void make_new_line(int new_line_number){
 	Line* new = (Line*) malloc(sizeof(Line));
+	new -> paragraph = NULL;
 
 	if(!new){
 		;//TODO: error handling for malloc error
 	}
+	size++;
 	
 	if(!first_line)
+	{
 		first_line = new;
-	else
-		last_line->next = new;
-	last_line = new;
-	size++;
+		size = 1;
+		return;
+	}
+	
+	if(new_line_number == 0)
+	{
+		new->next = first_line;
+		first_line = new;
+		return;
+	}
+	
+	Line* prev_line = first_line;
+	for(int i = 1; i < new_line_number; i++)
+	{
+		prev_line = prev_line->next;
+	}
+	new->next = prev_line->next;
+	prev_line->next = new;
+	return;
 }
 
-/**************************************************************
-* Methods for changing in between being a linked list and an array
+/*
 *
+*
+*/
+void remove_next_linked_list_node(void *ptr)
+{
+	void *temp = *(void**) ptr;
+	*(void**) ptr = **(void***) ptr;
+	free(temp);
+}
+
+/*
+*
+* @param pointer to the first element in any of the 3 linked list
+*/
+void remove_first_node_in_linked_list(void *ptr)
+{
+	if(first_line == ptr)
+	{
+		first_line = *(Line**) ptr;
+	}
+	else if(active_first_line == ptr)
+	{
+		active_first_line = *(Active_Line**) ptr;
+	}
+	else
+	{
+		//this is fordeleting a Letter from a letter linked list.
+		//Expected type of the void pointer is a pointer to the active_line where we wishes to remove the first node.
+		Letter *to_delete = (Letter*) *(Active_Line**) ptr;
+		ptr = to_delete -> next;
+		free(to_delete);
+		return;
+	}
+	free(ptr);
+}
+
+
+/**************************************************************
+* When a paragraph is clicked by the user, we prepare it for beign altered.
+*
+* @param &Line line
+* @return nothing
 ***************************************************************/
 void line_to_active_line(Line* line){
 	
@@ -58,6 +114,7 @@ void line_to_active_line(Line* line){
 	
 	if(!line->paragraph){
 		new_active_line -> linked_list_size = 0;
+		new_active_line -> first_char = NULL;
 		return;
 	}
 	
@@ -107,7 +164,7 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 		}else
 			letter = letter -> next;
 	}
-	paragraph[size] = '\000';
+	paragraph[size] = '\0';
 	line->paragraph = paragraph;
 	
 	
@@ -128,16 +185,22 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 * This ensures that the char array in converted into a linkedlist and prepared for use.
 *
 */
-void clicked_on_line(int line_number){
-	if (users_active_line){
+void clicked_on_line(int line_number)
+{
+	if (users_active_line)
+	{
 		active_line_to_line(users_active_line, true);
-		//TODO: make TCP sent a delist to the other clients
 	}
 	Line* pointer_to_line = first_line;
-	for(int i = 0; i < line_number; i++){
-		pointer_to_line = pointer_to_line->next;
+	if(line_number != 0)
+	{
+		for(int i = 0; i < line_number; i++)
+		{
+			pointer_to_line = pointer_to_line->next;
+		}
 	}
 	line_to_active_line(pointer_to_line);
+	users_active_line = pointer_to_line->active_line;
 }
 
 
@@ -147,13 +210,27 @@ void clicked_on_line(int line_number){
 * param position: the numneric position of the previus element on the line.
 * param character: the char that is whished to be written
 */
-void write_char(int position, char character){
+void write_char(int position, char character)
+{
 	if(!users_active_line)
 		return;
+		
+	if(character == '\n')
+	{
+		Line* temp = first_line;
+		int line_count = 1;
+		for( ; users_active_line -> original_line != temp ; temp = temp -> next)
+		{
+			line_count ++;
+		}
+		make_new_line(line_count);
+		return;
+	}
 	
-	//hard locks the line if amount of letters is above 98 (this shouldn't be ther in later version
+	//hard locks the line if amount of letters is above 98 (this shouldn't be there in later version)
 	if(users_active_line->linked_list_size > 98)
 		return;
+	
 	
 	Letter* new_letter = (Letter*) malloc(sizeof(Letter));
 	new_letter -> character = character;
@@ -180,7 +257,7 @@ void delete_char(int position){
 	if(!users_active_line)
 		return;
 	if(!users_active_line->first_char){
-		//TODO: delete the active line.
+		return;//TODO: delete the active line.
 	}
 	if(position > users_active_line->linked_list_size)
 		return;
@@ -218,17 +295,21 @@ char* get_line(int line_number){
 * returns a pointer to an array of all the strings for each line
 *
 */
-char** get_all_lines(){
+char **get_all_lines(){
 	if(list_of_lines)
 		free(list_of_lines);
 		
 	list_of_lines = (char**) malloc(size * sizeof(char*));
 	Line* current_element = first_line;
 	for(int i = 0; i < size; i++){
-		if(current_element->active_line){
+		if(current_element->active_line)
+		{
 			active_line_to_line(current_element->active_line,false);
 		}
-		list_of_lines[i] = current_element->paragraph;
+		if(current_element -> paragraph)
+			list_of_lines[i] = current_element->paragraph;
+		else
+			list_of_lines[i] = NULL;
 		current_element = current_element->next;
 	}
 	return list_of_lines;
@@ -252,6 +333,11 @@ void free_all_space(void){
 void init(void){
 	make_new_line(0);
     clicked_on_line(0);
+}
+
+int get_amount_of_lines(void)
+{
+	return size;
 }
 
 /***********
