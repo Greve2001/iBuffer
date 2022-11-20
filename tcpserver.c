@@ -123,6 +123,9 @@ void read_request(int client_socket, int socket_number)
 */
 void send_buffer(char* buffer, int len)
 {
+    extern int x_cursors[];
+    extern int y_cursors[];
+
     for (size_t i = 0; i < NUMBER_OF_CLI; i++)
     {
         if (&client_sockets[i] != NULL)

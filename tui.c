@@ -60,6 +60,9 @@ void stop_tui(void){
  * Updates the cursor position and refreshes the screen with new string.
 */
 void buffered_writing(char c, int socket_number){
+    extern int x_cursors[];
+    extern int y_cursors[];
+
     curs_set(1); // Makes cursor visible
 
     interpret_char(c, socket_number);
@@ -79,6 +82,8 @@ void buffered_writing(char c, int socket_number){
  * or if its for deleting.
 */
 void interpret_char(char c, int socket_number){
+    extern int x_cursors[];
+    extern int y_cursors[];
     // Get better way to handle this.
 
     // Normal typing
@@ -102,6 +107,9 @@ void interpret_char(char c, int socket_number){
  * (Primarily used internally)
 */
 void move_cursor(char c, int socket_number){
+    extern int x_cursors[];
+    extern int y_cursors[];
+
     strLength = strlen(get_line(y_cursors[socket_number]));
 
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
