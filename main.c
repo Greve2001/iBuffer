@@ -87,7 +87,14 @@ void join(void){
             break;
 
         if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
-            transfer_msg(c);
+        {
+            Message msg;
+            msg.x = get_cursor_pos();
+            msg.y = 0;  // TODO Implement function get y
+            msg.message[0] = c;
+            msg.message[1] = '\0';
+            transfer_msg(msg);
+        }
     }
 
     close_socket();

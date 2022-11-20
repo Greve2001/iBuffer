@@ -83,9 +83,14 @@ void *listen_udp_broadcast(void)
     char msg[MAX_PASS_LENGTH];
     int c = 0;
 
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(listener, &set);
+
     for(;;)
     {
-        recvfrom(listener, msg, sizeof(msg), 0, (struct sockaddr *) &sender_addr, &sender_size); 
+        if(select(FD_SETSIZE, &set, NULL, NULL, NULL))
+            recvfrom(listener, msg, sizeof(msg), 0, (struct sockaddr *) &sender_addr, &sender_size); 
 
         // Check for correct message
         if(strncmp(server_pass_phrase, msg, strlen(server_pass_phrase) - 1) == 0)

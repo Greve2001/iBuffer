@@ -94,13 +94,18 @@ void* handle_connection(void* socket)
 */
 void read_request(int client_socket) 
 {
-    char c;
+    Message *pmsg;
+    char msg[200] = {0};
 
     for(;;) 
     {
-        ssize_t len = read(client_socket, &c, sizeof(c));
+        ssize_t len = read(client_socket, &msg, sizeof(msg));
+        
         if (len != -1 && len != 0)
-            write_to_buffer(c); // main.c
+        {
+            pmsg = parser(msg);
+            write_to_buffer(pmsg->message[0]); // main.c
+        }
         else
             break;
     }
@@ -117,7 +122,13 @@ void send_buffer(char* buffer, int len)
     {
         if (&client_sockets[i] != NULL)
         {
-            send(client_sockets[i], buffer, sizeof(char)*len, 0);
+            Message msg;
+            msg.x = 0; // Temp
+            msg.y = 0; // Temp
+            memset(msg.message, 0, 100);
+            strcat(msg.message, buffer);
+            char* msg_string = serialize(&msg);
+            send(client_sockets[i], msg_string, sizeof(char)*strlen(msg_string), 0);
         }
     }
 }
