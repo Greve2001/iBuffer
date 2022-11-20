@@ -104,7 +104,12 @@ void read_request(int client_socket)
         if (len != -1 && len != 0)
         {
             pmsg = parser(msg);
-            write_to_buffer(pmsg->message[0]); // main.c
+            char c = pmsg->message[0];
+
+            if (c == ALT_NEWLINE) 
+                c = NEWLINE;
+
+            write_to_buffer(c); // main.c
         }
         else
             break;
@@ -123,8 +128,8 @@ void send_buffer(char* buffer, int len)
         if (&client_sockets[i] != NULL)
         {
             Message msg;
-            msg.x = 0; // Temp
-            msg.y = 0; // Temp
+            msg.x = get_cursor_xPos();
+            msg.y = get_cursor_yPos();
             memset(msg.message, 0, 100);
             strcat(msg.message, buffer);
             char* msg_string = serialize(&msg);

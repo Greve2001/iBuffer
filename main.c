@@ -86,11 +86,14 @@ void join(void){
         if (c == 27) // Escape key
             break;
 
-        if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW)
+        if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW || c == NEWLINE)
         {
+            if (c == NEWLINE) 
+                c = ALT_NEWLINE;
+
             Message msg;
-            msg.x = get_cursor_pos();
-            msg.y = 0;  // TODO Implement function get y
+            msg.x = get_cursor_xPos();
+            msg.y = get_cursor_yPos(); 
             msg.message[0] = c;
             msg.message[1] = '\0';
             transfer_msg(msg);
