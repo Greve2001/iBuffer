@@ -86,7 +86,8 @@ void join(void){
         if (c == 27) // Escape key
             break;
 
-        if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || c == RIGHT_ARROW || c == NEWLINE)
+        if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END) || c == RETURN || c == LEFT_ARROW || 
+            c == RIGHT_ARROW || c == NEWLINE || c == UP_ARROW || c == DOWN_ARROW)
         {
             if (c == NEWLINE) 
                 c = ALT_NEWLINE;

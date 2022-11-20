@@ -160,7 +160,7 @@ void print_buffer(char* buffer, int cursorX, int cursorY){
     }
     */
 
-    mvwprintw(mainWin, yStart+yPos, xStart, "%s", buffer);
+    mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
 
     // Draw box and move cursor
     box(mainWin, 0, 0);
