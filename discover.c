@@ -17,6 +17,14 @@ char *clients[NUMBER_OF_CLI]; // Added this to make it run
 pthread_mutex_t clients_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t clients_cond = PTHREAD_COND_INITIALIZER;
 
+/**
+ * Sends a broadcast via udp and then waits to an IP address as a response. If no response is
+ * given within one second the function closes the listening socket. The returned ip address
+ * is the counterpart udp server.
+ * @param ip_server char array to hold the server address
+ * @param size size of the given array
+ * @param phrase pointer to the pass phrase which should be used for server validation
+ */
 void send_udp_broadcast(char ip_server[], int size, char *phrase)
 {
     // Create a socket
@@ -48,6 +56,10 @@ void send_udp_broadcast(char ip_server[], int size, char *phrase)
     close(sock);
 }
 
+/**
+ * Spawn a new thread to run the udp listener on.
+ * @return the thread id of the newly spawned thread
+ */
 pthread_t run_listener(void)
 {
     pthread_t ptid;
@@ -56,6 +68,11 @@ pthread_t run_listener(void)
     return ptid;
 }
 
+/**
+ * Listen for broadcast messages and answer back with the IP of the host to clients
+ * only if the have the correct pass phrase.
+ * @return NULL
+ */
 void *listen_udp_broadcast(void) 
 {
     // Create listening socket
@@ -118,8 +135,11 @@ void *listen_udp_broadcast(void)
     return NULL;
 }
 
-// Modified example code from source:
-// man page getifaddrs
+/**
+ * Gets the ip address of the host and is based on the man page getifaddrs example code.
+ * @param host char array to hold the host address
+ * @return a pointer to the host array
+ */
 char get_local_ip(char host[])
 {
     struct ifaddrs *ifaddr;
@@ -155,11 +175,21 @@ char get_local_ip(char host[])
     return *host;
 }
 
+/**
+ * Check if the passed phrase is the same as the currently generated one.
+ * @param phrase to validate
+ * @return true if they are equal and false if not
+ */
 bool validate_pass_phrase(char *phrase) 
 {
     return strncmp(phrase, server_pass_phrase, strnlen(server_pass_phrase, MAX_PASS_LENGTH)) == 0;
 }
 
+/**
+ * Generates a new pass phrase based on three txt files and if one is already generated it frees the old
+ * one from memory before generating new one
+ * @return pointer to the pass phrase on the server
+ */
 char *generate_pass_phrase(void) 
 {
     free_pass_phrase();
@@ -188,6 +218,9 @@ char *generate_pass_phrase(void)
     return server_pass_phrase;
 }
 
+/**
+ * Free the currently allocated pass phrase
+ */
 void free_pass_phrase(void)
 {
     if (server_pass_phrase) 
@@ -197,6 +230,12 @@ void free_pass_phrase(void)
     }
 }
 
+/**]
+ * Get a sub part of the pass phrase from one of the resource files defined in this module.
+ * @param resource_file_number which resource to pick from the array
+ * @param length the length of the found line is written when found
+ * @return pointer to the line
+ */
 char *get_line_from_file(int resource_file_number, size_t *length)
 {
     char source[MAX_PATH_LENGTH] = "resources/";
@@ -243,6 +282,11 @@ error:
     return line;
 }
 
+/**
+ * Count the number of lines in a file
+ * @param fptr an open file pointer
+ * @return the number of lines as a integer
+ */
 int count_lines_in_file(FILE *fptr)
 {
     if(!fptr)
