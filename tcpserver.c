@@ -181,7 +181,6 @@ void add_to_array(int new_element)
 */
 void rm_from_array(int del_element)
 {
-    int *new_array = calloc(n_connected_clients - 1, sizeof(int));
     int idx = 0;
     for (int i = 0; i < n_connected_clients; i++)
     {
@@ -189,8 +188,6 @@ void rm_from_array(int del_element)
             new_array[idx++] = client_sockets[i];
     }
 
-    free(client_sockets);
-    client_sockets = new_array;
 }
 
 /**
