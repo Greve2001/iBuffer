@@ -4,6 +4,10 @@ static int own_socket;
 static int *client_sockets;
 static int n_connected_clients = 0;
 
+void add_to_array(int new_element);
+void rm_from_array(int del_element);
+int get_client_index(int client_socket);
+
 /*
 * Start TCP server
 * @param ip is the Internet host address
@@ -95,7 +99,7 @@ void* handle_connection(void* socket)
 */
 void read_request(int client_socket) 
 {
-    int client_index = get_client_index(client_sockets, n_connected_clients, client_socket);
+    int client_index = get_client_index(client_socket);
 
     Message *pmsg;
     char msg[200] = {0};
@@ -104,7 +108,7 @@ void read_request(int client_socket)
     {
         ssize_t len = read(client_socket, &msg, sizeof(msg));
         
-        if (len != -1 && len != 0)
+        if (len > 0)
         {
             pmsg = parser(msg);
             char c = pmsg->message[0];
@@ -115,7 +119,10 @@ void read_request(int client_socket)
             write_to_buffer(c, client_index); // main.c
         }
         else
+        {
+            rm_from_array(client_socket);
             break;
+        }       
     }
 }
 
@@ -167,9 +174,8 @@ void close_server(void)
 }
 
 /**
-* Add a new element to array
-* @param new_element element to be appended to old_array
-* @return a pointer to the new array
+* Add a new element to client_sockets
+* @param new_element element to be appended to client_sockets
 */
 void add_to_array(int new_element) 
 {
@@ -179,20 +185,31 @@ void add_to_array(int new_element)
 }
 
 /**
+* Remove del_element from client_sockets
+* @param del_element element to be deleted from client_sockets
+*/
+void rm_from_array(int del_element)
+{
+    int *new_array = calloc(n_connected_clients - 1, sizeof(int));
+    int idx = 0;
+    for (int i = 0; i < n_connected_clients; i++)
+    {
+        if (client_sockets[i] != del_element)
+            new_array[idx++] = client_sockets[i];
+    }
+
+    free(client_sockets);
+    client_sockets = new_array;
+}
+
+/**
 * Get the index of the client from the client_array that is equal to client_socket
-* @param client_array array of clients connected to the server
-* @param arr_len number of clients connected to the server
 * @param client_socket filedescriptor refering to the socket, which index we're trying to find
 * @return index of the client_socket in client_array
 */
-int get_client_index(int *client_array, int arr_len, int client_socket) 
+int get_client_index(int client_socket) 
 {
-    for (int i = 0; i < arr_len; i++) 
-    {
-        //printf("[%d\n]", client_array[i]);
-        if (client_array[i] == client_socket)
-        {
+    for (int i = 0; i < n_connected_clients; i++) 
+        if (client_sockets[i] == client_socket)
             return i;
-        }
-    }
 }
