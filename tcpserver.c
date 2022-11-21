@@ -55,18 +55,11 @@ void start_tcp_server(char * ip)
     {
         // Extract the first connection from the listening socket.
         // Create a new connected socket, and return new file descriptor referring to this socket
-        if (n_connected_clients < NUMBER_OF_CLI)
-        {
-            int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
-            add_to_array(client_socket);
+        int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
+        add_to_array(client_socket);
 
-            pthread_t thread;
-            pthread_create(&thread, NULL, (void*) handle_connection, (void*) &client_socket);
-
-            sleep(1);
-        }
-        else
-            break;
+        pthread_t thread;
+        pthread_create(&thread, NULL, (void*) handle_connection, (void*) &client_socket);
     }
 }
 
