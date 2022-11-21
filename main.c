@@ -123,7 +123,7 @@ void write_to_buffer(char c, int socket_number) {
     buffered_writing(c, socket_number); // tui.c
 
     char* line = get_all_lines()[y_cursors[socket_number]];
-    send_buffer(line, strlen(line)); // tcpserver.c
+    send_buffer(line, strlen(line), socket_number); // tcpserver.c
 
     pthread_mutex_unlock(&lock);
 }

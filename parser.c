@@ -16,6 +16,8 @@ Message* parser(char* string)
     token = strtok(NULL, delim);
     message->y = atoi(token);
     token = strtok(NULL, delim);
+    message->own = atoi(token);
+    token = strtok(NULL, delim);
     strcat(message->message, token); 
 
     return message;
@@ -30,6 +32,8 @@ char* serialize(Message* message)
     sprintf(conv, "%d;", message->x);
     strcat(result, conv); 
     sprintf(conv, "%d;", message->y);
+    strcat(result, conv);
+    sprintf(conv, "%d;", message->own);
     strcat(result, conv); 
     strcat(result, message->message);
     strcat(result, "}");

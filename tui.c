@@ -68,7 +68,7 @@ void buffered_writing(char c, int socket_number){
     interpret_char(c, socket_number);
     move_cursor(c, socket_number);
 
-    print_buffer(get_all_lines()[y_cursors[socket_number]], x_cursors[socket_number], y_cursors[socket_number]);
+    print_buffer(get_all_lines()[y_cursors[socket_number]], x_cursors[socket_number], y_cursors[socket_number], true);
 
     // Special for host.
     wmove(mainWin, y_cursors[NUMBER_OF_CLI]+yStart, x_cursors[NUMBER_OF_CLI]+xStart);
@@ -158,13 +158,24 @@ void move_cursor(char c, int socket_number){
  * Prints the entire buffer on the screen.
  * Takes the cursor position to correctly show where last write or delete was.
 */
-void print_buffer(char* buffer, int cursorX, int cursorY){
-    mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
+void print_buffer(char* buffer, int cursorX, int cursorY, bool own){
+    curs_set(1); 
+    if (own)
+    {
+        mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
+        wmove(mainWin, cursorY+yStart, cursorX+xStart);
+    }
+    else 
+    {
+        int old_x = xPos;
+        int old_y = yPos;
+        mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
+        wmove(mainWin, old_y+yStart, old_x+xStart);
+    }
 
     // Draw box and move cursor
     box(mainWin, 0, 0);
-    wmove(mainWin, cursorY+yStart, cursorX+xStart);
-    curs_set(1); // Not sure
+    curs_set(1);
     wrefresh(mainWin); // Refresh to show updates
 }
 
