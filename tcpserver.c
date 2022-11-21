@@ -173,7 +173,6 @@ void close_server(void)
 void add_to_array(int new_element) 
 {
     new_array[n_connected_clients++] = new_element;
-    client_sockets = new_array;
 }
 
 /**
