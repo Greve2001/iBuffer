@@ -111,8 +111,6 @@ void* handle_connection(void* socket_number);
 void read_request(int client_socket);
 void send_buffer(char*, int, int);
 void close_server(void);
-void add_to_array(int new_element);
-int get_client_index(int *client_array, int arr_len, int client_socket);
 
 // Linked List
 void make_new_line();
