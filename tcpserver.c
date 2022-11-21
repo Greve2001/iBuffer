@@ -1,8 +1,8 @@
 #include "common.h"
 
-int own_socket;
-int *client_sockets;
-int No_connected_clients = 0;
+static int own_socket;
+static int *client_sockets;
+static int n_connected_clients = 0;
 
 /*
 * Start TCP server
@@ -44,23 +44,22 @@ void start_tcp_server(char * ip)
         update_window("Listening failed...");
 
     struct sockaddr_in client_addr;
-    
+    client_sockets = (int *) malloc(0);    
 
     // Extract connection and create a new connected socket and handle this in a new thread
     for(;;)
     {
         // Extract the first connection from the listening socket.
         // Create a new connected socket, and return new file descriptor referring to this socket
-        if (No_connected_clients < NUMBER_OF_CLI)
+        if (n_connected_clients < NUMBER_OF_CLI)
         {
             int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
-            client_sockets = add_to_array(client_sockets, No_connected_clients, client_socket);
+            add_to_array(client_socket);
 
             pthread_t thread;
             pthread_create(&thread, NULL, (void*) handle_connection, (void*) &client_socket);
 
             sleep(1);
-            No_connected_clients++;
         }
         else
             break;
@@ -96,8 +95,7 @@ void* handle_connection(void* socket)
 */
 void read_request(int client_socket) 
 {
-    int client_index = get_client_index(client_sockets, No_connected_clients, client_socket);
-    printf("%d\n", client_index);
+    int client_index = get_client_index(client_sockets, n_connected_clients, client_socket);
 
     Message *pmsg;
     char msg[200] = {0};
@@ -126,7 +124,7 @@ void read_request(int client_socket)
 * @param buffer that has been modified (send this to client)
 * @param len sizeOf(buffer)
 */
-void send_buffer(char* buffer, int len, int socket_number)
+void send_buffer(char* buffer, int len, int client_index)
 {
     extern int x_cursors[];
     extern int y_cursors[];
@@ -136,7 +134,7 @@ void send_buffer(char* buffer, int len, int socket_number)
         if (&client_sockets[i] != NULL)
         {
             Message msg;
-            if (i == socket_number) // Own
+            if (i == client_index) // Own
             {
                 msg.x = x_cursors[i];
                 msg.y = y_cursors[i];
@@ -144,8 +142,8 @@ void send_buffer(char* buffer, int len, int socket_number)
             }
             else 
             {
-                msg.x = x_cursors[socket_number];
-                msg.y = y_cursors[socket_number];
+                msg.x = x_cursors[client_index];
+                msg.y = y_cursors[client_index];
                 msg.own = false;
             }
         
@@ -170,20 +168,14 @@ void close_server(void)
 
 /**
 * Add a new element to array
-* @param old_array the array to which a new element will be appended
-* @param arr_len length of the old array
 * @param new_element element to be appended to old_array
 * @return a pointer to the new array
 */
-int *add_to_array(int *old_array, int arr_len, int new_element) 
+void add_to_array(int new_element) 
 {
-    int new_array[arr_len + 1];
-    for (int i = 0; i < arr_len; i++) 
-        new_array[i] = old_array[i];
-
-    new_array[arr_len] = new_element;
-    int *new_array_pointer = new_array;
-    return new_array_pointer;
+    int *new_array = reallocarray(client_sockets, n_connected_clients + 1, sizeof(int));
+    new_array[n_connected_clients++] = new_element;
+    client_sockets = new_array;
 }
 
 /**
