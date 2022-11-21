@@ -122,7 +122,7 @@ void read_request(int client_socket, int socket_number)
 * @param buffer that has been modified (send this to client)
 * @param len sizeOf(buffer)
 */
-void send_buffer(char* buffer, int len)
+void send_buffer(char* buffer, int len, int socket_number)
 {
     extern int x_cursors[];
     extern int y_cursors[];
@@ -132,8 +132,19 @@ void send_buffer(char* buffer, int len)
         if (&client_sockets[i] != NULL)
         {
             Message msg;
-            msg.x = x_cursors[i];
-            msg.y = y_cursors[i];
+            if (i == socket_number) // Own
+            {
+                msg.x = x_cursors[i];
+                msg.y = y_cursors[i];
+                msg.own = true;
+            }
+            else 
+            {
+                msg.x = x_cursors[socket_number];
+                msg.y = y_cursors[socket_number];
+                msg.own = false;
+            }
+        
             memset(msg.message, 0, 100);
 
             if (buffer[0] != '\0')

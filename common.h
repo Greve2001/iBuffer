@@ -63,6 +63,7 @@ typedef struct Message
 {
     int x;
     int y;
+	bool own;
     char message[100];
 } Message;
 
@@ -89,7 +90,7 @@ void start_tui(char* pass_phrase);
 void stop_tui(void);
 void interpret_char(char c, int);
 void buffered_writing(char, int);
-void print_buffer(char* , int, int);
+void print_buffer(char* , int, int, bool);
 void print_status(void);
 int startup_window(void);
 char* input_window(void);
@@ -108,7 +109,7 @@ void close_socket(void);
 void start_tcp_server(char *);
 void* handle_connection(void* socket_number);
 void read_request(int client_socket, int socket_number);
-void send_buffer(char*, int);
+void send_buffer(char*, int, int);
 void close_server(void);
 
 // Linked List
