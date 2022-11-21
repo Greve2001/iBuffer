@@ -97,7 +97,6 @@ void update_window(char*);
 void move_cursor(char c, int);
 int get_cursor_xPos(void);
 int get_cursor_yPos(void);
-char* get_buffer(void);
 
 // TCP client
 void start_tcp_client(char *);
