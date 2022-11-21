@@ -107,9 +107,11 @@ void close_socket(void);
 // TCP server
 void start_tcp_server(char *);
 void* handle_connection(void* socket_number);
-void read_request(int client_socket, int socket_number);
+void read_request(int client_socket);
 void send_buffer(char*, int);
 void close_server(void);
+int *add_to_array(int *old_array, int arr_len, int new_element);
+int get_client_index(int *client_array, int arr_len, int client_socket);
 
 // Linked List
 void make_new_line();
