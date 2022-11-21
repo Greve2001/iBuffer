@@ -70,6 +70,9 @@ void buffered_writing(char c, int socket_number){
 
     print_buffer(get_all_lines()[y_cursors[socket_number]], x_cursors[socket_number], y_cursors[socket_number]);
 
+    // Special for host.
+    wmove(mainWin, y_cursors[NUMBER_OF_CLI]+yStart, x_cursors[NUMBER_OF_CLI]+xStart);
+
     // Draw Box outline and refresh
     box(mainWin, 0, 0);
     wrefresh(mainWin);
@@ -158,23 +161,12 @@ void move_cursor(char c, int socket_number){
 void print_buffer(char* buffer, int cursorX, int cursorY){
     curs_set(1); // Cursor visible
 
-    // Clear window and print buffer
-    //wclear(mainWin);
-    
-    /* OLD
-    int n_lines = get_amount_of_lines();
-    for (size_t i = 0; i < n_lines; i++)
-    {
-        mvwprintw(mainWin, yStart+i, xStart, "%s", buffer); // Print line
-    }
-    */
-
     mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
 
     // Draw box and move cursor
     box(mainWin, 0, 0);
     wmove(mainWin, cursorY+yStart, cursorX+xStart);
-
+    curs_set(1);
     wrefresh(mainWin); // Refresh to show updates
 }
 

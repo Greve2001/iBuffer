@@ -58,6 +58,7 @@ void start_tcp_server(char * ip)
             pthread_t thread;
             pthread_create(&thread, NULL, (void*) handle_connection, (void*) &clients_connected);
 
+            sleep(1);
             clients_connected++;
         }
         else
