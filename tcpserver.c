@@ -48,7 +48,7 @@ void start_tcp_server(char * ip)
         update_window("Listening failed...");
 
     struct sockaddr_in client_addr;
-    client_sockets = (int *) malloc(0);    
+    client_sockets = (int *) calloc(NUMBER_OF_CLI, sizeof(int));    
 
     // Extract connection and create a new connected socket and handle this in a new thread
     for(;;)
