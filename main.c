@@ -115,14 +115,15 @@ void write_to_buffer(char c, int socket_number) {
     if (status != 0)
         return;
 
-    
+    // Delete at some point
     char temp[100];
-    sprintf(temp, "Sock: %d  xPos: %d", socket_number, x_cursors[socket_number]);
+    sprintf(temp, "Sock: %d  xPos: %d    yPos: %d", socket_number, x_cursors[socket_number], y_cursors[socket_number]);
     update_window(temp);
     
     buffered_writing(c, socket_number); // tui.c
-    char* str = get_buffer();
-    send_buffer(str, strlen(str)); // tcpserver.c
+
+    char* line = get_all_lines()[y_cursors[socket_number]];
+    send_buffer(line, strlen(line)); // tcpserver.c
 
     pthread_mutex_unlock(&lock);
 }

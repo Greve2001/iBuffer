@@ -22,41 +22,6 @@ static char** list_of_lines;
 ************************************************************/
 int number_of_lines = 1;
 
-void make_new_line(){
-	Line* new = (Line*) malloc(sizeof(Line));
-	new -> paragraph = NULL;
-
-	if(!new){
-		;//TODO: error handling for malloc error
-	}
-	size++;
-	
-	if(!first_line)
-	{
-		first_line = new;
-		size = 1;
-		return;
-	}
-	
-	if(number_of_lines == 0)
-	{
-		new->next = first_line;
-		first_line = new;
-		return;
-	}
-	
-	Line* prev_line = first_line;
-	for(int i = 1; i < number_of_lines; i++)
-	{
-		prev_line = prev_line->next;
-	}
-	new->next = prev_line->next;
-	prev_line->next = new;
-
-	number_of_lines++;
-	return;
-}
-
 /*
 *
 *
@@ -184,6 +149,42 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 * 
 ******************************************************************/
 
+void make_new_line(){
+	Line* new = (Line*) malloc(sizeof(Line));
+	new -> paragraph = NULL;
+
+	if(!new){
+		;//TODO: error handling for malloc error
+	}
+	size++;
+	
+	if(!first_line)
+	{
+		first_line = new;
+		size = 1;
+		return;
+	}
+	
+	if(number_of_lines == 0)
+	{
+		new->next = first_line;
+		first_line = new;
+		return;
+	}
+	
+	Line* prev_line = first_line;
+	for(int i = 1; i < number_of_lines; i++)
+	{
+		prev_line = prev_line->next;
+	}
+	new->next = prev_line->next;
+	prev_line->next = new;
+
+	number_of_lines++;
+	return;
+}
+
+
 /*
 * When the front-end register the user clicking on a paragraph, they shall call this.
 * This ensures that the char array in converted into a linkedlist and prepared for use.
@@ -191,10 +192,13 @@ void active_line_to_line(Active_Line* active_line, bool free_active_line){
 */
 void clicked_on_line(int line_number)
 {
+	/* Deactivates previously active lines
 	if (users_active_line)
 	{
 		active_line_to_line(users_active_line, true);
 	}
+	*/
+
 	Line* pointer_to_line = first_line;
 	if(line_number != 0)
 	{

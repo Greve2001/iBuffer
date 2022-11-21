@@ -159,14 +159,12 @@ void move_cursor(char c, int socket_number){
  * Takes the cursor position to correctly show where last write or delete was.
 */
 void print_buffer(char* buffer, int cursorX, int cursorY){
-    curs_set(1); // Cursor visible
-
     mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
 
     // Draw box and move cursor
     box(mainWin, 0, 0);
     wmove(mainWin, cursorY+yStart, cursorX+xStart);
-    curs_set(1);
+    curs_set(1); // Not sure
     wrefresh(mainWin); // Refresh to show updates
 }
 
@@ -284,14 +282,6 @@ void update_window(char* str){
     box(updateWin, 0, 0);
 
     wrefresh(updateWin); // Show updates
-}
-
-/**
- * A middle-man function that returns the buffer, 
- * !which currently is a single line!
-*/
-char* get_buffer(void){
-    return get_all_lines()[yPos]; // Quick fix.
 }
 
 /**
