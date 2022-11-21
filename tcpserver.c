@@ -172,7 +172,6 @@ void close_server(void)
 */
 void add_to_array(int new_element) 
 {
-    int *new_array = reallocarray(client_sockets, n_connected_clients + 1, sizeof(int));
     new_array[n_connected_clients++] = new_element;
     client_sockets = new_array;
 }
