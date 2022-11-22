@@ -52,6 +52,8 @@ void send_udp_broadcast(char ip_server[], int size, char *phrase)
     // source https://www.gnu.org/software/libc/manual/html_node/Waiting-for-I_002fO.html
     if(select(FD_SETSIZE, &set, NULL, NULL, &timeout))
         recvfrom(sock, ip_server, size, 0, NULL, 0); 
+    else
+        ip_server[0] = '\0';
 
     close(sock);
 }
@@ -110,7 +112,7 @@ void *listen_udp_broadcast(void)
             recvfrom(listener, msg, sizeof(msg), 0, (struct sockaddr *) &sender_addr, &sender_size); 
 
         // Check for correct message
-        if(strncmp(server_pass_phrase, msg, strlen(server_pass_phrase) - 1) == 0)
+        if(validate_pass_phrase(msg))
         {
             //printf("Validatation approved, from: %s\n", inet_ntoa(sender_addr.sin_addr));
             char *tmp = (char *) malloc(sizeof(char) * strlen(inet_ntoa(sender_addr.sin_addr)));
@@ -182,7 +184,7 @@ char get_local_ip(char host[])
  */
 bool validate_pass_phrase(char *phrase) 
 {
-    return strncmp(phrase, server_pass_phrase, strnlen(server_pass_phrase, MAX_PASS_LENGTH)) == 0;
+    return strncmp(phrase, server_pass_phrase, strnlen(server_pass_phrase, MAX_PASS_LENGTH) -1) == 0;
 }
 
 /**
