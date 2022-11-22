@@ -103,11 +103,11 @@ void interpret_char(char c, int socket_number)
     
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
-        write_char(x_cursors[socket_number], c, y_cursors[socket_number]);
+        write_char(c, x_cursors[socket_number], y_cursors[socket_number]);
     }
     else if (c == RETURN)
     { // Return
-        delete_char(x_cursors[socket_number]);
+        delete_char(x_cursors[socket_number], y_cursors[socket_number]);
     }
     else if (c == '\n')
     { // Newline
@@ -148,7 +148,6 @@ void move_cursor(char c, int socket_number)
         {
             y_cursors[socket_number]--; 
             x_cursors[socket_number] = 0;
-            clicked_on_line(y_cursors[socket_number]);  
         }
     }
     else if (c == UP_ARROW)
@@ -156,15 +155,13 @@ void move_cursor(char c, int socket_number)
         if (y_cursors[socket_number] < mainHeight-2 && y_cursors[socket_number] < get_amount_of_lines()-1)
         {
             y_cursors[socket_number]++; 
-            x_cursors[socket_number] = 0;
-            clicked_on_line(y_cursors[socket_number]);  
+            x_cursors[socket_number] = 0; 
         }
     }
     else if (c == NEWLINE)
     { // Newline
         y_cursors[socket_number]++;
-        x_cursors[socket_number] = 0;
-        clicked_on_line(y_cursors[socket_number]);  
+        x_cursors[socket_number] = 0; 
     }
 }
 
