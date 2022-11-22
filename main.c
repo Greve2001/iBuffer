@@ -1,6 +1,5 @@
 #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
-#include "linklist.h"
 
 int x_cursors[NUMBER_OF_CLI+1];
 int y_cursors[NUMBER_OF_CLI+1];

@@ -218,7 +218,7 @@ void clicked_on_line(int line_number)
 * param position: the numneric position of the previus element on the line.
 * param character: the char that is whished to be written
 */
-void write_char(int position, char character)
+void write_char(int position, char character, int line)
 {
 	if(!users_active_line)
 		return;
@@ -241,17 +241,24 @@ void write_char(int position, char character)
 	if(users_active_line->linked_list_size > 98)
 		return;
 	
+	Active_Line *line_to_edit = active_first_line;
+	for(int i = 0; i < line; i++){
+		line_to_edit = line_to_edit->next;
+	}
 	
 	Letter* new_letter = (Letter*) malloc(sizeof(Letter));
 	new_letter -> character = character;
-	if(!users_active_line->first_char){
-		users_active_line->first_char = new_letter;
-		users_active_line->linked_list_size++;
+	if(!line_to_edit->first_char){
+		line_to_edit->first_char = new_letter;
+		line_to_edit->linked_list_size++;
 		return;
 	}
-	Letter* prev_letter = users_active_line->first_char;
-	for(int i = 0; i<position-1; i++) prev_letter = prev_letter->next;
-	users_active_line->linked_list_size++;
+	Letter* prev_letter = line_to_edit->first_char;
+	for(int i = 0; i<position-1; i++)
+	{
+		prev_letter = prev_letter->next;
+	}
+	line_to_edit->linked_list_size++;
 	new_letter->next = prev_letter->next;
 	prev_letter->next = new_letter;
 	

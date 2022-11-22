@@ -6,10 +6,10 @@ objects=discover.o linklist.o main.o tcpclient.o tcpserver.o tui.o parser.o
 iBuffer: $(objects) -lpthread -lncurses
 	$(CC) $(CFLAGS) $^ -o $@
 
-main.o: main.c common.h linklist.h -lpthread
+main.o: main.c common.h -lpthread
 	$(CC) -c $< $(CLAGS) -o $@
 
-tui.o: tui.c common.h linklist.h -lncurses
+tui.o: tui.c common.h -lncurses
 	$(CC) -c $< $(CLAGS) -o $@
 
 linklist.o: linklist.c common.h 
