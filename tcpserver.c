@@ -48,14 +48,23 @@ void start_tcp_server(char * ip)
         update_window("Listening failed...");
 
     struct sockaddr_in client_addr;
-    client_sockets = (int *) calloc(NUMBER_OF_CLI, sizeof(int));    
+    client_sockets = (int *) calloc(NUMBER_OF_CLI, sizeof(int));
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
+        client_sockets[i] = -1;
 
     // Extract connection and create a new connected socket and handle this in a new thread
     for(;;)
     {
-        // Extract the first connection from the listening socket.
+        // Extract the first connection from the listening socket (accept is blocking)
         // Create a new connected socket, and return new file descriptor referring to this socket
         int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
+        
+        // TODO: Find a better way to handle this...
+        if (n_connected_clients == NUMBER_OF_CLI)
+        {
+            close(client_socket);
+            continue;
+        }
         add_to_array(client_socket);
 
         pthread_t thread;
@@ -93,6 +102,8 @@ void* handle_connection(void* socket)
 void read_request(int client_socket) 
 {
     int client_index = get_client_index(client_socket);
+    if (client_index == -1) 
+        return;
 
     Message *pmsg;
     char msg[200] = {0};
@@ -172,7 +183,15 @@ void close_server(void)
 */
 void add_to_array(int new_element) 
 {
-    new_array[n_connected_clients++] = new_element;
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
+    {
+        if (client_sockets[i] == -1)
+        {
+            client_sockets[i] = new_element;
+            n_connected_clients++;
+            break;
+        }
+    }
 }
 
 /**
@@ -181,13 +200,15 @@ void add_to_array(int new_element)
 */
 void rm_from_array(int del_element)
 {
-    int idx = 0;
-    for (int i = 0; i < n_connected_clients; i++)
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
     {
-        if (client_sockets[i] != del_element)
-            new_array[idx++] = client_sockets[i];
+        if (client_sockets[i] == del_element)
+        {
+            client_sockets[i] = -1;
+            n_connected_clients--;
+            break;
+        }
     }
-
 }
 
 /**
@@ -197,7 +218,8 @@ void rm_from_array(int del_element)
 */
 int get_client_index(int client_socket) 
 {
-    for (int i = 0; i < n_connected_clients; i++) 
+    for (int i = 0; i < NUMBER_OF_CLI; i++) 
         if (client_sockets[i] == client_socket)
             return i;
+    return -1;
 }
