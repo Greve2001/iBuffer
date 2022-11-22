@@ -278,9 +278,20 @@ char* input_window(void){
     wrefresh(inputWin);
 
     // Get string from user
-    char* str = malloc(sizeof(char)*100);
+    char* str = calloc(1024, sizeof(char));
     move(2,1); // Move Cursor
-    getstr(str);
+    int i;
+    for(i = 0; (str[i] = getch()) != '\n'; i++)
+    {
+        if(str[i] == ESCAPE) 
+        {
+            str[0] = ESCAPE;
+            str[1] = '\0';
+            break;
+        }
+    }
+    if(str[i] == '\n')
+        str[i] = '\0';
 
     // Properly dispose of the window
     werase(inputWin);
