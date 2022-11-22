@@ -113,10 +113,12 @@ void read_request(int client_socket)
         ssize_t len = read(client_socket, &msg, sizeof(msg));
         
         if (len > 0)
+
         {
             pmsg = parser(msg);
             char c = pmsg->message[0];
 
+            // Switch out newline char, as socket ignores actual newlines
             if (c == ALT_NEWLINE) 
                 c = NEWLINE;
 
@@ -144,9 +146,10 @@ void send_buffer(char* buffer, int len, int client_index)
     {
         if (&client_sockets[i])
         {
+            // Construct message differently for each socket.
             Message msg;
-            if (i == client_index) // Own
-            {
+            if (i == client_index)
+            { // Own
                 msg.x = x_cursors[i];
                 msg.y = y_cursors[i];
                 msg.own = true;
@@ -157,14 +160,15 @@ void send_buffer(char* buffer, int len, int client_index)
                 msg.y = y_cursors[client_index];
                 msg.own = false;
             }
-        
             memset(msg.message, 0, 100);
 
+            // If the message is empty, input a single space. Else errors will occur
             if (buffer[0] != '\0')
                 strcat(msg.message, buffer);
             else 
                 msg.message[0] = ' ';
 
+            // Send
             char* msg_string = serialize(&msg);
             send(client_sockets[i], msg_string, sizeof(char)*strlen(msg_string), 0);
         }
