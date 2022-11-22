@@ -1,5 +1,4 @@
 #include "common.h"
-#include "linklist.h"
 
 WINDOW* statWin;
 WINDOW* mainWin;
@@ -93,7 +92,7 @@ void interpret_char(char c, int socket_number){
     
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
-        write_char(x_cursors[socket_number], c);
+        write_char(x_cursors[socket_number], c, y_cursors[socket_number]);
     }
     else if (c == RETURN)
     { // Return

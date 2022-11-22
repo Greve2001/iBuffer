@@ -115,12 +115,12 @@ void close_server(void);
 
 // Linked List
 void make_new_line();
-void write_char(int position, char character);
-void delete_char(int position);
-void clicked_on_line(int line_number);
-char* get_line(int line_number);
+void write_char(int, char, int);
+void delete_char(int);
+void clicked_on_line(int);
+char* get_line(int);
 char** get_all_lines();
-void free_list_of_lines(char** list_to_lines);
+void free_list_of_lines(char**);
 void free_all_space(void);
 void init(void);
 int get_amount_of_lines(void);
