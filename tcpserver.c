@@ -93,6 +93,8 @@ void* handle_connection(void* socket)
     }
 
     read_request(client_socket);
+
+    return NULL;
 }
 
 /** 
@@ -144,7 +146,7 @@ void send_buffer(char* buffer, int len, int client_index)
 
     for (size_t i = 0; i < NUMBER_OF_CLI; i++)
     {
-        if (&client_sockets[i])
+        if (client_sockets[i])
         {
             // Construct message differently for each socket.
             Message msg;

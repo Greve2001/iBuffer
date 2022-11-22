@@ -91,7 +91,8 @@ void *listen_udp_broadcast(void)
     broadcast_addr.sin_addr.s_addr = INADDR_ANY;
 
     // Bind the address
-    int ret = bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr));
+    if(bind(listener, (struct sockaddr *) &broadcast_addr, sizeof(broadcast_addr)) == -1)
+        return NULL;
 
     // Recieve a message and save who send it
     struct sockaddr_in sender_addr;
