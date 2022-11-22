@@ -1,5 +1,6 @@
 #include "common.h"
 
+// Global variables, used in different files
 int x_cursors[NUMBER_OF_CLI+1];
 int y_cursors[NUMBER_OF_CLI+1];
 
@@ -7,8 +8,9 @@ bool server_running = true;
 
 static pthread_mutex_t lock; // Main Lock
 
-int main(void) {
-    srand(time(0));
+int main(void)
+{
+    srand(time(0)); // Set random seed
 
     // Initialize Mutex
     if (pthread_mutex_init(&lock, NULL) != 0)
@@ -40,7 +42,8 @@ int main(void) {
 /**
  * The main function for the server process to run. It hosts the buffer for all clients to share
 */
-void host(void){
+void host(void)
+{
     // Discover
     char* pass_phrase = generate_pass_phrase();
     run_listener();
@@ -73,7 +76,8 @@ void host(void){
 /**
  * The main function for client processes to run. Can connect to server processes.
 */
-void join(void){
+void join(void)
+{
     char host[NI_MAXHOST] = {0};
 
     while(strnlen(host, NI_MAXHOST) == 0)
@@ -129,9 +133,14 @@ void join(void){
     stop_tui();
 }
 
-// Called from Client and Host
-void write_to_buffer(char c, int socket_number) {
-    // Lock for writing. Awaits until unlocked if locked
+/**
+ * Takes a character and tries to write it. After writing the new buffer gets broadcasted to all clients
+ * @param c The character to write.
+ * @param socket_number The number of the socket calling the method
+ */
+void write_to_buffer(char c, int socket_number)
+{
+    // Lock for writing. Await until unlocked if locked
     pthread_mutex_lock(&lock);
 
     // Write to buffer, with the requests socket number
@@ -147,7 +156,8 @@ void write_to_buffer(char c, int socket_number) {
 /**
  * Closes the program properly
 */
-void close_program(void) {
+void close_program(void)
+{
     server_running = false;
 
     close_socket();
