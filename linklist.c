@@ -16,7 +16,7 @@ static char *one_line;
 * 
 ******************************************************************/
 
-void make_new_line()
+void make_new_line(void)
 {
 	Line *new = (Line*) malloc(sizeof(Line));
 	new -> next = NULL;
@@ -32,6 +32,7 @@ void make_new_line()
 	if(!first_line)
 	{
 		first_line = new;
+		last_line = new;
 		lines = 1;
 		return;
 	}
@@ -48,6 +49,8 @@ void make_new_line()
 */
 void write_char(char letter, int letter_position, int line_number)
 {
+	if(line_number >= lines)
+		return;
 	Line *working_line = first_line;
 	for(int i = 0; i < line_number; i++)
 	{
@@ -59,6 +62,7 @@ void write_char(char letter, int letter_position, int line_number)
 		return;
 	
 	Letter *new_letter = (Letter*) malloc(sizeof(Letter));
+	new_letter -> character = letter;
 	working_line -> list_size ++;
 	
 	if(letter_position == 0)
@@ -126,7 +130,7 @@ char* get_line(int line_number){
 		line = line->next;
 	}
 	
-	one_line = malloc((line -> list_size + 1) * sizeof(char));
+	one_line = (char*) malloc((line -> list_size + 1) * sizeof(char));
 	
 	if(line -> list_size == 0)
 	{
@@ -160,13 +164,13 @@ char **get_all_lines(){
 		free(list_of_lines);
 	}
 	
-	list_of_lines = malloc(lines * sizeof(char*));
+	list_of_lines = (char**) malloc(lines * sizeof(char*));
 	list_of_lines_size = lines;
 	
 	Line *line = first_line;
 	for(int i = 0; i < lines; i++)
 	{
-		char *temp = malloc((line -> list_size + 1) * sizeof(char));
+		char *temp = (char*) malloc((line -> list_size + 1) * sizeof(char));
 		list_of_lines[i] = temp;
 		temp = get_line(i);
 	}
@@ -179,7 +183,7 @@ void free_all_space(void)
 }
 
 void init(void){
-	make_new_line(0);
+	make_new_line();
 }
 
 int get_amount_of_lines(void)
