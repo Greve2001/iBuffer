@@ -1,25 +1,29 @@
 #include "common.h"
 #include "linklist.h"
 
+// Windows
 WINDOW* statWin;
 WINDOW* mainWin;
 WINDOW* updateWin;
 
+// Window Dimensions
 int statWidth = 49, statHeight = 4;
 int updateWidth = 49, updateHeight = 4;
 int mainWidth = 100, mainHeight = 50;
 
-int strLength;
-int xPos, yPos;
-int xStart = 1, yStart = 1;
+int strLength; // Holds length of line
+int xPos, yPos; // Local x and y cursor position
+int xStart = 1, yStart = 1; // Offset for screen start
 
 char* keyword;
 
 /**
  * Starts the ncurses Text User Interface.
  * Initializes variables and preset windows.
-*/
-void start_tui(char* pass_phrase){
+ * @param pass_phrase to show in status window on startup.
+ */
+void start_tui(char* pass_phrase)
+{
     keyword = pass_phrase;
 
     // Initialization of tui settings and screen
@@ -36,7 +40,7 @@ void start_tui(char* pass_phrase){
 
     print_status(); // Display the status window.
 
-    // Set variables
+    // Initialized variables
     xPos = 0;
     yPos = 0;
     strLength = 0;
@@ -44,8 +48,9 @@ void start_tui(char* pass_phrase){
 
 /**
  * Stop the TUI by deleting the windows and deallocating them properly
-*/
-void stop_tui(void){
+ */
+void stop_tui(void)
+{
     werase(statWin);
     werase(updateWin);
     werase(mainWin);
@@ -58,18 +63,22 @@ void stop_tui(void){
 /**
  * Takes a character and writes it to the buffer.
  * Updates the cursor position and refreshes the screen with new string.
-*/
-void buffered_writing(char c, int socket_number){
+ * @param c The character to interpret.
+ * @param socket_number The number of the socket that wishes to write.
+ */
+void buffered_writing(char c, int socket_number)
+{
     extern int x_cursors[];
     extern int y_cursors[];
 
     curs_set(1); // Makes cursor visible
 
-    interpret_char(c, socket_number);
-    move_cursor(c, socket_number);
+    interpret_char(c, socket_number); // Write/Delete newline
+
+    move_cursor(c, socket_number); // Move cursor for the socket
 
     // Print line for the specified y-position
-    print_buffer(get_all_lines()[y_cursors[socket_number]], x_cursors[socket_number], y_cursors[socket_number], true);
+    print_buffer(get_line(y_cursors[socket_number]), x_cursors[socket_number], y_cursors[socket_number], true);
 
     // Special for host.
     wmove(mainWin, y_cursors[NUMBER_OF_CLI]+yStart, x_cursors[NUMBER_OF_CLI]+xStart);
@@ -84,8 +93,11 @@ void buffered_writing(char c, int socket_number){
 /**
  * Interprets the char, if its valid and whether the char is for adding to string,
  * or if its for deleting.
-*/
-void interpret_char(char c, int socket_number){
+ * @param c The character to be interpreted.
+ * @param socket_number The number of the socket that wishes to write.
+ */
+void interpret_char(char c, int socket_number)
+{
     extern int x_cursors[];
     extern int y_cursors[];
     // Get better way to handle this.
@@ -106,13 +118,16 @@ void interpret_char(char c, int socket_number){
 }
 
 /**
- * Moves the cursor and updates its position variables.
- * (Primarily used internally)
-*/
-void move_cursor(char c, int socket_number){
+ * Moves the cursor and updates its position variables. (Primarily used internally)
+ * @param c The character, that is used to tell how to move.
+ * @param socket_number The number of the socket that wishes to write.
+ */
+void move_cursor(char c, int socket_number)
+{
     extern int x_cursors[];
     extern int y_cursors[];
 
+    // Get length of line, to uphold boundaries
     strLength = strlen(get_line(y_cursors[socket_number]));
 
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
@@ -157,8 +172,13 @@ void move_cursor(char c, int socket_number){
 /**
  * Prints the entire buffer on the screen.
  * Takes the cursor position to correctly show where last write or delete was.
-*/
-void print_buffer(char* buffer, int cursorX, int cursorY, bool own){
+ * @param buffer A single string (char*) of text to print.
+ * @param cursorX The x position for the process cursor.
+ * @param cursorY The y position for the process cursor.
+ * @param own A boolean describing whether the cursor should be moved.
+ */
+void print_buffer(char* buffer, int cursorX, int cursorY, bool own)
+{
     curs_set(1); 
 
     // Clear line, before printing line
@@ -192,7 +212,8 @@ void print_buffer(char* buffer, int cursorX, int cursorY, bool own){
  * Prints the status window. Displays the amount of users and the keyword for the server
  * This has to be called again for the window to refresh, should the variables have changed.
 */
-void print_status(void){
+void print_status(void)
+{
     curs_set(0); // Cursor invisible to not make cursor dart around.
 
     // Print statuses
@@ -209,7 +230,8 @@ void print_status(void){
  * Returns the integer of the choice selected by user.
  * (start_tui() does not have to be called first)
 */
-int startup_window(void){
+int startup_window(void)
+{
     // Initial ncurses initialization
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE); 
@@ -261,7 +283,8 @@ int startup_window(void){
  * Returns a char* to the inputted string from the user.
  * (start_tui() does not have to be called first)
 */
-char* input_window(void){
+char* input_window(void)
+{
     // Initial ncurses initialization
     initscr(); cbreak(); echo();
     keypad(stdscr, TRUE); 
@@ -303,8 +326,10 @@ char* input_window(void){
 /**
  * Refreshes the update window with the inputted string.
  * Used for showing updates to the user.
-*/
-void update_window(char* str){
+ * @param str The string of text to show the user in the Update Window
+ */
+void update_window(char* str)
+{
     curs_set(0); // Make cursor invisible
 
     // Print update on the window
@@ -316,11 +341,11 @@ void update_window(char* str){
 }
 
 /**
- * Provides the cursor's position on screen.
+ * Provides the cursor's x position on screen.
 */
-int get_cursor_xPos(void){
-    return xPos;
-}
-int get_cursor_yPos(void){
-    return yPos;
-}
+int get_cursor_xPos(void){return xPos;}
+
+/**
+ * Provides the cursor's x position on screen.
+*/
+int get_cursor_yPos(void){return yPos;}
