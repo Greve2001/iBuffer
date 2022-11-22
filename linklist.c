@@ -100,6 +100,14 @@ void delete_char(int letter_position, int line_number){
 	
 	if(working_line -> list_size == 0)
 		return;
+		
+	if(working_line -> list_size == 1)
+	{
+		free(working_line -> first_letter);
+		working_line -> first_letter = NULL;
+		working_line -> list_size = 0;
+		return;
+	}
 	
 	working_line -> list_size --;
 		
@@ -108,10 +116,11 @@ void delete_char(int letter_position, int line_number){
 		Letter *temp = working_line -> first_letter;
 		working_line -> first_letter = temp -> next;
 		free(temp);
+		return;
 	}
 	
 	Letter *letter_before_delete = working_line -> first_letter;
-	for(int i = 1; i < line_number; i++)
+	for(int i = 2; i < letter_position; i++)
 	{
 		letter_before_delete = letter_before_delete -> next;
 	}

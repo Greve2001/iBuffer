@@ -13,21 +13,27 @@ void assert_equal(char* string1, char* string2)
 }
 
 int main(void){
-	
 
-	init();
-	write_char('a', 0,0);
-	write_char('b',1,0);
-	
-	printf(get_line(0));
-	
-	make_new_line();
-	
-	printf("\n");
-	write_char('c',0,1);
-	
-	printf(get_line(1));
-	
-	return 0;
+
+    init();
+    for(int i = 0; i < 10; i++){
+        write_char('a'+i, i, 0);
+    }
+
+    printf("%s", get_line(0));
+
+    make_new_line();
+
+    write_char('a',0,1);
+
+    printf("\n%s", get_line(1));
+
+    delete_char(4,0);
+    delete_char(1,0);
+
+    printf("\n%s", get_line(0));
+
+
+    return 0;
 
 }
