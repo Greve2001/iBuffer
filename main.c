@@ -1,6 +1,6 @@
-#define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
 
+// Global variables, used in different files
 int x_cursors[NUMBER_OF_CLI+1];
 int y_cursors[NUMBER_OF_CLI+1];
 
@@ -8,8 +8,9 @@ bool server_running = true;
 
 static pthread_mutex_t lock; // Main Lock
 
-int main(void) {
-    srand(time(0));
+int main(void)
+{
+    srand(time(0)); // Set random seed
 
     // Initialize Mutex
     if (pthread_mutex_init(&lock, NULL) != 0)
@@ -41,7 +42,8 @@ int main(void) {
 /**
  * The main function for the server process to run. It hosts the buffer for all clients to share
 */
-void host(void){
+void host(void)
+{
     // Discover
     char* pass_phrase = generate_pass_phrase();
     run_listener();
@@ -74,15 +76,26 @@ void host(void){
 /**
  * The main function for client processes to run. Can connect to server processes.
 */
-void join(void){
-    // Input Keyword
-    char* key = malloc(sizeof(char)*100); // Make in tui
-    key = input_window();
+void join(void)
+{
+    char host[NI_MAXHOST] = {0};
 
-    // Broadcast
-    char host[NI_MAXHOST];
-    send_udp_broadcast(host, sizeof(host), key); // for TUI testing
-    
+    while(strnlen(host, NI_MAXHOST) == 0)
+    {
+        // Input Keyword
+        char* key = input_window();
+        if (key[0] == ESCAPE)
+        {
+            free(key);
+            stop_tui();
+            exit(0);
+        }
+        // Broadcast
+        send_udp_broadcast(host, sizeof(host), key); // for TUI testing
+        
+        free(key);
+    }
+
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_client, host);
 
@@ -120,20 +133,22 @@ void join(void){
     stop_tui();
 }
 
-// Called from Client and Host
-void write_to_buffer(char c, int socket_number) {
-    // Check if mutex is locked. If is, throw away input
-    // If not lock mutex
-    int status = pthread_mutex_trylock(&lock);
-    if (status != 0)
-        return;
+/**
+ * Takes a character and tries to write it. After writing the new buffer gets broadcasted to all clients
+ * @param c The character to write.
+ * @param socket_number The number of the socket calling the method
+ */
+void write_to_buffer(char c, int socket_number)
+{
+    // Lock for writing. Await until unlocked if locked
+    pthread_mutex_lock(&lock);
 
     // Write to buffer, with the requests socket number
     buffered_writing(c, socket_number); // Calls TUI
 
     // Fetch the line the socket wrote to, to broadcast
-    char* line = get_all_lines()[y_cursors[socket_number]];
-    send_buffer(line, strlen(line), socket_number); // tcpserver.c
+    char* line = get_line(y_cursors[socket_number]);
+    send_buffer(line, strlen(line), socket_number); // TCP Server
 
     pthread_mutex_unlock(&lock); // Unlock mutex
 }
@@ -141,7 +156,8 @@ void write_to_buffer(char c, int socket_number) {
 /**
  * Closes the program properly
 */
-void close_program(void) {
+void close_program(void)
+{
     server_running = false;
 
     close_socket();

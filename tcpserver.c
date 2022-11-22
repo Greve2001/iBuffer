@@ -1,7 +1,12 @@
 #include "common.h"
 
-int own_socket;
-int client_sockets[NUMBER_OF_CLI];
+static int own_socket;
+static int *client_sockets;
+static int n_connected_clients = 0;
+
+void add_to_array(int new_element);
+void rm_from_array(int del_element);
+int get_client_index(int client_socket);
 
 /*
 * Start TCP server
@@ -43,26 +48,27 @@ void start_tcp_server(char * ip)
         update_window("Listening failed...");
 
     struct sockaddr_in client_addr;
-    
+    client_sockets = (int *) calloc(NUMBER_OF_CLI, sizeof(int));
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
+        client_sockets[i] = -1;
 
     // Extract connection and create a new connected socket and handle this in a new thread
-    int clients_connected = 0;
     for(;;)
     {
-        // Extract the first connection from the listening socket.
+        // Extract the first connection from the listening socket (accept is blocking)
         // Create a new connected socket, and return new file descriptor referring to this socket
-        if (clients_connected < NUMBER_OF_CLI)
+        int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
+        
+        // TODO: Find a better way to handle this...
+        if (n_connected_clients == NUMBER_OF_CLI)
         {
-            client_sockets[clients_connected] = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
-
-            pthread_t thread;
-            pthread_create(&thread, NULL, (void*) handle_connection, (void*) &clients_connected);
-
-            sleep(1);
-            clients_connected++;
+            close(client_socket);
+            continue;
         }
-        else
-            break;
+        add_to_array(client_socket);
+
+        pthread_t thread;
+        pthread_create(&thread, NULL, (void*) handle_connection, (void*) &client_socket);
     }
 }
 
@@ -71,9 +77,9 @@ void start_tcp_server(char * ip)
 * - send welcome message to newly connected client 
 * @param socket is the file descriptor refering the newly connected socket
 */
-void* handle_connection(void* socket_number) 
+void* handle_connection(void* socket) 
 {
-    int client_socket = client_sockets[*(int*)socket_number];
+    int client_socket = *(int*)socket;
 
     if(client_socket < 0) 
         update_window("Server accept failed...");
@@ -86,15 +92,21 @@ void* handle_connection(void* socket_number)
         send(client_socket, welcome_message, sizeof(welcome_message), 0); 
     }
 
-    read_request(client_socket, *(int*)socket_number);
+    read_request(client_socket);
+
+    return NULL;
 }
 
 /** 
 * Receive characters from client and write to buffer (ref: main.c)
 * @param client_socket is the file descriptor refering the connected socket of the client
 */
-void read_request(int client_socket, int socket_number) 
+void read_request(int client_socket) 
 {
+    int client_index = get_client_index(client_socket);
+    if (client_index == -1) 
+        return;
+
     Message *pmsg;
     char msg[200] = {0};
 
@@ -102,7 +114,8 @@ void read_request(int client_socket, int socket_number)
     {
         ssize_t len = read(client_socket, &msg, sizeof(msg));
         
-        if (len != -1 && len != 0) // If read correct
+        if (len > 0)
+
         {
             pmsg = parser(msg);
             char c = pmsg->message[0];
@@ -111,10 +124,13 @@ void read_request(int client_socket, int socket_number)
             if (c == ALT_NEWLINE) 
                 c = NEWLINE;
 
-            write_to_buffer(c, socket_number); // main.c
+            write_to_buffer(c, client_index); // main.c
         }
         else
+        {
+            rm_from_array(client_socket);
             break;
+        }       
     }
 }
 
@@ -123,27 +139,27 @@ void read_request(int client_socket, int socket_number)
 * @param buffer that has been modified (send this to client)
 * @param len sizeOf(buffer)
 */
-void send_buffer(char* buffer, int len, int socket_number)
+void send_buffer(char* buffer, int len, int client_index)
 {
     extern int x_cursors[];
     extern int y_cursors[];
 
     for (size_t i = 0; i < NUMBER_OF_CLI; i++)
     {
-        if (&client_sockets[i] != NULL)
+        if (client_sockets[i])
         {
             // Construct message differently for each socket.
             Message msg;
-            if (i == socket_number) 
+            if (i == client_index)
             { // Own
                 msg.x = x_cursors[i];
                 msg.y = y_cursors[i];
                 msg.own = true;
             }
-            else                    
-            { // Other
-                msg.x = x_cursors[socket_number];
-                msg.y = y_cursors[socket_number];
+            else 
+            {
+                msg.x = x_cursors[client_index];
+                msg.y = y_cursors[client_index];
                 msg.own = false;
             }
             memset(msg.message, 0, 100);
@@ -165,4 +181,51 @@ void close_server(void)
 {
     int status = close(own_socket);
     printf("Attempted closing server with status: %d\n", status);
+}
+
+/**
+* Add a new element to client_sockets
+* @param new_element element to be appended to client_sockets
+*/
+void add_to_array(int new_element) 
+{
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
+    {
+        if (client_sockets[i] == -1)
+        {
+            client_sockets[i] = new_element;
+            n_connected_clients++;
+            break;
+        }
+    }
+}
+
+/**
+* Remove del_element from client_sockets
+* @param del_element element to be deleted from client_sockets
+*/
+void rm_from_array(int del_element)
+{
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
+    {
+        if (client_sockets[i] == del_element)
+        {
+            client_sockets[i] = -1;
+            n_connected_clients--;
+            break;
+        }
+    }
+}
+
+/**
+* Get the index of the client from the client_array that is equal to client_socket
+* @param client_socket filedescriptor refering to the socket, which index we're trying to find
+* @return index of the client_socket in client_array
+*/
+int get_client_index(int client_socket) 
+{
+    for (int i = 0; i < NUMBER_OF_CLI; i++) 
+        if (client_sockets[i] == client_socket)
+            return i;
+    return -1;
 }

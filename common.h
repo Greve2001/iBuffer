@@ -1,5 +1,10 @@
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE     	/* To get defns of NI_MAXSERV and NI_MAXHOST */
+#endif
+
 #ifndef COMMON_H
 #define COMMON_H
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,8 +24,6 @@
 #include <bits/types/struct_timeval.h>
 #include <sys/select.h>
 #include <ncurses.h> // TUI specific
-
-#define _GNU_SOURCE     	/* To get defns of NI_MAXSERV and NI_MAXHOST */
 
 #define NUMBER_OF_CLI 		5
 
@@ -101,7 +104,7 @@ void close_socket(void);
 // TCP server
 void start_tcp_server(char *);
 void* handle_connection(void* socket_number);
-void read_request(int client_socket, int socket_number);
+void read_request(int client_socket);
 void send_buffer(char*, int, int);
 void close_server(void);
 
