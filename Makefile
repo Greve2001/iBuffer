@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g
+CFLAGS=-Wall -s -O3
 
 objects=discover.o linklist.o main.o tcpclient.o tcpserver.o tui.o parser.o
 
