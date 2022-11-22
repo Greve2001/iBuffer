@@ -109,7 +109,7 @@ void close_socket(void);
 // TCP server
 void start_tcp_server(char *);
 void* handle_connection(void* socket_number);
-void read_request(int client_socket, int socket_number);
+void read_request(int client_socket);
 void send_buffer(char*, int, int);
 void close_server(void);
 
