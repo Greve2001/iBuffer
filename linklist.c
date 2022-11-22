@@ -6,6 +6,7 @@ static Line *first_line;
 static Line *last_line;
 
 //for printing lines
+static int list_of_lines_size;
 static char **list_of_lines;
 static char *one_line;
 
@@ -152,8 +153,7 @@ char* get_line(int line_number){
 char **get_all_lines(){
 	if(list_of_lines)
 	{
-		size_t size = sizeof(list_of_lines) / sizeof(list_of_lines[0]);
-		for(int i = 0; i < size; i++)
+		for(int i = 0; i < list_of_lines_size; i++)
 		{
 			free(list_of_lines[i]);
 		}
@@ -161,6 +161,7 @@ char **get_all_lines(){
 	}
 	
 	list_of_lines = malloc(lines * sizeof(char*));
+	list_of_lines_size = lines;
 	
 	Line *line = first_line;
 	for(int i = 0; i < lines; i++)
