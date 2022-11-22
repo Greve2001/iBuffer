@@ -68,6 +68,7 @@ void buffered_writing(char c, int socket_number){
     interpret_char(c, socket_number);
     move_cursor(c, socket_number);
 
+    // Print line for the specified y-position
     print_buffer(get_all_lines()[y_cursors[socket_number]], x_cursors[socket_number], y_cursors[socket_number], true);
 
     // Special for host.
@@ -89,9 +90,9 @@ void interpret_char(char c, int socket_number){
     extern int y_cursors[];
     // Get better way to handle this.
 
-    // Normal typing
+    
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
-    {
+    { // Normal typing
         write_char(x_cursors[socket_number], c);
     }
     else if (c == RETURN)
@@ -99,7 +100,7 @@ void interpret_char(char c, int socket_number){
         delete_char(x_cursors[socket_number]);
     }
     else if (c == '\n')
-    {
+    { // Newline
         update_window("New Line!");
         make_new_line(y_cursors[socket_number]);
     }
@@ -129,7 +130,7 @@ void move_cursor(char c, int socket_number){
         if (x_cursors[socket_number] < strLength) x_cursors[socket_number]++;
     }
     else if (c == DOWN_ARROW)
-    {
+    { // Down Arrow
         if (y_cursors[socket_number] > 0)
         {
             y_cursors[socket_number]--; 
@@ -138,7 +139,7 @@ void move_cursor(char c, int socket_number){
         }
     }
     else if (c == UP_ARROW)
-    {
+    { // Up Arrow
         if (y_cursors[socket_number] < mainHeight-2 && y_cursors[socket_number] < get_amount_of_lines()-1)
         {
             y_cursors[socket_number]++; 
@@ -147,7 +148,7 @@ void move_cursor(char c, int socket_number){
         }
     }
     else if (c == NEWLINE)
-    {
+    { // Newline
         y_cursors[socket_number]++;
         x_cursors[socket_number] = 0;
         clicked_on_line(y_cursors[socket_number]);  
@@ -160,6 +161,8 @@ void move_cursor(char c, int socket_number){
 */
 void print_buffer(char* buffer, int cursorX, int cursorY, bool own){
     curs_set(1); 
+
+    // Print differently depending on if the buffer print comes from the same client or not
     if (own)
     {
         mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
