@@ -1,6 +1,4 @@
-#define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #include "common.h"
-#include "linklist.h"
 
 int x_cursors[NUMBER_OF_CLI+1];
 int y_cursors[NUMBER_OF_CLI+1];
@@ -76,14 +74,24 @@ void host(void){
  * The main function for client processes to run. Can connect to server processes.
 */
 void join(void){
-    // Input Keyword
-    char* key = malloc(sizeof(char)*100); // Make in tui
-    key = input_window();
+    char host[NI_MAXHOST] = {0};
 
-    // Broadcast
-    char host[NI_MAXHOST];
-    send_udp_broadcast(host, sizeof(host), key); // for TUI testing
-    
+    while(strnlen(host, NI_MAXHOST) == 0)
+    {
+        // Input Keyword
+        char* key = input_window();
+        if (key[0] == ESCAPE)
+        {
+            free(key);
+            stop_tui();
+            exit(0);
+        }
+        // Broadcast
+        send_udp_broadcast(host, sizeof(host), key); // for TUI testing
+        
+        free(key);
+    }
+
     pthread_t thread;
     pthread_create(&thread, NULL, (void*) start_tcp_client, host);
 
