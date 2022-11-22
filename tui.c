@@ -90,7 +90,7 @@ void interpret_char(char c, int socket_number){
     extern int y_cursors[];
     // Get better way to handle this.
 
-    
+    clicked_on_line(y_cursors[socket_number]);
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
         write_char(x_cursors[socket_number], c);
@@ -162,9 +162,15 @@ void move_cursor(char c, int socket_number){
 void print_buffer(char* buffer, int cursorX, int cursorY, bool own){
     curs_set(1); 
 
+    // Clear line, before printing line
+    wmove(mainWin, cursorY+yStart, 0);
+    wclrtoeol(mainWin);
+
     // Print differently depending on if the buffer print comes from the same client or not
     if (own)
     {
+        xPos = cursorX;
+        yPos = cursorY;
         mvwprintw(mainWin, yStart+cursorY, xStart, "%s", buffer);
         wmove(mainWin, cursorY+yStart, cursorX+xStart);
     }
@@ -176,9 +182,10 @@ void print_buffer(char* buffer, int cursorX, int cursorY, bool own){
         wmove(mainWin, old_y+yStart, old_x+xStart);
     }
 
-    // Draw box and move cursor
+    // Draw box and cursor
     box(mainWin, 0, 0);
     curs_set(1);
+
     wrefresh(mainWin); // Refresh to show updates
 }
 
