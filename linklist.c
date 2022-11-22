@@ -17,7 +17,7 @@ static char** list_of_lines;
 
 
 /**********************************************************
-* These methods is used for handleing the buffered lines only
+* These methods is used for handling the buffered lines only
 *
 ************************************************************/
 int number_of_lines = 1;
