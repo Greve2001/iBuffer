@@ -24,6 +24,7 @@
 
 #define NUMBER_OF_CLI 		5
 
+#define ESCAPE				27
 #define MAX_STRING_LENGTH   99
 #define CHAR_RANGE_START    32
 #define CHAR_RANGE_END      126

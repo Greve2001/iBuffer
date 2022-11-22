@@ -23,6 +23,9 @@ Message* parser(char* string)
     return message;
 }
 
+/**
+ * Serialized a Message into string for network sending
+*/
 char* serialize(Message* message) 
 {
     char *result = (char *) calloc(1, sizeof(*message) + 100);
