@@ -89,7 +89,6 @@ void interpret_char(char c, int socket_number){
     extern int x_cursors[];
     extern int y_cursors[];
     // Get better way to handle this.
-
     
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing

@@ -131,18 +131,15 @@ void join(void){
 
 // Called from Client and Host
 void write_to_buffer(char c, int socket_number) {
-    // Check if mutex is locked. If is, throw away input
-    // If not lock mutex
-    int status = pthread_mutex_trylock(&lock);
-    if (status != 0)
-        return;
+    // Lock for writing. Awaits until unlocked if locked
+    pthread_mutex_lock(&lock);
 
     // Write to buffer, with the requests socket number
     buffered_writing(c, socket_number); // Calls TUI
 
     // Fetch the line the socket wrote to, to broadcast
-    char* line = get_all_lines()[y_cursors[socket_number]];
-    send_buffer(line, strlen(line), socket_number); // tcpserver.c
+    char* line = get_line(y_cursors[socket_number]);
+    send_buffer(line, strlen(line), socket_number); // TCP Server
 
     pthread_mutex_unlock(&lock); // Unlock mutex
 }
