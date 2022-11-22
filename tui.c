@@ -90,7 +90,7 @@ void interpret_char(char c, int socket_number){
     extern int y_cursors[];
     // Get better way to handle this.
 
-    clicked_on_line(y_cursors[socket_number]);
+    
     if ((CHAR_RANGE_START <= c && c <= CHAR_RANGE_END))
     { // Normal typing
         write_char(x_cursors[socket_number], c);
