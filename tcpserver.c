@@ -185,6 +185,7 @@ void send_buffer(char* buffer, int len, int client_index)
  */
 void close_server(void)
 {
+    free(client_sockets);
     int status = close(own_socket);
     printf("Attempted closing server with status: %d\n", status);
 }
