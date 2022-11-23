@@ -160,7 +160,9 @@ char get_local_ip(char host[])
             continue;
 
         family = ifa->ifa_addr->sa_family;
-        if (family == AF_INET && (strstr(ifa->ifa_name, "wl") || strstr(ifa->ifa_name, "eth"))) 
+        if (family == AF_INET && (strstr(ifa->ifa_name, "wl") 
+            || strstr(ifa->ifa_name, "eth")
+            || strstr(ifa->ifa_name, "enp"))) 
         {
             s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
                     host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
