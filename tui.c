@@ -282,7 +282,7 @@ int startup_window(void)
 char* input_window(void)
 {
     // Initial ncurses initialization
-    initscr(); cbreak(); echo();
+    initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE); 
     curs_set(1);
 
@@ -290,7 +290,7 @@ char* input_window(void)
     WINDOW* inputWin = newwin(4, 30, 0, 0);
     refresh();
     
-    // Print and refresh to display
+    // Initial display
     mvwprintw(inputWin, 1, 1, "Please enter passphrase: ");
     box(inputWin, 0, 0);
     wrefresh(inputWin);
@@ -298,18 +298,48 @@ char* input_window(void)
     // Get string from user
     char* str = calloc(1024, sizeof(char));
     move(2,1); // Move Cursor
-    int i;
-    for(i = 0; (str[i] = getch()) != '\n'; i++)
+
+    // Get user input
+    int i = 0;
+    while (true)
     {
-        if(str[i] == ESCAPE) 
+        char c = getch();
+
+        if (c == ESCAPE)
         {
             str[0] = ESCAPE;
             str[1] = '\0';
             break;
         }
+        else if (c == NEWLINE) 
+        {
+            str[i] = '\n';
+            break;
+        }
+        else if (c == RETURN)
+        {
+            if (i > 0)
+            {
+                str[i-1] = '\0'; 
+                i--;
+            }
+                
+        }
+        else 
+        {
+            str[i] = c;
+            i++;
+        }
+
+    
+        // Print and refresh to display
+        wclear(inputWin);
+        mvwprintw(inputWin, 1, 1, "Please enter passphrase: ");
+        mvwprintw(inputWin, 2, 1, "%s", str);
+        wmove(inputWin, 2, i+1);
+        box(inputWin, 0, 0);
+        wrefresh(inputWin);
     }
-    if(str[i] == '\n')
-        str[i] = '\0';
 
     // Properly dispose of the window
     werase(inputWin);
