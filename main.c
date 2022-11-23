@@ -162,5 +162,6 @@ void close_program(void)
     close_server(); 
     pthread_mutex_destroy(&lock);
     stop_tui();
+    free_all_space();
     exit(EXIT_SUCCESS);
 }
