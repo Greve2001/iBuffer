@@ -313,7 +313,7 @@ char* input_window(void)
         }
         else if (c == NEWLINE) 
         {
-            str[i] = '\n';
+            str[i] = '\0';
             break;
         }
         else if (c == RETURN)
