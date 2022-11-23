@@ -130,7 +130,6 @@ void join(void)
     }
 
     // Proper closing of loose ends
-    close_socket();
     stop_tui();
 }
 
