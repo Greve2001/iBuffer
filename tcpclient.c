@@ -54,7 +54,7 @@ void read_response(void)
         char recv[200] = {0};
         ssize_t len1 = read(server_socket, recv, sizeof(recv));
         
-        if (len1 != -1 && len1 != 0) // If read correct
+        if (len1 > 0) // If read correct
         {
             Message *msg = parser(recv);
             print_buffer(msg->message, msg->x, msg->y, msg->own);
@@ -62,6 +62,7 @@ void read_response(void)
         else
             break;
     }
+    close_socket();
     pthread_exit(NULL);
 }
 

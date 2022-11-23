@@ -136,7 +136,7 @@ void read_request(int client_socket)
 }
 
 /**
- * Send buffer back to client
+ * Send buffer back to all client. 
  * @param buffer that has been modified (send this to client)
  * @param len sizeOf(buffer)
  * @param client_index index of the current client in client_sockets
