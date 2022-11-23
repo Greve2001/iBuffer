@@ -8,10 +8,10 @@ void add_to_array(int new_element);
 void rm_from_array(int del_element);
 int get_client_index(int client_socket);
 
-/*
-* Start TCP server
-* @param ip is the Internet host address
-*/
+/**
+ * Start TCP server
+ * @param ip is the Internet host address
+ */
 void start_tcp_server(char * ip) 
 {
     // endpoint for communication -> file descriptor that refers to the endpoint.
@@ -48,6 +48,7 @@ void start_tcp_server(char * ip)
         update_window("Listening failed...");
 
     struct sockaddr_in client_addr;
+
     client_sockets = (int *) calloc(NUMBER_OF_CLI, sizeof(int));
     for (int i = 0; i < NUMBER_OF_CLI; i++)
         client_sockets[i] = -1;
@@ -59,6 +60,11 @@ void start_tcp_server(char * ip)
         // Create a new connected socket, and return new file descriptor referring to this socket
         int client_socket = accept(own_socket, (struct sockaddr*) &client_addr, &addr_len);
         
+        if(client_socket < 0) 
+            {
+                update_window("Server accept failed...");
+                exit(1);
+            }
         // TODO: Find a better way to handle this...
         if (n_connected_clients == NUMBER_OF_CLI)
         {
@@ -73,24 +79,19 @@ void start_tcp_server(char * ip)
 }
 
 /**
-* Handle connection between client and server
-* - send welcome message to newly connected client 
-* @param socket is the file descriptor refering the newly connected socket
-*/
+ * Handle connection between client and server
+ * - send welcome message to newly connected client 
+ * @param socket is the file descriptor refering the newly connected socket
+ */
 void* handle_connection(void* socket) 
 {
     int client_socket = *(int*)socket;
 
-    if(client_socket < 0) 
-        update_window("Server accept failed...");
-    else 
-    {
-        update_window("Server accepted a client");
-        fflush(stdout);
+    update_window("Server accepted a client");
+    fflush(stdout);
 
-        char welcome_message[] = "Welcome to server!";
-        send(client_socket, welcome_message, sizeof(welcome_message), 0); 
-    }
+    char welcome_message[] = "Welcome to server!";
+    send(client_socket, welcome_message, sizeof(welcome_message), 0); 
 
     read_request(client_socket);
 
@@ -98,13 +99,13 @@ void* handle_connection(void* socket)
 }
 
 /** 
-* Receive characters from client and write to buffer (ref: main.c)
-* @param client_socket is the file descriptor refering the connected socket of the client
-*/
+ * Receive characters from client and write to buffer (ref: main.c)
+ * @param client_socket is the file descriptor refering the connected socket of the client
+ */
 void read_request(int client_socket) 
 {
-    int client_index = get_client_index(client_socket);
-    if (client_index == -1) 
+    int client_index;
+    if ((client_index = get_client_index(client_socket)) == -1) 
         return;
 
     Message *pmsg;
@@ -135,18 +136,19 @@ void read_request(int client_socket)
 }
 
 /**
-* Send buffer back to client
-* @param buffer that has been modified (send this to client)
-* @param len sizeOf(buffer)
-*/
+ * Send buffer back to client
+ * @param buffer that has been modified (send this to client)
+ * @param len sizeOf(buffer)
+ * @param client_index index of the current client in client_sockets
+ */
 void send_buffer(char* buffer, int len, int client_index)
 {
     extern int x_cursors[];
     extern int y_cursors[];
 
-    for (size_t i = 0; i < NUMBER_OF_CLI; i++)
+    for (int i = 0; i < NUMBER_OF_CLI; i++)
     {
-        if (client_sockets[i])
+        if (client_sockets[i] != -1)
         {
             // Construct message differently for each socket.
             Message msg;
@@ -177,6 +179,9 @@ void send_buffer(char* buffer, int len, int client_index)
     }
 }
 
+/**
+ * Close server socket
+ */
 void close_server(void)
 {
     int status = close(own_socket);
@@ -184,9 +189,9 @@ void close_server(void)
 }
 
 /**
-* Add a new element to client_sockets
-* @param new_element element to be appended to client_sockets
-*/
+ * Add a new element to client_sockets
+ * @param new_element element to be appended to client_sockets
+ */
 void add_to_array(int new_element) 
 {
     for (int i = 0; i < NUMBER_OF_CLI; i++)
@@ -201,9 +206,9 @@ void add_to_array(int new_element)
 }
 
 /**
-* Remove del_element from client_sockets
-* @param del_element element to be deleted from client_sockets
-*/
+ * Remove del_element from client_sockets
+ * @param del_element element to be deleted from client_sockets
+ */
 void rm_from_array(int del_element)
 {
     for (int i = 0; i < NUMBER_OF_CLI; i++)
@@ -218,10 +223,11 @@ void rm_from_array(int del_element)
 }
 
 /**
-* Get the index of the client from the client_array that is equal to client_socket
-* @param client_socket filedescriptor refering to the socket, which index we're trying to find
-* @return index of the client_socket in client_array
-*/
+ * Get the index of the client from the client_array that is equal to client_socket
+ * @param client_socket filedescriptor refering to the socket, which index we're trying to find
+ * @return index of the client_socket in client_array 
+ *         or -1 if client isn't in client_sockets
+ */
 int get_client_index(int client_socket) 
 {
     for (int i = 0; i < NUMBER_OF_CLI; i++) 
