@@ -116,7 +116,6 @@ void read_request(int client_socket)
         ssize_t len = read(client_socket, &msg, sizeof(msg));
         
         if (len > 0)
-
         {
             pmsg = parser(msg);
             char c = pmsg->message[0];
@@ -130,6 +129,8 @@ void read_request(int client_socket)
         else
         {
             rm_from_array(client_socket);
+            close(client_socket);
+            pthread_exit(NULL);
             break;
         }       
     }
