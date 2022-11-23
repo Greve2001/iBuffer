@@ -186,9 +186,30 @@ char **get_all_lines(){
 	return list_of_lines;
 }
 
+/*
+* This should be called when closing program.
+* 
+* This will clear all the stack allocated memory and free it to the OS. If this is not
+* run at the end of the program, all the malloc allocated memory risk of beign
+* kept reserved. In that case, users might have to restart there computer to free
+* this memory.
+*
+*/
 void free_all_space(void)
 {
-	;
+    for(int i = 0; i< lines; i++)
+    {
+        Line *temp = first_line;
+        Letter *temp2 = temp->first_letter;
+        for(int j = 0; j < temp->list_size; j++)
+        {
+            Letter *delete = temp2;
+            temp2 = temp2->next;
+            free(delete);
+        }
+        first_line = temp->next;
+        free(temp);
+    }
 }
 
 void init(void){
