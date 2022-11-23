@@ -4,9 +4,9 @@
 int server_socket;
 
 /** 
-* Start TCP client
-* @param ip of the server you're trying to connect to 
-*/
+ * Start TCP client
+ * @param ip of the server you're trying to connect to 
+ */
 void start_tcp_client(char * ip) 
 {
     // filedescriptor
@@ -45,8 +45,8 @@ void start_tcp_client(char * ip)
 }
 
 /** 
-* Reads the buffer sent from the server
-*/
+ * Reads the buffer sent from the server
+ */
 void read_response(void) 
 {
     for(;;) 
@@ -66,9 +66,9 @@ void read_response(void)
 }
 
 /**
-* Send character to server
-* @param c is the character you want to send
-*/
+ * Send message to server
+ * @param msg is the message you want to send
+ */
 void transfer_msg(Message msg) 
 {
     char *ser_msg = serialize(&msg);
@@ -77,8 +77,8 @@ void transfer_msg(Message msg)
 }
 
 /**
-* Print status after attemting to close server socket
-*/
+ * Print status after attemting to close server socket
+ */
 void close_socket(void)
 {
     int status = close(server_socket);

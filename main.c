@@ -4,8 +4,6 @@
 int x_cursors[NUMBER_OF_CLI+1];
 int y_cursors[NUMBER_OF_CLI+1];
 
-bool server_running = true;
-
 static pthread_mutex_t lock; // Main Lock
 
 int main(void)
@@ -40,8 +38,9 @@ int main(void)
 }
 
 /**
- * The main function for the server process to run. It hosts the buffer for all clients to share
-*/
+ * The main function for the server process to run. 
+ * - Hosts the buffer for all clients to share
+ */
 void host(void)
 {
     // Discover
@@ -61,7 +60,7 @@ void host(void)
     update_window("");
 
     // Listen for escape key to shutdown application
-    while (server_running)
+    for(;;)
     {
         char c = getch();
         if (c == ESCAPE) break; // Escape key
@@ -74,17 +73,19 @@ void host(void)
 }
 
 /**
- * The main function for client processes to run. Can connect to server processes.
-*/
+ * The main function for client processes to run. 
+ * - Clients can connect to server processes
+ */
 void join(void)
 {
     char host[NI_MAXHOST] = {0};
 
+    // Ask for passphrase until passphrase is correct or ESCAPE is detected
     while(strnlen(host, NI_MAXHOST) == 0)
     {
         // Input Keyword
         char* key = input_window();
-        if (key[0] == ESCAPE)
+        if (key[0] == ESCAPE) // close program
         {
             free(key);
             stop_tui();
@@ -136,35 +137,31 @@ void join(void)
 /**
  * Takes a character and tries to write it. After writing the new buffer gets broadcasted to all clients
  * @param c The character to write.
- * @param socket_number The number of the socket calling the method
+ * @param socket_indx The number of the socket calling the method
  */
-void write_to_buffer(char c, int socket_number)
+void write_to_buffer(char c, int socket_indx)
 {
     // Lock for writing. Await until unlocked if locked
     pthread_mutex_lock(&lock);
 
     // Write to buffer, with the requests socket number
-    buffered_writing(c, socket_number); // Calls TUI
+    buffered_writing(c, socket_indx); // Calls TUI
 
     // Fetch the line the socket wrote to, to broadcast
-    char* line = get_line(y_cursors[socket_number]);
-    send_buffer(line, strlen(line), socket_number); // TCP Server
+    char* line = get_line(y_cursors[socket_indx]);
+    send_buffer(line, strlen(line), socket_indx); // TCP Server
 
     pthread_mutex_unlock(&lock); // Unlock mutex
 }
 
 /**
  * Closes the program properly
-*/
+ * - this is a responsibility of the server
+ */
 void close_program(void)
 {
-    server_running = false;
-
-    close_socket();
     close_server(); 
-
     pthread_mutex_destroy(&lock);
-
     stop_tui();
     exit(EXIT_SUCCESS);
 }

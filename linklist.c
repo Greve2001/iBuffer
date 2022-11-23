@@ -64,7 +64,7 @@ void write_char(char letter, int letter_position, int line_number)
 	Letter *new_letter = (Letter*) malloc(sizeof(Letter));
 	new_letter -> character = letter;
 	working_line -> list_size ++;
-	
+
 	if(letter_position == 0)
 	{
 		new_letter -> next = working_line -> first_letter;
@@ -77,7 +77,7 @@ void write_char(char letter, int letter_position, int line_number)
 	{
 		before_new_letter = before_new_letter -> next;
 	}
-	
+
 	new_letter -> next = before_new_letter -> next;
 	before_new_letter -> next = new_letter;
 }
@@ -91,16 +91,16 @@ void write_char(char letter, int letter_position, int line_number)
 void delete_char(int letter_position, int line_number){
 	if(letter_position == 0)
 		return;
-	
+
 	Line *working_line = first_line;
 	for(int i = 0; i < line_number; i++)
 	{
 		working_line = working_line -> next;
 	}
-	
+
 	if(working_line -> list_size == 0)
 		return;
-		
+
 	if(working_line -> list_size == 1)
 	{
 		free(working_line -> first_letter);
@@ -108,9 +108,9 @@ void delete_char(int letter_position, int line_number){
 		working_line -> list_size = 0;
 		return;
 	}
-	
+
 	working_line -> list_size --;
-		
+
 	if(letter_position == 1)
 	{
 		Letter *temp = working_line -> first_letter;
@@ -118,17 +118,17 @@ void delete_char(int letter_position, int line_number){
 		free(temp);
 		return;
 	}
-	
+
 	Letter *letter_before_delete = working_line -> first_letter;
 	for(int i = 2; i < letter_position; i++)
 	{
 		letter_before_delete = letter_before_delete -> next;
 	}
-	
+
 	Letter *temp = letter_before_delete -> next;
 	letter_before_delete -> next = temp -> next;
 	free(temp);
-		
+
 }
 
 char* get_line(int line_number){
@@ -140,13 +140,13 @@ char* get_line(int line_number){
 	}
 	
 	one_line = (char*) malloc((line -> list_size + 1) * sizeof(char));
-	
+
 	if(line -> list_size == 0)
 	{
 		one_line[0] = '\0';
 		return one_line;
 	}
-	
+
 	Letter *temp = line -> first_letter;
 	for(int i = 0; i < line -> list_size; i++)
 	{
@@ -155,7 +155,7 @@ char* get_line(int line_number){
 			temp = temp -> next;
 	}
 	one_line[line -> list_size] = '\0';
-	
+
 	return one_line;
 }
 
@@ -172,10 +172,10 @@ char **get_all_lines(){
 		}
 		free(list_of_lines);
 	}
-	
+
 	list_of_lines = (char**) malloc(lines * sizeof(char*));
 	list_of_lines_size = lines;
-	
+
 	Line *line = first_line;
 	for(int i = 0; i < lines; i++)
 	{
